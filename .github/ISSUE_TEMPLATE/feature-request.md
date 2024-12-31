@@ -3,7 +3,7 @@ name: Feature request
 about: 개발해야 할 기능
 title: "[Feat]"
 labels: feature
-assignees: muncool39
+assignees: ''
 
 ---
 
