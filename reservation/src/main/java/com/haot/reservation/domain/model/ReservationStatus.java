@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ReservationStatus {
 
-  PENDING("예약 대기"),
+  PENDING("결제 대기"),
   CANCELED("예약 취소"),
   COMPLETED("예약 완료");
 
