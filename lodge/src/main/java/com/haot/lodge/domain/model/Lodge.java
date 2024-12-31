@@ -1,4 +1,4 @@
-package com.haot.lodge.domain.entity;
+package com.haot.lodge.domain.model;
 
 
 import jakarta.persistence.Column;

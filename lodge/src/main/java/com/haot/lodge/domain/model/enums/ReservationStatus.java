@@ -1,4 +1,4 @@
-package com.haot.lodge.domain.enums;
+package com.haot.lodge.domain.model.enums;
 
 import lombok.AllArgsConstructor;
 

@@ -1,6 +1,6 @@
-package com.haot.lodge.domain.entity;
+package com.haot.lodge.domain.model;
 
-import com.haot.lodge.domain.enums.ReservationStatus;
+import com.haot.lodge.domain.model.enums.ReservationStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

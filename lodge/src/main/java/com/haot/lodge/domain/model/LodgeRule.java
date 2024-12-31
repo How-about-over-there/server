@@ -1,4 +1,4 @@
-package com.haot.lodge.domain.entity;
+package com.haot.lodge.domain.model;
 
 
 import jakarta.persistence.Column;
@@ -8,7 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,24 +21,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_lodge_image")
-public class LodgeImage {
-
+@Table(name = "p_lodge_rule")
+public class LodgeRule {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lodge_id")
     private Lodge lodge;
 
-    @Column(name = "title")
-    private String title;
+    @Column(name = "max_reservation_day", nullable = false)
+    private Integer maxReservationDay;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "max_personnel", nullable = false)
+    private Integer maxPersonnel;
 
-    @Column(name = "url", nullable = false)
-    private String url;
+    @Column(name = "customization")
+    private String customization;
 
 }
