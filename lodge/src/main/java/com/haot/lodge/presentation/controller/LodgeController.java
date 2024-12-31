@@ -49,4 +49,42 @@ public class LodgeController {
                 .build();
         return ApiResponse.success(new LodgeCreateResponse(info));
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping
+    public ApiResponse<Page<LodgeReadAllResponse>> readAll(
+            @PageableDefault(size = 30)
+            Pageable pageable
+    ) {
+        LodgeResponse info = LodgeResponse.builder()
+                .id("UUID")
+                .name("이름")
+                .description("휴양지입니다.")
+                .term(2)
+                .address("경기도 고양시 고양로 551")
+                .build();
+        LodgeResponse info2 = LodgeResponse.builder()
+                .id("UUID2")
+                .name("이름")
+                .description("휴양지입니다.")
+                .term(2)
+                .address("경기도 고양시 고양로 551")
+                .build();
+        lodgeImageResponse image = lodgeImageResponse.builder()
+                .id("imageId")
+                .url("http://s3url")
+                .build();
+        LodgeReadAllResponse data = LodgeReadAllResponse.builder()
+                .lodge(info)
+                .images(List.of(image))
+                .build();
+        LodgeReadAllResponse data2 = LodgeReadAllResponse.builder()
+                .lodge(info2)
+                .images(List.of(image))
+                .build();
+        List<LodgeReadAllResponse> list = List.of(data, data2);
+        Page<LodgeReadAllResponse> response = new PageImpl<>(list, pageable, list.size());
+        return ApiResponse.success(response);
+    }
+
 }
