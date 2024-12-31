@@ -53,9 +53,11 @@ public class Lodge {
     private LodgeRule rule;
 
     @OneToMany(mappedBy = "lodge")
+    @Builder.Default
     private List<LodgeImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "lodge")
+    @Builder.Default
     private List<LodgeDate> dates = new ArrayList<>();
 
 }
