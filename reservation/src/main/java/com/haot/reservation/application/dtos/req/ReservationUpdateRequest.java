@@ -1,10 +1,9 @@
 package com.haot.reservation.application.dtos.req;
 
-import lombok.Getter;
+public record ReservationUpdateRequest(
+    String paymentId,
+    String status
 
-@Getter
-public class ReservationUpdateRequest {
+) {
 
-  private String paymentId;
-  private String status;
 }
