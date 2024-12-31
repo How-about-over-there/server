@@ -6,7 +6,7 @@ import com.haot.lodge.application.response.lodgeImageResponse;
 import com.haot.lodge.presentation.response.LodgeReadAllResponse;
 import com.haot.lodge.application.response.LodgeRuleResponse;
 import com.haot.lodge.presentation.request.LodgeCreateRequest;
-import com.haot.lodge.presentation.request.LodgeDateRequest;
+import com.haot.lodge.presentation.request.LodgeReservationRequest;
 import com.haot.lodge.presentation.request.LodgeUpdateRequest;
 import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.presentation.response.LodgeCreateResponse;
@@ -138,7 +138,7 @@ public class LodgeController {
     @PostMapping("/{lodgeId}")
     public ApiResponse<LodgeReservationResponse> reservation(
             @PathVariable String lodgeId,
-            @RequestBody LodgeDateRequest request
+            @RequestBody LodgeReservationRequest request
     ) {
         LodgeResponse info = LodgeResponse.builder()
                 .id(lodgeId)
