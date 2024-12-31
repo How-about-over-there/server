@@ -4,6 +4,7 @@ package com.haot.lodge.presentation.controller;
 import com.haot.lodge.application.response.LodgeDateResponse;
 import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
+import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
 import com.haot.lodge.presentation.response.LodgeDateReadResponse;
 import java.time.LocalDate;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -52,4 +54,15 @@ public class LodgeDateController {
         Slice<LodgeDateReadResponse> response = new SliceImpl<>(dates, pageable, false);
         return ApiResponse.success(response);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/{dateId}")
+    public ApiResponse<Void> update(
+            @PathVariable Long dateId,
+            @RequestBody LodgeDateUpdateRequest request
+    ) {
+        return ApiResponse.success();
+    }
+
+
 }
