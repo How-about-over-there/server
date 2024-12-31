@@ -52,4 +52,7 @@ public class Reservation {
   @Enumerated(EnumType.STRING)
   @Column(name = "reservation_status", nullable = false)
   private ReservationStatus status;
+
+  @Column(name = "payment_id", nullable = true)
+  private String paymentId;
 }
