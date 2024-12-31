@@ -59,7 +59,6 @@ public class AdminUserController {
   @ResponseStatus(HttpStatus.OK)
   @GetMapping
   public ApiResponse<Page<AdminUserGetResponse>> getUsers(
-      @RequestHeader("Authorization") String authorizationHeader,
       @RequestParam(required = false) String name,
       @RequestParam(required = false) String email,
       @RequestParam(required = false) String phoneNumber,
@@ -121,7 +120,7 @@ public class AdminUserController {
   @PatchMapping("/{userId}")
   public ApiResponse<Void> updateUserById(
       @PathVariable String userId,
-      @RequestBody AdminUserUpdateRequest request) {
+      @RequestBody(required = false) AdminUserUpdateRequest request) {
 
     return ApiResponse.success();
   }
