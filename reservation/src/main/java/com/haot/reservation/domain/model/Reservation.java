@@ -52,4 +52,13 @@ public class Reservation {
   @Enumerated(EnumType.STRING)
   @Column(name = "reservation_status", nullable = false)
   private ReservationStatus status;
+
+  @Column(name = "point_id", nullable = false)
+  private String pointId;
+
+  @Column(name = "payment_id", nullable = false)
+  private String paymentId;
+  // null 로 있다가 생성되면 값이 넣어짐
+  @Column(name = "reservation_coupon_id", nullable = true)
+  private String reservationCouponId;
 }
