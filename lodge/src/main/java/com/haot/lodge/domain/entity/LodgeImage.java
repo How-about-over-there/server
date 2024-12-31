@@ -32,11 +32,13 @@ public class LodgeImage {
     @JoinColumn(name = "lodge_id")
     private Lodge lodge;
 
+    @Column(name = "title")
     private String title;
 
+    @Column(name = "description")
     private String description;
 
-    @Column(nullable = false)
+    @Column(name = "url", nullable = false)
     private String url;
 
 }

@@ -30,22 +30,22 @@ public class Lodge {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+    @Column(name = "host_id", nullable = false)
     private String hostId;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(nullable = false)
+    @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(nullable = false)
+    @Column(name = "term", nullable = false)
     private Integer term;
 
-    @Column(nullable = false)
+    @Column(name = "basic_price", nullable = false)
     private Double basicPrice;
 
     @OneToOne(fetch = FetchType.LAZY)

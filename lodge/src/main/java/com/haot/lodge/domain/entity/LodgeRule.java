@@ -31,12 +31,13 @@ public class LodgeRule {
     @JoinColumn(name = "lodge_id")
     private Lodge lodge;
 
-    @Column(nullable = false)
+    @Column(name = "max_reservation_day", nullable = false)
     private Integer maxReservationDay;
 
-    @Column(nullable = false)
+    @Column(name = "max_personnel", nullable = false)
     private Integer maxPersonnel;
 
+    @Column(name = "customization")
     private String customization;
 
 }
