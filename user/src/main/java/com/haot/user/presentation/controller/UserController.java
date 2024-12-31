@@ -28,7 +28,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @PostMapping("/validation")
   public ApiResponse<UserLoginValidationResponse> validateLoginInformation(
-      @RequestBody UserLoginValidationRequest request) {
+      @RequestBody(required = false) UserLoginValidationRequest request) {
 
     UserLoginValidationResponse res = UserLoginValidationResponse.builder()
         .message("인증되었습니다.")
@@ -74,7 +74,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping("/me")
   public ApiResponse<Void> updateMyInfo(
-      @RequestBody UserUpdateMeRequest request) {
+      @RequestBody(required = false) UserUpdateMeRequest request) {
 
     return ApiResponse.success();
   }
