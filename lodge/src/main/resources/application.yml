@@ -1,8 +1,8 @@
 server:
-  port: 19093
+  port: 19098
 spring:
   application:
-   name: lodge
+   name: lodge-service
   datasource:
      driver-class-name: org.postgresql.Driver
   jpa:
