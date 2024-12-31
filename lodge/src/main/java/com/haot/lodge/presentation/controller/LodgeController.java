@@ -116,4 +116,14 @@ public class LodgeController {
                 .build();
         return ApiResponse.success(response);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/{lodgeId}")
+    public ApiResponse<Void>update(
+            @PathVariable String lodgeId,
+            @Valid LodgeUpdateRequest request
+    ) {
+        return ApiResponse.success();
+    }
+
 }
