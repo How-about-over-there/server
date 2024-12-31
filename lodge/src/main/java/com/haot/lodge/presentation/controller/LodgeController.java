@@ -133,4 +133,22 @@ public class LodgeController {
     ) {
         return ApiResponse.success();
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/{lodgeId}")
+    public ApiResponse<LodgeReservationResponse> reservation(
+            @PathVariable String lodgeId,
+            @RequestBody LodgeDateRequest request
+    ) {
+        LodgeResponse info = LodgeResponse.builder()
+                .id(lodgeId)
+                .name("이름")
+                .description("휴양지입니다.")
+                .term(2)
+                .address("경기도 고양시 고양로 551")
+                .build();
+        return ApiResponse.success(new LodgeReservationResponse(info, request.dates()));
+    }
+
+
 }
