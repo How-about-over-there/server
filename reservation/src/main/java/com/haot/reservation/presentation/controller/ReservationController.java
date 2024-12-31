@@ -1,0 +1,80 @@
+package com.haot.reservation.presentation.controller;
+
+import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
+import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
+import com.haot.reservation.application.dtos.res.ReservationGetResponse;
+import com.haot.reservation.common.response.ApiResponse;
+import com.haot.reservation.domain.model.ReservationStatus;
+import java.time.LocalDate;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/reservations")
+public class ReservationController {
+
+  @ResponseStatus(HttpStatus.CREATED)
+  @PostMapping
+  public ApiResponse<ReservationGetResponse> createReservation(
+      @RequestBody ReservationCreateRequest reservationCreateRequest
+  ) {
+    return ApiResponse.success(createDummyReservation());
+  }
+
+  @ResponseStatus(HttpStatus.OK)
+  @GetMapping("/{reservationId}")
+  public ApiResponse<ReservationGetResponse> getReservation(
+      @PathVariable String reservationId
+  ) {
+    return ApiResponse.success(createDummyReservation());
+  }
+
+  @ResponseStatus(HttpStatus.OK)
+  @GetMapping
+  public ApiResponse<ReservationGetResponse> searchReservation() {
+    return ApiResponse.success(createDummyReservation());
+  }
+
+  @ResponseStatus(HttpStatus.OK)
+  @PatchMapping("/{reservationId}")
+  public ApiResponse<Void> updateReservation(
+      @RequestBody ReservationUpdateRequest reservationUpdateRequest,
+      @PathVariable String reservationId
+  ) {
+    return ApiResponse.success();
+  }
+
+  @ResponseStatus(HttpStatus.OK)
+  @DeleteMapping("/{reservationId}")
+  public ApiResponse<Void> deleteReservation(
+      @PathVariable String reservationId
+  ) {
+    return ApiResponse.success();
+  }
+
+  private ReservationGetResponse createDummyReservation() {
+    return ReservationGetResponse.builder()
+        .reservationId(String.valueOf(UUID.randomUUID()))
+        .userId(String.valueOf(UUID.randomUUID()))
+        .lodgeName("엄청난 숙소")
+        .checkInDate(LocalDate.of(2025, 1, 1))
+        .checkOutDate(LocalDate.of(2025, 1, 5))
+        .numGuests(4)
+        .request("~~ 준비해주세요!")
+        .totalPrice(350000)
+        .status(ReservationStatus.PENDING)
+        .paymentId("결제 대기중 입니다.")
+        .build();
+  }
+}
