@@ -126,4 +126,11 @@ public class LodgeController {
         return ApiResponse.success();
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/{lodgeId}")
+    public ApiResponse<Void> delete(
+            @PathVariable String lodgeId
+    ) {
+        return ApiResponse.success();
+    }
 }
