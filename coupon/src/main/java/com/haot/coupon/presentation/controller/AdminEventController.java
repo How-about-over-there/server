@@ -1,8 +1,8 @@
 package com.haot.coupon.presentation.controller;
 
-import com.haot.coupon.application.dto.request.EventCreateRequest;
-import com.haot.coupon.application.dto.request.EventModifyRequest;
-import com.haot.coupon.application.dto.response.EventCreateResponse;
+import com.haot.coupon.application.dto.request.events.EventCreateRequest;
+import com.haot.coupon.application.dto.request.events.EventModifyRequest;
+import com.haot.coupon.application.dto.response.events.EventCreateResponse;
 import com.haot.coupon.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

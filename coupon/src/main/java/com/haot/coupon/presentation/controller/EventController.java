@@ -1,7 +1,7 @@
 package com.haot.coupon.presentation.controller;
 
-import com.haot.coupon.application.dto.request.EventSearchRequest;
-import com.haot.coupon.application.dto.response.EventSearchResponse;
+import com.haot.coupon.application.dto.request.events.EventSearchRequest;
+import com.haot.coupon.application.dto.response.events.EventSearchResponse;
 import com.haot.coupon.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

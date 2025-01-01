@@ -1,4 +1,4 @@
-package com.haot.coupon.application.dto.request;
+package com.haot.coupon.application.dto.request.events;
 
 import java.time.LocalDateTime;
 
