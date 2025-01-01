@@ -1,14 +1,11 @@
-package com.haot.coupon.application.dto.response.coupons;
+package com.haot.coupon.application.dto.request.coupons;
 
 import com.haot.coupon.domain.model.enums.CouponType;
 import com.haot.coupon.domain.model.enums.DiscountPolicy;
-import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Builder
-public record CouponSearchResponse(
-        String couponId,
+public record CouponCreateRequest(
         String couponName,
         LocalDateTime couponAvailableDate,
         LocalDateTime couponExpiredDate,

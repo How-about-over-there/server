@@ -57,6 +57,8 @@ public class CouponController {
                         .maximumAmount(500000)
                         .minimumAmount(50000)
                         .discountRate(10)
+                        .maxQuantity(2000)
+                        .issuedQuantity(300)
                 .build());
     }
 

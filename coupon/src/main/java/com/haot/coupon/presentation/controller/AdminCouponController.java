@@ -1,6 +1,8 @@
 package com.haot.coupon.presentation.controller;
 
+import com.haot.coupon.application.dto.request.coupons.CouponCreateRequest;
 import com.haot.coupon.application.dto.request.coupons.CouponSearchRequest;
+import com.haot.coupon.application.dto.response.coupons.CouponCreateResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.domain.model.enums.CouponType;
@@ -23,20 +25,22 @@ public class AdminCouponController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public ApiResponse<Page<CouponSearchResponse>> couponSearch(@ModelAttribute CouponSearchRequest request,
-                                                               Pageable pageable){
+                                                                Pageable pageable) {
 
         List<CouponSearchResponse> response = List.of(
                 CouponSearchResponse.builder()
-                    .couponId("sadflkdsflksandf")
-                    .couponName("테스트 쿠폰 1")
-                    .couponAvailableDate(LocalDateTime.now().minusDays(1))
-                    .couponExpiredDate(LocalDateTime.now().plusDays(1))
-                    .couponType(CouponType.PRIORITY)
-                    .discountPolicy(DiscountPolicy.PERCENTAGE)
-                    .maximumAmount(500000)
-                    .minimumAmount(50000)
-                    .discountRate(10)
-                    .build(),
+                        .couponId("sadflkdsflksandf")
+                        .couponName("테스트 쿠폰 1")
+                        .couponAvailableDate(LocalDateTime.now().minusDays(1))
+                        .couponExpiredDate(LocalDateTime.now().plusDays(1))
+                        .couponType(CouponType.PRIORITY)
+                        .discountPolicy(DiscountPolicy.PERCENTAGE)
+                        .maximumAmount(500000)
+                        .minimumAmount(50000)
+                        .discountRate(10)
+                        .maxQuantity(5000)
+                        .issuedQuantity(3000)
+                        .build(),
                 CouponSearchResponse.builder()
                         .couponId("ankjdsfkjsdfj")
                         .couponName("테스트 쿠폰 2")
@@ -47,6 +51,8 @@ public class AdminCouponController {
                         .maximumAmount(500000)
                         .minimumAmount(50000)
                         .discountAmount(20000)
+                        .maxQuantity(5000)
+                        .issuedQuantity(3000)
                         .build()
 
         );
@@ -54,7 +60,14 @@ public class AdminCouponController {
         return ApiResponse.success(new PageImpl<>(response, pageable, response.size()));
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping
+    public ApiResponse<CouponCreateResponse> create(@RequestBody CouponCreateRequest request) {
 
+        return ApiResponse.success(CouponCreateResponse.builder()
+                .couponId("snckxnvjcxnvj")
+                .build());
+    }
 
 
 }
