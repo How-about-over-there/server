@@ -1,4 +1,4 @@
-package com.haot.coupon.application.dto.response.events.coupons;
+package com.haot.coupon.application.dto.response.coupons;
 
 import com.haot.coupon.domain.model.enums.CouponStatus;
 import lombok.Builder;
