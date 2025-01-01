@@ -69,5 +69,10 @@ public class AdminCouponController {
                 .build());
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/{couponId}")
+    public ApiResponse<Void> delete(@PathVariable String couponId) {
+        return ApiResponse.success();
+    }
 
 }
