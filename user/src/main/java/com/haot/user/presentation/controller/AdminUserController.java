@@ -116,6 +116,9 @@ public class AdminUserController {
     return ApiResponse.success(res);
   }
 
+  /*
+  TODO: API 개발 후 @RequestBody(required = false) 에서 required 프로퍼티 제거 및 @Valid 추가하기
+ */
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping("/{userId}")
   public ApiResponse<Void> updateUserById(
