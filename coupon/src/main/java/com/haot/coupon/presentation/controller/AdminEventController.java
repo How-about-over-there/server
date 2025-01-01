@@ -2,6 +2,7 @@ package com.haot.coupon.presentation.controller;
 
 import com.haot.coupon.application.dto.request.EventCreateRequest;
 import com.haot.coupon.application.dto.request.EventModifyRequest;
+import com.haot.coupon.application.dto.response.EventCreateResponse;
 import com.haot.coupon.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,8 +15,8 @@ public class AdminEventController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ApiResponse<String> create(@RequestBody EventCreateRequest eventCreateRequest) {
-        return ApiResponse.success(eventCreateRequest.couponId());
+    public ApiResponse<EventCreateResponse> create(@RequestBody EventCreateRequest eventCreateRequest) {
+        return ApiResponse.success(new EventCreateResponse(eventCreateRequest.couponId()));
     }
 
     @ResponseStatus(HttpStatus.OK)
