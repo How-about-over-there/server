@@ -1,10 +1,10 @@
 package com.haot.user.presentation.controller;
 
-import com.haot.user.application.req.UserLoginValidationRequest;
-import com.haot.user.application.req.UserUpdateMeRequest;
-import com.haot.user.application.res.UserGetMeResponse;
-import com.haot.user.application.res.UserLoginValidationResponse;
-import com.haot.user.application.res.UserValidationResponse;
+import com.haot.user.application.dto.req.UserLoginValidationRequest;
+import com.haot.user.application.dto.req.UserUpdateMeRequest;
+import com.haot.user.application.dto.res.UserGetMeResponse;
+import com.haot.user.application.dto.res.UserLoginValidationResponse;
+import com.haot.user.application.dto.res.UserValidationResponse;
 import com.haot.user.application.service.UserValidationService;
 import com.haot.user.common.response.ApiResponse;
 import com.haot.user.domain.model.enums.Gender;

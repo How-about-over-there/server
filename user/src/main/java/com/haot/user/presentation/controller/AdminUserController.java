@@ -1,7 +1,7 @@
 package com.haot.user.presentation.controller;
 
-import com.haot.user.application.req.AdminUserUpdateRequest;
-import com.haot.user.application.res.AdminUserGetResponse;
+import com.haot.user.application.dto.req.AdminUserUpdateRequest;
+import com.haot.user.application.dto.res.AdminUserGetResponse;
 import com.haot.user.common.response.ApiResponse;
 import com.haot.user.domain.model.enums.Role;
 import java.util.Arrays;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;

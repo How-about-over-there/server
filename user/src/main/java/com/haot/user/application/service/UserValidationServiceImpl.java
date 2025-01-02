@@ -1,8 +1,8 @@
 package com.haot.user.application.service;
 
 
-import com.haot.user.application.req.UserLoginValidationRequest;
-import com.haot.user.application.res.UserLoginValidationResponse;
+import com.haot.user.application.dto.req.UserLoginValidationRequest;
+import com.haot.user.application.dto.res.UserLoginValidationResponse;
 import com.haot.user.common.exception.ApplicationException;
 import com.haot.user.common.exception.ErrorCode;
 import com.haot.user.common.util.Argon2PasswordEncoder;

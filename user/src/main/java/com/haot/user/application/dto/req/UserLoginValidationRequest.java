@@ -1,4 +1,4 @@
-package com.haot.user.application.req;
+package com.haot.user.application.dto.req;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
