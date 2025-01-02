@@ -12,6 +12,7 @@ import com.haot.lodge.presentation.response.LodgeCreateResponse;
 import com.haot.lodge.presentation.response.LodgeReadOneResponse;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -132,9 +132,17 @@ public class LodgeController {
         return ApiResponse.success();
     }
 
+    /**
+     * 숙소 유효성 검사 API
+     * @param lodgeId 검사를 진행 할 숙소 ID
+     * @return 유효성
+     */
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{lodgeId}/verify")
+    public Map<String, Boolean> verify(
+            @PathVariable(name = "lodgeId") String lodgeId
     ) {
+        return Map.of("validity", true);
     }
-
 
 }
