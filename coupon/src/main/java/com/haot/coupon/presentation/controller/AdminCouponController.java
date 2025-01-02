@@ -3,10 +3,12 @@ package com.haot.coupon.presentation.controller;
 import com.haot.coupon.application.dto.request.coupons.CouponCreateRequest;
 import com.haot.coupon.application.dto.request.coupons.CouponSearchRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponCreateResponse;
+import com.haot.coupon.application.dto.response.coupons.CouponHistoryResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.domain.model.enums.CouponType;
 import com.haot.coupon.domain.model.enums.DiscountPolicy;
+import com.haot.coupon.domain.model.enums.ReservationCouponStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -74,5 +76,37 @@ public class AdminCouponController {
     public ApiResponse<Void> delete(@PathVariable String couponId) {
         return ApiResponse.success();
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/{reservationCouponId}")
+    public ApiResponse<Void> deleteCouponHistory(@PathVariable(value = "reservationCouponId") String reservationCouponId) {
+        return ApiResponse.success();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{userCouponId}")
+    public ApiResponse<List<CouponHistoryResponse>> getCouponHistories(@PathVariable(value = "userCouponId") String userCouponId) {
+
+        List<CouponHistoryResponse> response = List.of(
+                CouponHistoryResponse.builder()
+                        .reservationCouponId("dnfjdsvcjxv")
+                        .userCouponId(userCouponId)
+                        .reservationCouponStatus(ReservationCouponStatus.COMPLETED)
+                        .reservationPrice(50000)
+                        .reservationDiscountedPrice(5000)
+                        .build(),
+                CouponHistoryResponse.builder()
+                        .reservationCouponId("dnfjdsdsvcvvcjxv")
+                        .userCouponId(userCouponId)
+                        .reservationCouponStatus(ReservationCouponStatus.CANCEL)
+                        .reservationPrice(40000)
+                        .reservationDiscountedPrice(4000)
+                        .build()
+        );
+
+        return ApiResponse.success(response);
+
+    }
+
 
 }
