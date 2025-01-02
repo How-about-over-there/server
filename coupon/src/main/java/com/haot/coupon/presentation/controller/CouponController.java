@@ -1,7 +1,6 @@
 package com.haot.coupon.presentation.controller;
 
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
-import com.haot.coupon.application.dto.request.coupons.CouponVerifyRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponReadMeResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.application.dto.response.coupons.ReservationVerifyResponse;
@@ -71,9 +70,10 @@ public class CouponController {
         return ApiResponse.success();
     }
 
+    // TODO userID 받아야된다.
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{couponId}/verify")
-    public ApiResponse<ReservationVerifyResponse> verify(@PathVariable String couponId, @RequestBody CouponVerifyRequest request) {
+    public ApiResponse<ReservationVerifyResponse> verify(@PathVariable String couponId, Integer reservationPrice) {
         return ApiResponse.success(ReservationVerifyResponse.builder()
                 .reservationCouponId("dsknfsdvcxv")
                 .discountedPrice(35000)
