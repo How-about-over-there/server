@@ -1,8 +1,10 @@
 package com.haot.coupon.presentation.controller;
 
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
+import com.haot.coupon.application.dto.request.coupons.CouponVerifyRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponReadMeResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
+import com.haot.coupon.application.dto.response.coupons.ReservationVerifyResponse;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.domain.model.enums.CouponStatus;
 import com.haot.coupon.domain.model.enums.CouponType;
@@ -22,7 +24,7 @@ public class CouponController {
     // TODO Header에서 userId 받아 사용
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/me")
-    public ApiResponse<List<CouponReadMeResponse>> getMyCoupons(String userId){
+    public ApiResponse<List<CouponReadMeResponse>> getMyCoupons(String userId) {
 
         List<CouponReadMeResponse> response = List.of(
                 CouponReadMeResponse.builder()
@@ -47,26 +49,35 @@ public class CouponController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{couponId}")
-    public ApiResponse<CouponSearchResponse> getCouponDetails(@PathVariable String couponId){
+    public ApiResponse<CouponSearchResponse> getCouponDetails(@PathVariable String couponId) {
         return ApiResponse.success(CouponSearchResponse.builder()
-                        .couponId(couponId)
-                        .couponName("테스트 쿠폰 1")
-                        .couponAvailableDate(LocalDateTime.now().minusDays(1))
-                        .couponExpiredDate(LocalDateTime.now().plusDays(1))
-                        .couponType(CouponType.PRIORITY)
-                        .discountPolicy(DiscountPolicy.PERCENTAGE)
-                        .maximumAmount(500000)
-                        .minimumAmount(50000)
-                        .discountRate(10)
-                        .maxQuantity(2000)
-                        .issuedQuantity(300)
+                .couponId(couponId)
+                .couponName("테스트 쿠폰 1")
+                .couponAvailableDate(LocalDateTime.now().minusDays(1))
+                .couponExpiredDate(LocalDateTime.now().plusDays(1))
+                .couponType(CouponType.PRIORITY)
+                .discountPolicy(DiscountPolicy.PERCENTAGE)
+                .maximumAmount(500000)
+                .minimumAmount(50000)
+                .discountRate(10)
+                .maxQuantity(2000)
+                .issuedQuantity(300)
                 .build());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/issued")
-    public ApiResponse<Void> issueCoupon(@RequestBody CouponCustomerCreateRequest request, String userId){
+    public ApiResponse<Void> issueCoupon(@RequestBody CouponCustomerCreateRequest request, String userId) {
         return ApiResponse.success();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{couponId}/verify")
+    public ApiResponse<ReservationVerifyResponse> verify(@PathVariable String couponId, @RequestBody CouponVerifyRequest request) {
+        return ApiResponse.success(ReservationVerifyResponse.builder()
+                .reservationCouponId("dsknfsdvcxv")
+                .discountedPrice(35000)
+                .build());
     }
 
 }
