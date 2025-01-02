@@ -4,6 +4,9 @@ spring:
   application:
     name: coupon-service
   datasource:
+    url: jdbc:postgresql://localhost:5432/coupon
+    username:
+    password:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
