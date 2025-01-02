@@ -1,4 +1,4 @@
-package com.haot.user.application.res;
+package com.haot.user.application.dto.res;
 
 import com.haot.user.domain.model.enums.Gender;
 import com.haot.user.domain.model.enums.Role;

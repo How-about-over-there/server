@@ -1,13 +1,15 @@
 package com.haot.user.presentation.controller;
 
-import com.haot.user.application.req.UserLoginValidationRequest;
-import com.haot.user.application.req.UserUpdateMeRequest;
-import com.haot.user.application.res.UserGetMeResponse;
-import com.haot.user.application.res.UserLoginValidationResponse;
-import com.haot.user.application.res.UserValidationResponse;
+import com.haot.user.application.dto.req.UserLoginValidationRequest;
+import com.haot.user.application.dto.req.UserUpdateMeRequest;
+import com.haot.user.application.dto.res.UserGetMeResponse;
+import com.haot.user.application.dto.res.UserLoginValidationResponse;
+import com.haot.user.application.dto.res.UserValidationResponse;
+import com.haot.user.application.service.UserValidationService;
 import com.haot.user.common.response.ApiResponse;
 import com.haot.user.domain.model.enums.Gender;
 import com.haot.user.domain.model.enums.Role;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,20 +27,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
+  private final UserValidationService userValidationService;
+
   /*
   TODO: API 개발 후 @RequestBody(required = false) 에서 required 프로퍼티 제거 및 @Valid 추가하기
  */
   @ResponseStatus(HttpStatus.OK)
   @PostMapping("/validation")
   public ApiResponse<UserLoginValidationResponse> validateLoginInformation(
-      @RequestBody(required = false) UserLoginValidationRequest request) {
+      @Valid @RequestBody UserLoginValidationRequest request) {
 
-    UserLoginValidationResponse res = UserLoginValidationResponse.builder()
-        .message("인증되었습니다.")
-        .isValid(true)
-        .build();
-
-    return ApiResponse.success(res);
+    return ApiResponse.success(userValidationService.validateLoginInformation(request));
   }
 
   @ResponseStatus(HttpStatus.OK)
