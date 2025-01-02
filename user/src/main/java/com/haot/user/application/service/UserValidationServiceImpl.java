@@ -3,6 +3,7 @@ package com.haot.user.application.service;
 
 import com.haot.user.application.dto.req.UserLoginValidationRequest;
 import com.haot.user.application.dto.res.UserLoginValidationResponse;
+import com.haot.user.application.dto.res.UserValidationResponse;
 import com.haot.user.common.exception.ApplicationException;
 import com.haot.user.common.exception.ErrorCode;
 import com.haot.user.common.util.Argon2PasswordEncoder;
@@ -33,6 +34,14 @@ public class UserValidationServiceImpl implements UserValidationService {
     return UserLoginValidationResponse.builder()
         .userId(findUserByEmail.getId())
         .role(findUserByEmail.getRole())
+        .build();
+  }
+
+  @Override
+  public UserValidationResponse validateUserById(String userId) {
+    // return : 파라미터로 받은 userId가 User Table 에 존재하는지에 대한 여부 반환
+    return UserValidationResponse.builder()
+        .isValid(userRepository.existsById(userId))
         .build();
   }
 }
