@@ -47,7 +47,7 @@ public class Reservation {
   private String request;
 
   @Column(name = "total_price", nullable = false)
-  private Integer totalPrice;
+  private Double totalPrice;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "reservation_status", nullable = false)
