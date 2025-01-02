@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,6 +61,21 @@ public class LodgeDateController {
     public ApiResponse<Void> update(
             @PathVariable Long dateId,
             @RequestBody LodgeDateUpdateRequest request
+    ) {
+        return ApiResponse.success();
+    }
+
+    /**
+     * 예약 날짜 상태 변경 API
+     * @param dateId 변경할 날짜 id
+     * @param status 변경할 상태 (EMPTY/WAITING/COMPLETE)
+     * @return 기본 성공 응답
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/{dateId}")
+    public ApiResponse<Void> updateStatus(
+            @PathVariable(name = "dateId") Long dateId,
+            @RequestParam(name = "status", required = true) ReservationStatus status
     ) {
         return ApiResponse.success();
     }

@@ -6,12 +6,10 @@ import com.haot.lodge.application.response.lodgeImageResponse;
 import com.haot.lodge.presentation.response.LodgeReadAllResponse;
 import com.haot.lodge.application.response.LodgeRuleResponse;
 import com.haot.lodge.presentation.request.LodgeCreateRequest;
-import com.haot.lodge.presentation.request.LodgeReservationRequest;
 import com.haot.lodge.presentation.request.LodgeUpdateRequest;
 import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.presentation.response.LodgeCreateResponse;
 import com.haot.lodge.presentation.response.LodgeReadOneResponse;
-import com.haot.lodge.presentation.response.LodgeReservationResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -135,19 +133,7 @@ public class LodgeController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/{lodgeId}")
-    public ApiResponse<LodgeReservationResponse> reservation(
-            @PathVariable String lodgeId,
-            @RequestBody LodgeReservationRequest request
     ) {
-        LodgeResponse info = LodgeResponse.builder()
-                .id(lodgeId)
-                .name("이름")
-                .description("휴양지입니다.")
-                .term(2)
-                .address("경기도 고양시 고양로 551")
-                .build();
-        return ApiResponse.success(new LodgeReservationResponse(info, request.dates()));
     }
 
 
