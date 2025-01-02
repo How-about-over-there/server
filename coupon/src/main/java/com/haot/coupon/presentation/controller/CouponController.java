@@ -1,5 +1,6 @@
 package com.haot.coupon.presentation.controller;
 
+import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponReadMeResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.common.response.ApiResponse;
@@ -62,5 +63,10 @@ public class CouponController {
                 .build());
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/issued")
+    public ApiResponse<Void> issueCoupon(@RequestBody CouponCustomerCreateRequest request, String userId){
+        return ApiResponse.success();
+    }
 
 }
