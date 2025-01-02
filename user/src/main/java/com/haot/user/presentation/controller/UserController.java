@@ -45,11 +45,7 @@ public class UserController {
   public ApiResponse<UserValidationResponse> validateUser(
       @PathVariable("userId") String userIdToValidate) {
 
-    UserValidationResponse res = UserValidationResponse.builder()
-        .isValid(true)
-        .build();
-
-    return ApiResponse.success(res);
+    return ApiResponse.success(userValidationService.validateUserById(userIdToValidate));
   }
 
   @ResponseStatus(HttpStatus.OK)
