@@ -9,6 +9,7 @@ import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.domain.model.enums.CouponType;
 import com.haot.coupon.domain.model.enums.DiscountPolicy;
 import com.haot.coupon.domain.model.enums.ReservationCouponStatus;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -64,7 +65,7 @@ public class AdminCouponController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping
-    public ApiResponse<CouponCreateResponse> create(@RequestBody CouponCreateRequest request) {
+    public ApiResponse<CouponCreateResponse> create(@Valid @RequestBody CouponCreateRequest request) {
 
         return ApiResponse.success(CouponCreateResponse.builder()
                 .couponId("snckxnvjcxnvj")
