@@ -20,7 +20,7 @@ public class CustomCouponExceptionHandler {
         ResCodeIfs errorCode = customCouponException.resCode;
 
         return ResponseEntity.status(errorCode.getHttpStatus())
-                .body(ApiResponse.error(errorCode));
+                .body(ApiResponse.ERROR(errorCode));
 
     }
 
