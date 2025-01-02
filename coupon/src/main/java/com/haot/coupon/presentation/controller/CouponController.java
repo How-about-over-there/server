@@ -70,7 +70,7 @@ public class CouponController {
         return ApiResponse.success();
     }
 
-    // TODO userID 받아야된다.
+    // TODO [예약 유효성 검사 Feign] userID 받아야된다.
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{couponId}/verify")
     public ApiResponse<ReservationVerifyResponse> verify(@PathVariable String couponId, Integer reservationPrice) {
@@ -79,5 +79,14 @@ public class CouponController {
                 .discountedPrice(35000)
                 .build());
     }
+
+    // [Feign] 예약 취소 or 확정 API
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{reservationCouponId}")
+    public ApiResponse<Void> confirmReservation(@PathVariable(value = "reservationCouponId") String reservationCouponId
+            , String reservationStatus) {
+        return ApiResponse.success();
+    }
+
 
 }
