@@ -59,7 +59,7 @@ public class LodgeDateController {
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{dateId}")
     public ApiResponse<Void> update(
-            @PathVariable Long dateId,
+            @PathVariable String dateId,
             @RequestBody LodgeDateUpdateRequest request
     ) {
         return ApiResponse.success();
@@ -74,7 +74,7 @@ public class LodgeDateController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{dateId}")
     public ApiResponse<Void> updateStatus(
-            @PathVariable(name = "dateId") Long dateId,
+            @PathVariable(name = "dateId") String dateId,
             @RequestParam(name = "status", required = true) ReservationStatus status
     ) {
         return ApiResponse.success();
