@@ -56,8 +56,8 @@ public class CouponController {
                 .couponExpiredDate(LocalDateTime.now().plusDays(1))
                 .couponType(CouponType.PRIORITY)
                 .discountPolicy(DiscountPolicy.PERCENTAGE)
-                .maximumAmount(500000)
-                .minimumAmount(50000)
+                .maximumAmount(500000.0)
+                .minimumAmount(50000.0)
                 .discountRate(10)
                 .maxQuantity(2000)
                 .issuedQuantity(300)
@@ -73,10 +73,10 @@ public class CouponController {
     // TODO [예약 유효성 검사 Feign] userID 받아야된다.
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{couponId}/verify")
-    public ApiResponse<ReservationVerifyResponse> verify(@PathVariable String couponId, Integer reservationPrice) {
+    public ApiResponse<ReservationVerifyResponse> verify(@PathVariable String couponId, Double reservationPrice) {
         return ApiResponse.success(ReservationVerifyResponse.builder()
                 .reservationCouponId("dsknfsdvcxv")
-                .discountedPrice(35000)
+                .discountedPrice(35000.0)
                 .build());
     }
 

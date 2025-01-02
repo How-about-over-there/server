@@ -14,10 +14,10 @@ public record CouponSearchResponse(
         LocalDateTime couponExpiredDate,
         CouponType couponType,
         DiscountPolicy discountPolicy,
-        Integer minimumAmount,
-        Integer maximumAmount,
+        Double minimumAmount,
+        Double maximumAmount,
         Integer discountRate,
-        Integer discountAmount,
+        Double discountAmount,
         Integer maxQuantity,
         Integer issuedQuantity
 ) {

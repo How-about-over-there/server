@@ -11,10 +11,10 @@ public record CouponCreateRequest(
         LocalDateTime couponExpiredDate,
         CouponType couponType,
         DiscountPolicy discountPolicy,
-        Integer minimumAmount,
-        Integer maximumAmount,
-        Integer discountRate,
-        Integer discountAmount,
+        Double minimumAmount,
+        Double maximumAmount,
+        Double discountRate,
+        Double discountAmount,
         Integer maxQuantity,
         Integer issuedQuantity
 ) {

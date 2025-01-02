@@ -6,6 +6,6 @@ import lombok.Builder;
 public record ReservationVerifyResponse(
 
         String reservationCouponId,
-        Integer discountedPrice
+        Double discountedPrice
 ) {
 }

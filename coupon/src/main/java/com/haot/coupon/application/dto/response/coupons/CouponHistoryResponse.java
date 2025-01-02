@@ -9,7 +9,7 @@ public record CouponHistoryResponse(
         String reservationCouponId,
         String userCouponId,
         ReservationCouponStatus reservationCouponStatus,
-        Integer reservationPrice,
-        Integer reservationDiscountedPrice
+        Double reservationPrice,
+        Double reservationDiscountedPrice
 ) {
 }

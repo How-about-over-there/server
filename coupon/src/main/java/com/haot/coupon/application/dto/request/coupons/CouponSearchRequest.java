@@ -12,9 +12,9 @@ public record CouponSearchRequest(
         LocalDateTime searchEndDate,
         CouponType couponType,
         DiscountPolicy discountPolicy,
-        Integer minAmount,
-        Integer maxAmount,
+        Double minAmount,
+        Double maxAmount,
         Integer discountRate,
-        Integer discountAmount
+        Double discountAmount
 ) {
 }
