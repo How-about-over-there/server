@@ -78,7 +78,7 @@ public class AdminCouponController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/{reservationCouponId}")
+    @DeleteMapping("/reservation/{reservationCouponId}")
     public ApiResponse<Void> deleteCouponHistory(@PathVariable(value = "reservationCouponId") String reservationCouponId) {
         return ApiResponse.success();
     }
