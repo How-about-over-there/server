@@ -41,8 +41,8 @@ public class AdminPaymentController {
                         "IMP-UID",
                         "IMP-UID",
                         "MERCHANT-UID",
-                        100000,
-                        100000,
+                        100000.0,
+                        100000.0,
                         "CARD",
                         "READY"
                 )
@@ -61,8 +61,8 @@ public class AdminPaymentController {
                         "IMP-UID",
                         "IMP-UID",
                         "MERCHANT-UID",
-                        100000,
-                        100000,
+                        100000.0,
+                        100000.0,
                         "CARD",
                         "READY"
                 ),
@@ -72,8 +72,8 @@ public class AdminPaymentController {
                         "IMP-UID",
                         "IMP-UID",
                         "MERCHANT-UID",
-                        100000,
-                        100000,
+                        100000.0,
+                        100000.0,
                         "CARD",
                         "READY"
                 )

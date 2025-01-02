@@ -30,7 +30,7 @@ class AdminPaymentControllerTest {
     @DisplayName("결제 수정 테스트")
     void updatePayment() throws Exception {
         // Given: 테스트 데이터
-        PaymentUpdateRequest request = new PaymentUpdateRequest(100000,"CARD", "PAID");
+        PaymentUpdateRequest request = new PaymentUpdateRequest(100000.0,"CARD", "PAID");
         String paymentId = "PAYMENT-UUID";
 
         // When: API 호출 및 결과 받기

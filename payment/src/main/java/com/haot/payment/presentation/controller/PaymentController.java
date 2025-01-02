@@ -30,7 +30,7 @@ public class PaymentController {
                         "IMP-UID",
                         "MERCHANT-UID",
                         request.price(),
-                        100000,
+                        100000.0,
                         "CARD",
                         "READY"
                 )
@@ -48,8 +48,8 @@ public class PaymentController {
                         "IMP-UID",
                         "IMP-UID",
                         "MERCHANT-UID",
-                        100000,
-                        100000,
+                        100000.0,
+                        100000.0,
                         "CARD",
                         "READY"
                 )
@@ -68,8 +68,8 @@ public class PaymentController {
                         "IMP-UID",
                         "IMP-UID",
                         "MERCHANT-UID",
-                        100000,
-                        100000,
+                        100000.0,
+                        100000.0,
                         "CARD",
                         "READY"
                 ),
@@ -79,8 +79,8 @@ public class PaymentController {
                         "IMP-UID",
                         "IMP-UID",
                         "MERCHANT-UID",
-                        100000,
-                        100000,
+                        100000.0,
+                        100000.0,
                         "CARD",
                         "READY"
                 )
@@ -104,7 +104,7 @@ public class PaymentController {
                         "IMP-UID",
                         "MERCHANT-UID",
                         request.price(),
-                        100000,
+                        100000.0,
                         request.method(),
                         "READY"
                 )

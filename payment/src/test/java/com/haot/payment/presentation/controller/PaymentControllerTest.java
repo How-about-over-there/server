@@ -32,7 +32,7 @@ class PaymentControllerTest {
     @DisplayName("결제 생성 테스트")
     void createPayment() throws Exception {
         // Given: 테스트 데이터
-        PaymentCreateRequest request = new PaymentCreateRequest("USER-UUID", "RESERVATION-UUID", 100000, "CARD");
+        PaymentCreateRequest request = new PaymentCreateRequest("USER-UUID", "RESERVATION-UUID", 100000.0, "CARD");
 
         // When: API 호출 및 결과 받기
         MvcResult result = mockMvc.perform(post("/api/v1/payments")
@@ -105,7 +105,7 @@ class PaymentControllerTest {
     @DisplayName("결제 취소 테스트")
     void cancelPayment() throws Exception {
         // Given: 테스트 데이터
-        PaymentCancelRequest request = new PaymentCancelRequest(100000, "CARD");
+        PaymentCancelRequest request = new PaymentCancelRequest(100000.0, "CARD");
         String paymentId = "PAYMENT-UUID1";
         // When: API 호출 및 결과 받기
         MvcResult result = mockMvc.perform(get("/api/v1/payments/{paymentId}", paymentId)
