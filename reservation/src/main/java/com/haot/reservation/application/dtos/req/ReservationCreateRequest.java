@@ -10,7 +10,7 @@ public record ReservationCreateRequest (
     // 숙소 아이디
     String lodgeId,
     // 적용할 포인트
-    Integer point,
+    Double point,
     // 적용할 쿠폰 아이디
     String userCouponId
 )
