@@ -1,7 +1,7 @@
 package com.haot.payment.application.dto.request;
 
 public record PaymentUpdateRequest (
-        double price,
+        Double price,
         String method,
         String status
 ) {}

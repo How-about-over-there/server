@@ -7,6 +7,6 @@ import jakarta.validation.constraints.NotNull;
 public record PaymentCreateRequest(
         String userId,
         @NotBlank String reservationId,
-        @NotNull @Min(0) double price,
+        @NotNull @Min(0) Double price,
         @NotNull String method
 ) {}

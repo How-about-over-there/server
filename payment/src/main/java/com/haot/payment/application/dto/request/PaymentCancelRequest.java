@@ -5,6 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record PaymentCancelRequest(
-        @NotNull @Min(0) double price,
+        @NotNull @Min(0) Double price,
         @NotBlank String method
 ) {}

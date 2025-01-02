@@ -6,8 +6,8 @@ public record PaymentResponse(
         String reservationId,
         String impUid,
         String merchantUid,
-        double price,
-        double finalPrice,
+        Double price,
+        Double finalPrice,
         String method,
         String status
 ) {}
