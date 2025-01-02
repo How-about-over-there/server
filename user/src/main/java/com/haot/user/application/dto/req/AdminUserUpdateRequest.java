@@ -1,4 +1,4 @@
-package com.haot.user.application.req;
+package com.haot.user.application.dto.req;
 
 import com.haot.user.domain.model.enums.Role;
 import lombok.Builder;
