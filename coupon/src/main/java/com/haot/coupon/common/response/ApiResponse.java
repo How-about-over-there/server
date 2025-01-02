@@ -24,8 +24,8 @@ public record ApiResponse<T> (
         return new ApiResponse<>("4000","Success", "API 요청에 성공했습니다",null);
     }
 
-    public static ApiResponse<Object> error(ResCodeIfs resCodeIfs){
-        return new ApiResponse<>(resCodeIfs.getCode(), "error", resCodeIfs.getMessage(), null);
+    public static ApiResponse<Object> ERROR(ResCodeIfs resCodeIfs){
+        return new ApiResponse<>(resCodeIfs.getCode(), "error", resCodeIfs.getMessage(), null, null);
     }
 
     public static ApiResponse<Object> ERROR(ResCodeIfs resCodeIfs, List<String> errorList) {

@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode implements ResCodeIfs {
 
+    // 0000: Common Error
+    INTERNAL_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "0000", "Unknown Server Error"),
     VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "0009", "Validation failed"),
 
     // 쿠폰 exception
