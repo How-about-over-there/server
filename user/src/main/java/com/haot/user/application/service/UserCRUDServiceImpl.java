@@ -2,7 +2,10 @@ package com.haot.user.application.service;
 
 import com.haot.user.application.dto.req.UserCreateRequest;
 import com.haot.user.application.dto.res.UserCreateResponse;
+import com.haot.user.common.exception.ApplicationException;
+import com.haot.user.common.exception.ErrorCode;
 import com.haot.user.domain.model.User;
+import com.haot.user.domain.model.enums.Role;
 import com.haot.user.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +20,12 @@ public class UserCRUDServiceImpl implements UserCRUDService {
   @Transactional
   public UserCreateResponse createUser(UserCreateRequest request) {
     // business logic
-    // 1. User 객체 생성
+    // 1. request 의 Role 이 ADMIN 일 경우 생성 불가
+    if (request.role().equals(Role.ADMIN)) {
+      throw new ApplicationException(ErrorCode.UNAUTHORIZED_EXCEPTION);
+    }
+
+    // 2. User 객체 생성
     User user = User.create(
         request.name(),
         request.password(),
@@ -32,7 +40,7 @@ public class UserCRUDServiceImpl implements UserCRUDService {
         request.address()
     );
 
-    // 2. User 객체 저장 (가정: userRepository 사용)
+    // 3. User 객체 저장 (가정: userRepository 사용)
     User savedUser = userRepository.save(user);
 
     // return : UserCreateResponse 반환
