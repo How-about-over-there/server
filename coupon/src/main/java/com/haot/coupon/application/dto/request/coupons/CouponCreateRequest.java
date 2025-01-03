@@ -15,7 +15,7 @@ public record CouponCreateRequest(
         DiscountPolicy discountPolicy,
         Double minimumAmount,
         Double maximumAmount,
-        Double discountRate,
+        Integer discountRate,
         Double discountAmount,
         Integer maxQuantity,
         Integer issuedQuantity
