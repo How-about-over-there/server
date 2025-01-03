@@ -34,16 +34,3 @@ public class LodgeService {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
