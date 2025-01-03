@@ -20,7 +20,7 @@ public record ApiResponse<T> (
     }
 
     public static ApiResponse<Void> fail(ErrorCode errorCode) {
-        return new ApiResponse<>(errorCode.getCode(), "FAIL", errorCode.getMessage(), null);
+        return new ApiResponse<>(errorCode.getCode(), "ERROR", errorCode.getMessage(), null);
     }
 
     public static <T> ApiResponse<T> fail(ErrorCode errorCode, T data) {
