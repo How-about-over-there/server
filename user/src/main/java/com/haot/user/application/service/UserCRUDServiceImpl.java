@@ -4,6 +4,7 @@ import com.haot.user.application.dto.req.UserCreateRequest;
 import com.haot.user.application.dto.res.UserCreateResponse;
 import com.haot.user.common.exception.ApplicationException;
 import com.haot.user.common.exception.ErrorCode;
+import com.haot.user.common.util.Argon2PasswordEncoder;
 import com.haot.user.domain.model.User;
 import com.haot.user.domain.model.enums.Role;
 import com.haot.user.infrastructure.repository.UserRepository;
@@ -28,7 +29,8 @@ public class UserCRUDServiceImpl implements UserCRUDService {
     // 2. User 객체 생성
     User user = User.create(
         request.name(),
-        request.password(),
+        //Password 는 인코딩 후 저장
+        Argon2PasswordEncoder.encode(request.password().toCharArray()),
         request.email(),
         request.phoneNumber(),
         request.role(),
