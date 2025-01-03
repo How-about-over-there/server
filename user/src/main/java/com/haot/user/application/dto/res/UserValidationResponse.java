@@ -6,5 +6,9 @@ import lombok.Builder;
 public record UserValidationResponse(
     Boolean isValid
 ) {
-
+  public static UserValidationResponse of(final Boolean isValid) {
+    return UserValidationResponse.builder()
+        .isValid(isValid)
+        .build();
+  }
 }
