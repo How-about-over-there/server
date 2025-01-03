@@ -41,4 +41,15 @@ public class LodgeImage {
     @Column(name = "url", nullable = false)
     private String url;
 
+    public static LodgeImage create(
+            Lodge lodge,  String url, String title, String description
+    ) {
+        return LodgeImage.builder()
+                .lodge(lodge)
+                .title(title)
+                .description(description)
+                .url(url)
+                .build();
+    }
+
 }

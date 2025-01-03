@@ -44,4 +44,14 @@ public class LodgeDate {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
+    public static LodgeDate create(
+            Lodge lodge, LocalDate date, Double price, ReservationStatus status
+    ) {
+        return LodgeDate.builder()
+                .lodge(lodge)
+                .date(date)
+                .price(price)
+                .status(ReservationStatus.EMPTY)
+                .build();
+    }
 }

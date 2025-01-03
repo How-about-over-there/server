@@ -1,6 +1,7 @@
 package com.haot.lodge.domain.model;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -52,12 +53,25 @@ public class Lodge {
     @JoinColumn(name = "lodge_rule_id")
     private LodgeRule rule;
 
-    @OneToMany(mappedBy = "lodge")
+    @OneToMany(mappedBy = "lodge", cascade = CascadeType.ALL)
     @Builder.Default
     private List<LodgeImage> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "lodge")
+    @OneToMany(mappedBy = "lodge", cascade = CascadeType.ALL)
     @Builder.Default
     private List<LodgeDate> dates = new ArrayList<>();
+
+    public static Lodge createLodge(
+            String hostId, String name, String description, String address, Integer term, Double basicPrice
+    ) {
+        return Lodge.builder()
+                .hostId(hostId)
+                .name(name)
+                .description(description)
+                .address(address)
+                .term(term)
+                .basicPrice(basicPrice)
+                .build();
+    }
 
 }
