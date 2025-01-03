@@ -1,8 +1,6 @@
 package com.haot.auth.presentation.controller;
 
-import com.haot.auth.application.dto.req.AuthLoginRequest;
 import com.haot.auth.application.dto.req.AuthSignupRequest;
-import com.haot.auth.application.dto.res.AuthLoginResponse;
 import com.haot.auth.application.dto.res.AuthSignupResponse;
 import com.haot.auth.application.service.AuthService;
 import com.haot.auth.common.response.ApiResponse;

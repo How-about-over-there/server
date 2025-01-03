@@ -1,14 +1,9 @@
 package com.haot.auth.application.feign.adapter;
 
-import com.haot.auth.application.dto.req.AuthLoginRequest;
 import com.haot.auth.application.dto.req.AuthSignupRequest;
-import com.haot.auth.application.dto.res.AuthLoginResponse;
 import com.haot.auth.domain.enums.Role;
 import com.haot.auth.infrastructure.feign.client.UserClient;
 import com.haot.auth.infrastructure.feign.dto.FeignUserCreateRequest;
-import com.haot.auth.infrastructure.feign.dto.FeignUserLoginValidationRequest;
-import com.haot.auth.infrastructure.feign.dto.FeignUserLoginValidationResponse;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
