@@ -1,10 +1,13 @@
 package com.haot.user.presentation.controller;
 
+import com.haot.user.application.dto.req.UserCreateRequest;
 import com.haot.user.application.dto.req.UserLoginValidationRequest;
 import com.haot.user.application.dto.req.UserUpdateMeRequest;
+import com.haot.user.application.dto.res.UserCreateResponse;
 import com.haot.user.application.dto.res.UserGetMeResponse;
 import com.haot.user.application.dto.res.UserLoginValidationResponse;
 import com.haot.user.application.dto.res.UserValidationResponse;
+import com.haot.user.application.service.UserCRUDService;
 import com.haot.user.application.service.UserValidationService;
 import com.haot.user.common.response.ApiResponse;
 import com.haot.user.domain.model.enums.Gender;
@@ -28,10 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserValidationService userValidationService;
+  private final UserCRUDService userCRUDService;
 
-  /*
-  TODO: API 개발 후 @RequestBody(required = false) 에서 required 프로퍼티 제거 및 @Valid 추가하기
- */
   @ResponseStatus(HttpStatus.OK)
   @PostMapping("/validation")
   public ApiResponse<UserLoginValidationResponse> validateLoginInformation(
@@ -46,6 +47,14 @@ public class UserController {
       @PathVariable("userId") String userIdToValidate) {
 
     return ApiResponse.success(userValidationService.validateUserById(userIdToValidate));
+  }
+
+  @ResponseStatus(HttpStatus.OK)
+  @PostMapping
+  public ApiResponse<UserCreateResponse> createUser(
+      @Valid @RequestBody UserCreateRequest request) {
+
+    return ApiResponse.success(userCRUDService.createUser(request));
   }
 
   @ResponseStatus(HttpStatus.OK)

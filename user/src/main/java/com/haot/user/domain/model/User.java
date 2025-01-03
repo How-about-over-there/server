@@ -10,7 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,7 +36,7 @@ public class User {
   @Column(name = "password", length = 255, nullable = false)
   private String password;
 
-  @Column(name = "email", length = 255, nullable = false)
+  @Column(name = "email", length = 255, nullable = false, unique = true)
   private String email;
 
   @Column(name = "phone_number", length = 255, nullable = false)
@@ -47,7 +47,7 @@ public class User {
   private Role role;
 
   @Column(name = "birth_date")
-  private LocalDateTime birthDate;
+  private LocalDate birthDate;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "gender")
@@ -64,5 +64,36 @@ public class User {
 
   @Column(name = "address", length = 255)
   private String address;
+
+  public static User create(
+      String name,
+      String password,
+      String email,
+      String phoneNumber,
+      Role role,
+      LocalDate birthDate,
+      Gender gender,
+      String preferredLanguage,
+      String currency,
+      String profileImageUrl,
+      String address
+  ) {
+    if (role == null) {
+      role = Role.USER;
+    }
+    return User.builder()
+        .name(name)
+        .password(password)
+        .email(email)
+        .phoneNumber(phoneNumber)
+        .role(role)
+        .birthDate(birthDate)
+        .gender(gender)
+        .preferredLanguage(preferredLanguage)
+        .currency(currency)
+        .profileImageUrl(profileImageUrl)
+        .address(address)
+        .build();
+  }
 
 }
