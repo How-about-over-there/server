@@ -3,6 +3,7 @@ package com.haot.lodge.presentation.controller;
 
 import com.haot.lodge.application.response.LodgeResponse;
 import com.haot.lodge.application.response.lodgeImageResponse;
+import com.haot.lodge.application.service.LodgeService;
 import com.haot.lodge.presentation.response.LodgeReadAllResponse;
 import com.haot.lodge.application.response.LodgeRuleResponse;
 import com.haot.lodge.presentation.request.LodgeCreateRequest;
@@ -33,19 +34,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LodgeController {
 
+    private final LodgeService lodgeService;
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ApiResponse<LodgeCreateResponse> create(
             @Valid LodgeCreateRequest request
     ) {
-        LodgeResponse info = LodgeResponse.builder()
-                .id("UUID")
-                .name("이름")
-                .description("휴양지입니다.")
-                .term(2)
-                .address("경기도 고양시 고양로 551")
-                .build();
-        return ApiResponse.success(new LodgeCreateResponse(info));
+        String userId = "UUID"; // 임시 유저 ID (Header 에서 가져오도록 수정 필요)
+        LodgeResponse lodge = lodgeService.createLodge(userId, request);
+        return ApiResponse.success(new LodgeCreateResponse(lodge));
     }
 
     @ResponseStatus(HttpStatus.OK)

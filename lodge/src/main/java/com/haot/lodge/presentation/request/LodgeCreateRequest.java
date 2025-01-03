@@ -12,9 +12,9 @@ public record LodgeCreateRequest(
         @NotBlank String address,
         @NotNull Integer term,
         @NotNull Double basicPrice,
-        @NotNull List<MultipartFile> images,
-        @NotNull List<String> imageTitles,
-        @NotNull List<String> imageDescriptions,
+        @NotNull MultipartFile image,
+        @NotNull String imageTitle,
+        @NotNull String imageDescription,
         @NotNull Integer maxReservationDay,
         @NotNull Integer maxPersonnel,
         String customization,
@@ -22,4 +22,5 @@ public record LodgeCreateRequest(
         @NotNull LocalDate endDate,
         List<LocalDate> excludeDates
 ) {
+
 }
