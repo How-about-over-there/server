@@ -19,6 +19,7 @@ public class UserCoupon {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(nullable = false, name = "user_id")
     private String userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
