@@ -1,4 +1,4 @@
-package com.haot.lodge.application.service;
+package com.haot.lodge.application.service.Impl;
 
 
 import com.haot.lodge.domain.model.Lodge;

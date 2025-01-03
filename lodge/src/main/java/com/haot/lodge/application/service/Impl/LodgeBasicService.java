@@ -7,10 +7,11 @@ import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.repository.LodgeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class LodgeService {
+public class LodgeBasicService {
 
     private final LodgeRepository lodgeRepository;
 
@@ -25,8 +26,8 @@ public class LodgeService {
         if(lodgeRepository.findByHostIdAndName(userId, name).isPresent()) {
             throw new LodgeException(ErrorCode.ALREADY_EXIST_REVIEW);
         }
-        return Lodge.createLodge(
+        return lodgeRepository.save(Lodge.createLodge(
                 userId, name, description, address, term, basicPrice
-        );
+        ));
     }
 }

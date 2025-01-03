@@ -1,4 +1,4 @@
-package com.haot.lodge.application.service;
+package com.haot.lodge.application.service.Impl;
 
 
 import com.haot.lodge.domain.model.Lodge;
@@ -22,6 +22,7 @@ public class LodgeImageService {
         );
     }
 
+    // TODO: S3 연결 필요
     private String convertToUrl(MultipartFile file) {
         return "http://S3";
     }

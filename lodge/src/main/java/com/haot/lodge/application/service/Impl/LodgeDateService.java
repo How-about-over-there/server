@@ -1,6 +1,8 @@
-package com.haot.lodge.application.service;
+package com.haot.lodge.application.service.Impl;
 
 
+import com.haot.lodge.common.exception.ErrorCode;
+import com.haot.lodge.common.exception.LodgeException;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeDate;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
@@ -43,7 +45,6 @@ public class LodgeDateService {
             lodgeDates.add(lodgeDate);
             currentDate = currentDate.plusDays(1);
         }
-
         lodgeDateRepository.saveAll(lodgeDates);
     }
 
@@ -54,17 +55,17 @@ public class LodgeDateService {
      */
     private void dateValidation(LocalDate startDate, LocalDate endDate) {
         if (startDate.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Start date must be before or equal to end date.");
+            throw new LodgeException(ErrorCode.START_DATE_IN_PAST);
         }
         if (startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("Start date must be before or equal to end date.");
+            throw new LodgeException(ErrorCode.START_DATE_AFTER_END_DATE);
         }
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
         if (daysBetween < MIN_RANGE) {
-            throw new IllegalArgumentException("The date range must be at least 30 days.");
+            throw new LodgeException(ErrorCode.DATE_RANGE_TOO_SHORT);
         }
         if (daysBetween > MAX_RANGE) {
-            throw new IllegalArgumentException("The date range cannot exceed 365 days.");
+            throw new LodgeException(ErrorCode.DATE_RANGE_TOO_LONG);
         }
     }
 }
