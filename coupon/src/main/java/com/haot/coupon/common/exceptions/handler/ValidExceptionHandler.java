@@ -1,4 +1,4 @@
-package com.haot.coupon.common.exceptions;
+package com.haot.coupon.common.exceptions.handler;
 
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.common.response.enums.ErrorCode;
