@@ -31,17 +31,15 @@ public class UserValidationServiceImpl implements UserValidationService {
     }
 
     // return : 로그인 성공한 유저 정보 반환
-    return UserLoginValidationResponse.builder()
-        .userId(findUserByEmail.getId())
-        .role(findUserByEmail.getRole())
-        .build();
+    return UserLoginValidationResponse.of(
+        findUserByEmail.getId(),
+        findUserByEmail.getRole()
+    );
   }
 
   @Override
   public UserValidationResponse validateUserById(String userId) {
     // return : 파라미터로 받은 userId가 User Table 에 존재하는지에 대한 여부 반환
-    return UserValidationResponse.builder()
-        .isValid(userRepository.existsById(userId))
-        .build();
+    return UserValidationResponse.of(userRepository.existsById(userId));
   }
 }
