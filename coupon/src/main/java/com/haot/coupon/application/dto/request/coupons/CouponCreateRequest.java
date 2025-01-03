@@ -1,6 +1,9 @@
 package com.haot.coupon.application.dto.request.coupons;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDateTime;
 
@@ -30,7 +33,7 @@ public record CouponCreateRequest(
         Integer discountRate,
         Double discountAmount,
         @NotNull
-        Integer maxQuantity,
+        Integer totalQuantity,
 
         int issuedQuantity
 ) {
