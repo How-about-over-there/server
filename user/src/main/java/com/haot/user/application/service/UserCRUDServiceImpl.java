@@ -46,9 +46,9 @@ public class UserCRUDServiceImpl implements UserCRUDService {
     User savedUser = userRepository.save(user);
 
     // return : UserCreateResponse 반환
-    return UserCreateResponse.builder()
-        .userId(savedUser.getId())
-        .build();
+    return UserCreateResponse.of(
+        savedUser.getId()
+    );
   }
 
 }

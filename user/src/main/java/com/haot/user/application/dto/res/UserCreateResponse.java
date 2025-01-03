@@ -6,5 +6,9 @@ import lombok.Builder;
 public record UserCreateResponse(
     String userId
 ) {
-
+  public static UserCreateResponse of(String userId) {
+    return UserCreateResponse.builder()
+        .userId(userId)
+        .build();
+  }
 }
