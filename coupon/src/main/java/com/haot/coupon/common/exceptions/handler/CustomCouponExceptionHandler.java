@@ -17,7 +17,7 @@ public class CustomCouponExceptionHandler {
     @ExceptionHandler(value = CustomCouponException.class)
     public ResponseEntity<ApiResponse<Object>> handleCustomCouponException(CustomCouponException customCouponException) {
 
-        log.error("{}", customCouponException.getMessage());
+        log.error("{}", customCouponException.resCode.getMessage());
         ResCodeIfs errorCode = customCouponException.resCode;
 
         return ResponseEntity.status(errorCode.getHttpStatus())

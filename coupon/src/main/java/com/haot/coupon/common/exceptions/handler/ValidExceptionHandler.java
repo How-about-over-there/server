@@ -3,6 +3,7 @@ package com.haot.coupon.common.exceptions.handler;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.common.response.enums.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j(topic = "ValidExceptionHandler")
+@Order(value = Integer.MAX_VALUE - 1)
 @RestControllerAdvice
 public class ValidExceptionHandler {
 
