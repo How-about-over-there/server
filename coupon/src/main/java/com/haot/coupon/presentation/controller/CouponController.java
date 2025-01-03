@@ -80,7 +80,7 @@ public class CouponController {
                 .build());
     }
 
-    // [Feign] 예약 취소 or 확정 API
+    // [Feign] 예약 취소 or 확정 API TODO reservationStatus ENUM값으로 고치기
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{reservationCouponId}")
     public ApiResponse<Void> confirmReservation(@PathVariable(value = "reservationCouponId") String reservationCouponId
