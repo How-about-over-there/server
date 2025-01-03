@@ -53,11 +53,11 @@ public class Lodge {
     @JoinColumn(name = "lodge_rule_id")
     private LodgeRule rule;
 
-    @OneToMany(mappedBy = "lodge", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "lodge")
     @Builder.Default
     private List<LodgeImage> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "lodge", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "lodge")
     @Builder.Default
     private List<LodgeDate> dates = new ArrayList<>();
 
