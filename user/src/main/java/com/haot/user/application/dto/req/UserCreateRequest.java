@@ -4,6 +4,7 @@ import com.haot.user.domain.model.enums.Gender;
 import com.haot.user.domain.model.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 public record UserCreateRequest(
@@ -11,6 +12,7 @@ public record UserCreateRequest(
     String name,
 
     @NotBlank(message = "비밀번호는 필수 항목입니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9]{8,}$", message = "비밀번호는 8자 이상, 영어와 숫자로만 이루어져야 합니다.")
     String password,
 
     @NotBlank(message = "이메일은 필수 항목입니다.")
