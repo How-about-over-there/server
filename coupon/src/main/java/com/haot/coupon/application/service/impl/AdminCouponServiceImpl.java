@@ -14,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 public class AdminCouponServiceImpl implements AdminCouponService {
@@ -30,7 +28,7 @@ public class AdminCouponServiceImpl implements AdminCouponService {
         // Business Logic TODO (아직 중복을 잡기 얘매한거 같다.)
 
         // expiredDate가 availabledate +1일 보다 후여야 한다.
-        if(!request.couponAvailableDate().plusDays(1).isBefore(request.couponExpiredDate())){
+        if (!request.couponAvailableDate().plusDays(1).isBefore(request.couponExpiredDate())) {
             throw new CustomCouponException(ErrorCode.INSUFFICIENT_DATE_DIFFERENCE);
         }
 
@@ -38,26 +36,26 @@ public class AdminCouponServiceImpl implements AdminCouponService {
         CouponType couponType = CouponType.checkCouponType(request.couponType());
 
         // 할인율 쿠폰 -> discountRate, discountPolicy는 -> PERCENTAGE
-        if(request.discountRate() != null){
+        if (request.discountRate() != null) {
             validatePercentagePolicy(request, discountPolicy);
-        // 금액 할인 쿠폰 -> discountAmount, discountPolicy는 -> AMOUNT
-        }else{
+            // 금액 할인 쿠폰 -> discountAmount, discountPolicy는 -> AMOUNT
+        } else {
             validateAmountPolicy(request, discountPolicy);
         }
 
         // 일단 선착순 쿠폰 1 ~ 100000개까지
-        if(couponType == CouponType.PRIORITY){
-            if(request.totalQuantity() < 1 || request.totalQuantity() > 100000){
+        if (couponType == CouponType.PRIORITY) {
+            if (request.totalQuantity() < 1 || request.totalQuantity() > 100000) {
                 throw new CustomCouponException(ErrorCode.WRONG_TOTAL_QUANTITY);
             }
-        // 무제한 쿠폰은 최대 발급 수량 -1로 받기
-        }else{
-            if(request.totalQuantity() != -1){
+            // 무제한 쿠폰은 최대 발급 수량 -1로 받기
+        } else {
+            if (request.totalQuantity() != -1) {
                 throw new CustomCouponException(ErrorCode.WRONG_TOTAL_QUANTITY);
             }
         }
 
-        Coupon savedCoupon= couponRepository.save(couponMapper.toEntity(request));
+        Coupon savedCoupon = couponRepository.save(couponMapper.toEntity(request));
 
         return couponMapper.responseId(savedCoupon.getId());
     }
@@ -81,11 +79,11 @@ public class AdminCouponServiceImpl implements AdminCouponService {
             throw new CustomCouponException(ErrorCode.DISCOUNT_POLICY_NOT_MATCH);
         }
         // 쿠폰 최소 사용 금액 < discountAmount -> exception
-        if(request.minDiscountAmount() < request.discountAmount()){
+        if (request.minDiscountAmount() < request.discountAmount()) {
             throw new CustomCouponException(ErrorCode.DISCOUNT_EXCEEDS_MIN_AMOUNT);
         }
         // 쿠폰 최대 사용 금액 < discountAmount -> exception
-        if(request.maxDiscountAmount() < request.discountAmount()){
+        if (request.maxDiscountAmount() < request.discountAmount()) {
             throw new CustomCouponException(ErrorCode.DISCOUNT_EXCEEDS_MAX_AMOUNT);
         }
 
