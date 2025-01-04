@@ -27,7 +27,7 @@ public class AdminCouponServiceImpl implements AdminCouponService {
     @Override
     public CouponCreateResponse create(CouponCreateRequest request) {
 
-        // Business Logic (아직 중복을 하게 둘지는 정하지 않았다)
+        // Business Logic TODO (아직 중복을 잡기 얘매한거 같다.)
 
         // expiredDate가 availabledate +1일 보다 후여야 한다.
         if(!request.couponAvailableDate().plusDays(1).isBefore(request.couponExpiredDate())){
@@ -62,6 +62,7 @@ public class AdminCouponServiceImpl implements AdminCouponService {
         return couponMapper.responseId(savedCoupon.getId());
     }
 
+    // 할인율 쿠폰일때 유효성 검사
     private void validatePercentagePolicy(CouponCreateRequest request, DiscountPolicy discountPolicy) {
         if (request.discountAmount() != null) {
             throw new CustomCouponException(ErrorCode.TOO_MANY_DISCOUNT_POLICY);
@@ -71,6 +72,7 @@ public class AdminCouponServiceImpl implements AdminCouponService {
         }
     }
 
+    // 금액 쿠폰일떼 우효성 검사
     private void validateAmountPolicy(CouponCreateRequest request, DiscountPolicy discountPolicy) {
         if (request.discountAmount() == null || request.discountAmount() <= 0) {
             throw new CustomCouponException(ErrorCode.WRONG_DISCOUNT_AMOUNT);
