@@ -20,6 +20,10 @@ public record ApiResponse<T> (
         return new ApiResponse<>("4000","Success", "API 요청에 성공했습니다", data);
     }
 
+    public static <T> ApiResponse<T> SUCCESS(ResCodeIfs resCodeIfs, T data) {
+        return new ApiResponse<>(resCodeIfs.getCode(), "Success", resCodeIfs.getMessage(), data);
+    }
+
     public static ApiResponse<Void> success() {
         return new ApiResponse<>("4000","Success", "API 요청에 성공했습니다",null);
     }

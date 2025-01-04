@@ -5,6 +5,7 @@ import com.haot.coupon.application.dto.request.events.EventModifyRequest;
 import com.haot.coupon.application.dto.response.events.EventCreateResponse;
 import com.haot.coupon.application.service.AdminEventService;
 import com.haot.coupon.common.response.ApiResponse;
+import com.haot.coupon.common.response.enums.SuccessCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class AdminEventController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ApiResponse<EventCreateResponse> create(@Valid @RequestBody EventCreateRequest eventCreateRequest) {
-        return ApiResponse.success(adminEventService.create(eventCreateRequest));
+        return ApiResponse.SUCCESS(SuccessCode.CREATE_EVENT_SUCCESS, adminEventService.create(eventCreateRequest));
     }
 
     @ResponseStatus(HttpStatus.OK)

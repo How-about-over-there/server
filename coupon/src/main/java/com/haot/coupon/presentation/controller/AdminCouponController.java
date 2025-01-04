@@ -7,6 +7,7 @@ import com.haot.coupon.application.dto.response.coupons.CouponHistoryResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.application.service.AdminCouponService;
 import com.haot.coupon.common.response.ApiResponse;
+import com.haot.coupon.common.response.enums.SuccessCode;
 import com.haot.coupon.domain.model.enums.CouponType;
 import com.haot.coupon.domain.model.enums.DiscountPolicy;
 import com.haot.coupon.domain.model.enums.ReservationCouponStatus;
@@ -71,7 +72,7 @@ public class AdminCouponController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping
     public ApiResponse<CouponCreateResponse> create(@Valid @RequestBody CouponCreateRequest request) {
-        return ApiResponse.success(adminCouponService.create(request));
+        return ApiResponse.SUCCESS(SuccessCode.CREATE_COUPON_SUCCESS, adminCouponService.create(request));
     }
 
     @ResponseStatus(HttpStatus.OK)
