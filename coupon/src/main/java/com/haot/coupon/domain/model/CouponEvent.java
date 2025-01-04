@@ -7,7 +7,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -38,5 +38,27 @@ public class CouponEvent {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EventStatus eventStatus;
+
+
+    public void updateEventStatus(){
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if(now.isBefore(this.eventStartDate)){
+            this.eventStatus = EventStatus.AWAITING;
+            System.out.println("AWAITING");
+        }
+
+        if(now.isAfter(this.eventEndDate)){
+            this.eventStatus = EventStatus.END;
+            System.out.println("END");
+        }
+
+        if(now.isAfter(this.eventStartDate) && now.isBefore(this.eventEndDate)){
+            this.eventStatus = EventStatus.IN_PROGRESS;
+            System.out.println("IN_PROGRESS");
+        }
+
+    }
 
 }
