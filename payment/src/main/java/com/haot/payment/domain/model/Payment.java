@@ -14,7 +14,6 @@ import lombok.*;
 @Table(name = "p_payment", schema = "payment")
 public class Payment {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "payment_id")
     private String id;
 
@@ -24,11 +23,8 @@ public class Payment {
     @Column(name = "reservation_id", nullable = false)
     private String reservationId;
 
-    @Column(name = "imp_uid", nullable = false)
-    private String impUid;
-
-    @Column(name = "merchant_uid", nullable = false)
-    private String merchantUid;
+    @Column(name = "merchant_id", nullable = false)
+    private String merchantId;
 
     @Column(name = "price", nullable = false)
     @Min(0)
