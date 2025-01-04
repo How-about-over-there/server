@@ -26,12 +26,17 @@ public record CouponCreateRequest(
         @Pattern(regexp = "PERCENTAGE|AMOUNT", message = "유효한 상태 값을 입력하세요.")
         @NotNull
         String discountPolicy,
+
         @NotNull
         Double minDiscountAmount, // 쿠폰 사용시 최소 사용 금액
+
         @NotNull
         Double maxDiscountAmount, // 쿠폰 사용 할 수 있는 최대 금액
+
         Integer discountRate,
+
         Double discountAmount,
+
         @NotNull
         Integer totalQuantity,
 
