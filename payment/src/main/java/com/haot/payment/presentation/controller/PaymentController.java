@@ -5,6 +5,8 @@ import com.haot.payment.application.dto.request.PaymentCreateRequest;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.common.response.ApiResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/payments")
+@RequiredArgsConstructor
 public class PaymentController {
 
     // 결제 생성
@@ -24,11 +28,10 @@ public class PaymentController {
 
         return ApiResponse.success(
                 new PaymentResponse(
-                        "PAYMENT-UUID1",
+                        request.paymentId(),
                         request.userId(),
                         request.reservationId(),
-                        "IMP-UID",
-                        "MERCHANT-UID",
+                        "MERCHANT-ID",
                         request.price(),
                         100000.0,
                         "CARD",
@@ -45,9 +48,8 @@ public class PaymentController {
                 new PaymentResponse(
                         paymentId,
                         "USER-UUID",
-                        "IMP-UID",
-                        "IMP-UID",
-                        "MERCHANT-UID",
+                        "RESERVATION-UUID",
+                        "MERCHANT-ID",
                         100000.0,
                         100000.0,
                         "CARD",
@@ -65,9 +67,8 @@ public class PaymentController {
                 new PaymentResponse(
                         "PAYMENT-UUID1",
                         "USER-UUID",
-                        "IMP-UID",
-                        "IMP-UID",
-                        "MERCHANT-UID",
+                        "RESERVATION-UUID",
+                        "MERCHANT-ID",
                         100000.0,
                         100000.0,
                         "CARD",
@@ -76,9 +77,8 @@ public class PaymentController {
                 new PaymentResponse(
                         "PAYMENT-UUID2",
                         "USER-UUID",
-                        "IMP-UID",
-                        "IMP-UID",
-                        "MERCHANT-UID",
+                        "RESERVATION-UUID",
+                        "MERCHANT-ID",
                         100000.0,
                         100000.0,
                         "CARD",
@@ -100,9 +100,8 @@ public class PaymentController {
                 new PaymentResponse(
                         paymentId,
                         "USER-UUID",
-                        "IMP-UID",
-                        "IMP-UID",
-                        "MERCHANT-UID",
+                        "RESERVATION-UUID",
+                        "MERCHANT-ID",
                         request.price(),
                         100000.0,
                         request.method(),
