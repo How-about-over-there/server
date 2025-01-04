@@ -6,5 +6,5 @@ import jakarta.validation.Valid;
 
 public interface AdminCouponService {
 
-    CouponCreateResponse create(@Valid CouponCreateRequest request);
+    CouponCreateResponse create(CouponCreateRequest request);
 }
