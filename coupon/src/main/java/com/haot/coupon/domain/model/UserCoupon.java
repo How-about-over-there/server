@@ -33,6 +33,6 @@ public class UserCoupon {
     @Column(nullable = true, name = "used_date")
     private LocalDateTime usedDate;
 
-    @Column(nullable = false)
+    @Column(name = "is_delete", nullable = false)
     private boolean isDelete = false;
 }

@@ -39,7 +39,7 @@ public class CouponEvent {
     @Column(nullable = false)
     private EventStatus eventStatus;
 
-    @Column(nullable = false)
+    @Column(name = "is_delete", nullable = false)
     private boolean isDelete = false;
 
 

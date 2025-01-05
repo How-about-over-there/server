@@ -55,6 +55,6 @@ public class Coupon {
     @Column(nullable = true, name = "discount_amount")
     private Double discountAmount;
 
-    @Column(nullable = false)
+    @Column(name = "is_delete", nullable = false)
     private boolean isDelete = false;
 }
