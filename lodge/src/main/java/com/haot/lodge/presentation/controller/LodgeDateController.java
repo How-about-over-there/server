@@ -2,10 +2,13 @@ package com.haot.lodge.presentation.controller;
 
 
 import com.haot.lodge.application.response.LodgeDateResponse;
+import com.haot.lodge.application.service.Impl.LodgeDateService;
 import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
 import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
+import com.haot.lodge.presentation.request.LodgeDateUpdateStatusRequest;
 import com.haot.lodge.presentation.response.LodgeDateReadResponse;
+import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/lodge-dates")
 @RequiredArgsConstructor
 public class LodgeDateController {
+
+    private final LodgeDateService lodgeDateService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
@@ -65,20 +70,13 @@ public class LodgeDateController {
         return ApiResponse.success();
     }
 
-    /**
-     * 예약 날짜 상태 변경 API
-     * @param dateId 변경할 날짜 id
-     * @param status 변경할 상태 (EMPTY/WAITING/COMPLETE)
-     * @return 기본 성공 응답
-     */
+    @PostMapping("/status")
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/{dateId}")
     public ApiResponse<Void> updateStatus(
-            @PathVariable(name = "dateId") String dateId,
-            @RequestParam(name = "status", required = true) ReservationStatus status
+            @Valid @RequestBody LodgeDateUpdateStatusRequest request
     ) {
+        lodgeDateService.updateStatus(request.lodgeDateIds(), request.status());
         return ApiResponse.success();
     }
-
 
 }
