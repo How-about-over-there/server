@@ -11,7 +11,9 @@ public enum ErrorCode {
     VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "0009", "Validation failed"),
 
     // 5000: Lodge Error
-    ALREADY_EXIST_REVIEW(HttpStatus.CONFLICT, "5001","같은 이름의 숙소가 이미 존재합니다."),
+    LODGE_NOT_FOUND(HttpStatus.NOT_FOUND, "5001", "일치하는 숙소 정보를 찾을 수 없습니다."),
+    LODGE_RULE_NOT_FOUND(HttpStatus.NOT_FOUND, "5002", "일치하는 숙소 규칙 정보를 찾을 수 없습니다."),
+    ALREADY_EXIST_LODGE_NAME(HttpStatus.CONFLICT, "5003","같은 이름의 숙소가 이미 존재합니다."),
 
     // 5100: LodgeDate Error
     START_DATE_IN_PAST(HttpStatus.BAD_REQUEST, "5101", "시작 날짜는 현재 날짜 이후여야 합니다."),
