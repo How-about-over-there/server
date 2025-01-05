@@ -48,6 +48,16 @@ public class LodgeDateService {
         lodgeDateRepository.saveAll(lodgeDates);
     }
 
+    @Transactional
+    public void updateStatus(List<String> ids, String requestStatus) {
+        ReservationStatus status = ReservationStatus.fromString(requestStatus);
+        ids.forEach(id -> {
+            LodgeDate lodgeDate = lodgeDateRepository.findById(id)
+                    .orElseThrow(()-> new LodgeException(ErrorCode.LODGE_DATE_NOT_FOUND));
+            lodgeDate.updateStatus(status);
+        });
+    }
+
     /**
      * 입력된 날짜 유효성 검사
      * @param startDate 숙소 시작 날짜
