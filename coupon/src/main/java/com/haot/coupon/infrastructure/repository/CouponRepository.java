@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface CouponRepository extends JpaRepository<Coupon, String> {
 
-    Optional<Coupon> findByIdAndExpiredDateIsAfter(String couponId, LocalDateTime eventEndDate);
+    Optional<Coupon> findByIdAndExpiredDateIsAfterAndIsDeleteFalse(String couponId, LocalDateTime eventEndDate);
 }

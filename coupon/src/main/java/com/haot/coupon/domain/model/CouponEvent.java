@@ -49,17 +49,12 @@ public class CouponEvent {
 
         if(now.isBefore(this.eventStartDate)){
             this.eventStatus = EventStatus.AWAITING;
-            System.out.println("AWAITING");
-        }
 
-        if(now.isAfter(this.eventEndDate)){
+        }else if(now.isAfter(this.eventEndDate)){
             this.eventStatus = EventStatus.END;
-            System.out.println("END");
-        }
 
-        if(now.isAfter(this.eventStartDate) && now.isBefore(this.eventEndDate)){
+        }else if(now.isAfter(this.eventStartDate) && now.isBefore(this.eventEndDate)){
             this.eventStatus = EventStatus.IN_PROGRESS;
-            System.out.println("IN_PROGRESS");
         }
 
     }

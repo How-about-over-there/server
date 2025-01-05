@@ -26,7 +26,8 @@ public enum ErrorCode implements ResCodeIfs {
     WRONG_TOTAL_QUANTITY(HttpStatus.BAD_REQUEST, "4010", "쿠폰 최대 발급 수량이 정책에 맞지 않습니다."),
     COUPON_TYPE_NOT_MATCH(HttpStatus.BAD_REQUEST, "4011", "쿠폰 타입이 맞지 않습니다."),
     COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "4012", "Coupon not found."),
-    EXIST_PRIORITY_COUPON_EVENTS(HttpStatus.BAD_REQUEST, "4013", "쿠폰이 이미 있는 이벤트의 선착순 쿠폰입니다."),
+    EXIST_PRIORITY_COUPON_EVENTS(HttpStatus.CONFLICT, "4013", "이미 있는 이벤트의 선착순 쿠폰입니다."),
+    EXIST_UNLIMITED_COUPON_EVENTS(HttpStatus.CONFLICT, "4014", "대기중인 이벤트나 진행중인 이벤트의 무제한 쿠폰입니다."),
     ;
 
     private final HttpStatus httpStatus;
