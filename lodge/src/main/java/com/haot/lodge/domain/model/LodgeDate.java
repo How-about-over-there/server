@@ -44,6 +44,10 @@ public class LodgeDate {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
+    public void updateStatus(ReservationStatus status) {
+        this.status = status;
+    }
+
     public static LodgeDate create(
             Lodge lodge, LocalDate date, Double price, ReservationStatus status
     ) {
