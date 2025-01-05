@@ -2,7 +2,7 @@ package com.haot.lodge.presentation.controller;
 
 
 import com.haot.lodge.application.response.LodgeResponse;
-import com.haot.lodge.application.response.lodgeImageResponse;
+import com.haot.lodge.application.response.LodgeImageResponse;
 import com.haot.lodge.application.service.LodgeService;
 import com.haot.lodge.presentation.response.LodgeReadAllResponse;
 import com.haot.lodge.application.response.LodgeRuleResponse;
@@ -66,7 +66,7 @@ public class LodgeController {
                 .term(2)
                 .address("경기도 고양시 고양로 551")
                 .build();
-        lodgeImageResponse image = lodgeImageResponse.builder()
+        LodgeImageResponse image = LodgeImageResponse.builder()
                 .id("imageId")
                 .url("http://s3url")
                 .build();
