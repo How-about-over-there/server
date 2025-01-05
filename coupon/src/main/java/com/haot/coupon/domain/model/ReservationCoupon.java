@@ -29,4 +29,7 @@ public class ReservationCoupon {
 
     @Column(nullable = false, name = "reservation_discount_price")
     private Double reservationDiscountPrice;
+
+    @Column(nullable = false)
+    private boolean isDelete = false;
 }
