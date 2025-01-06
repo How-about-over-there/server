@@ -1,6 +1,7 @@
 package com.haot.lodge.domain.model;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_lodge")
-public class Lodge {
+public class Lodge extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -48,10 +49,6 @@ public class Lodge {
     @Column(name = "basic_price", nullable = false)
     private Double basicPrice;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lodge_rule_id")
-    private LodgeRule rule;
-
     @OneToMany(mappedBy = "lodge")
     @Builder.Default
     private List<LodgeImage> images = new ArrayList<>();
@@ -59,5 +56,18 @@ public class Lodge {
     @OneToMany(mappedBy = "lodge")
     @Builder.Default
     private List<LodgeDate> dates = new ArrayList<>();
+
+    public static Lodge createLodge(
+            String hostId, String name, String description, String address, Integer term, Double basicPrice
+    ) {
+        return Lodge.builder()
+                .hostId(hostId)
+                .name(name)
+                .description(description)
+                .address(address)
+                .term(term)
+                .basicPrice(basicPrice)
+                .build();
+    }
 
 }

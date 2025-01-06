@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_lodge_rule")
-public class LodgeRule {
+public class LodgeRule extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -40,4 +40,15 @@ public class LodgeRule {
     @Column(name = "customization")
     private String customization;
 
+
+    public static LodgeRule create(
+            Lodge lodge, Integer maxReservationDay, Integer maxPersonnel, String customization
+    ) {
+        return LodgeRule.builder()
+                .lodge(lodge)
+                .maxReservationDay(maxReservationDay)
+                .maxPersonnel(maxPersonnel)
+                .customization(customization)
+                .build();
+    }
 }

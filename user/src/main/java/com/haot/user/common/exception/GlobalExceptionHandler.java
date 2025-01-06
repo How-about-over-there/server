@@ -1,7 +1,6 @@
 package com.haot.user.common.exception;
 
 import com.haot.user.common.response.ApiResponse;
-import com.haot.user.common.response.ErrorResponse;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,27 +15,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(ApplicationException.class)
-  protected ResponseEntity<ErrorResponse> handleApplicationException(ApplicationException e) {
+  @ExceptionHandler(UserException.class)
+  protected ResponseEntity<ApiResponse<Void>> handleUserException(UserException e) {
     log.error("{} {}", e, e.getErrorCode().toString());
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-        .body(new ErrorResponse(e.getErrorCode()));
+        .body(ApiResponse.fail(e.getErrorCode()));
   }
 
   @ExceptionHandler(RuntimeException.class)
-  protected ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e) {
+  protected ResponseEntity<ApiResponse<Void>> handleRuntimeException(RuntimeException e) {
     log.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(new ErrorResponse(e.getMessage()));
+        .body(ApiResponse.fail(e.getMessage()));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> methodArgumentNotValidException(
+  public ResponseEntity<ApiResponse<Void>> methodArgumentNotValidException(
       MethodArgumentNotValidException e) {
     log.error(e.getMessage());
     return ResponseEntity
         .status(HttpStatus.BAD_REQUEST)
-        .body(new ErrorResponse(ErrorCode.INVALID_VALUE_EXCEPTION,
+        .body(ApiResponse.fail(ErrorCode.INVALID_VALUE_EXCEPTION,
             Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage()));
   }
 }

@@ -6,4 +6,5 @@ import com.haot.coupon.application.dto.response.coupons.CouponCreateResponse;
 public interface AdminCouponService {
 
     CouponCreateResponse create(CouponCreateRequest request);
+
 }

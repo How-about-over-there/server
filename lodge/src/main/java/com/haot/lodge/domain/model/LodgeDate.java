@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_lodge_date")
-public class LodgeDate {
+public class LodgeDate extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -44,4 +44,18 @@ public class LodgeDate {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
+    public void updateStatus(ReservationStatus status) {
+        this.status = status;
+    }
+
+    public static LodgeDate create(
+            Lodge lodge, LocalDate date, Double price, ReservationStatus status
+    ) {
+        return LodgeDate.builder()
+                .lodge(lodge)
+                .date(date)
+                .price(price)
+                .status(ReservationStatus.EMPTY)
+                .build();
+    }
 }

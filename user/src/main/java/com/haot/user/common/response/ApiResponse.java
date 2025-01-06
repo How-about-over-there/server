@@ -1,6 +1,7 @@
 package com.haot.user.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.haot.user.common.exception.ErrorCode;
 import lombok.Builder;
 
 @Builder
@@ -18,5 +19,21 @@ public record ApiResponse<T>(
 
   public static ApiResponse<Void> success() {
     return new ApiResponse<>("3001", "Success", "API 요청에 성공했습니다", null);
+  }
+
+  public static ApiResponse<Void> fail(String message) {
+    return new ApiResponse<>(ErrorCode.INTERNAL_SERVER_EXCEPTION.getCode(), "ERROR", message, null);
+  }
+
+  public static ApiResponse<Void> fail(ErrorCode errorCode) {
+    return new ApiResponse<>(errorCode.getCode(), "ERROR", errorCode.getMessage(), null);
+  }
+
+  public static ApiResponse<Void> fail(ErrorCode errorCode, String message) {
+    return new ApiResponse<>(errorCode.getCode(), "ERROR", message, null);
+  }
+
+  public static <T> ApiResponse<T> fail(ErrorCode errorCode, T data) {
+    return new ApiResponse<>(errorCode.getCode(), "ERROR", errorCode.getMessage(), data);
   }
 }
