@@ -21,7 +21,8 @@ public enum ErrorCode {
 
   // 3000: User Error
   USER_NOT_FOUND_EXCEPTION(HttpStatus.BAD_REQUEST, "3002", "존재하지 않는 사용자입니다."),
-  INVALID_PASSWORD_EXCEPTION(HttpStatus.BAD_REQUEST, "3003", "비밀번호가 일치하지 않습니다.");
+  INVALID_PASSWORD_EXCEPTION(HttpStatus.BAD_REQUEST, "3003", "비밀번호가 일치하지 않습니다."),
+  USER_ALREADY_EXIST_EXCEPTION(HttpStatus.BAD_REQUEST, "3004", "이미 해당 이메일에 대한 유저가 존재합니다.");
 
   private final HttpStatus httpStatus;
   private final String code;
