@@ -1,10 +1,13 @@
 package com.haot.auth.infrastructure.feign.adapter;
 
+import com.haot.auth.application.dto.req.AuthLoginRequest;
 import com.haot.auth.application.dto.req.AuthSignupRequest;
 import com.haot.auth.application.feign.port.UserClientPort;
 import com.haot.auth.domain.enums.Role;
 import com.haot.auth.infrastructure.feign.client.UserClient;
 import com.haot.auth.infrastructure.feign.dto.FeignUserCreateRequest;
+import com.haot.auth.infrastructure.feign.dto.FeignUserLoginValidationRequest;
+import com.haot.auth.infrastructure.feign.dto.FeignUserLoginValidationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -32,5 +35,16 @@ public class UserClientAdapter implements UserClientPort {
     // 응답값 반환
     return userClient.createUser(feignUserCreateRequest).data().userId();
   }
+
+  public FeignUserLoginValidationResponse validationUser(AuthLoginRequest authLoginRequest) {
+
+    FeignUserLoginValidationRequest build = FeignUserLoginValidationRequest.builder()
+        .email(authLoginRequest.email())
+        .password(authLoginRequest.password())
+        .build();
+
+    return userClient.validateLoginInformation(build).data();
+  }
+
 
 }
