@@ -47,14 +47,11 @@ public class CouponEvent {
 
         LocalDateTime now = LocalDateTime.now();
 
-        if(now.isBefore(this.eventStartDate)){
-            this.eventStatus = EventStatus.AWAITING;
+        this.eventStatus = EventStatus.DEFAULT;
 
-        }else if(now.isAfter(this.eventEndDate)){
-            this.eventStatus = EventStatus.END;
+        if(now.isAfter(this.eventEndDate)){
+            this.eventStatus = EventStatus.EXPIRED;
 
-        }else if(now.isAfter(this.eventStartDate) && now.isBefore(this.eventEndDate)){
-            this.eventStatus = EventStatus.IN_PROGRESS;
         }
 
     }

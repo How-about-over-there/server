@@ -56,7 +56,7 @@ public class AdminEventServiceImpl implements AdminEventService {
                     .findByCouponIdAndEventEndDateIsAfterAndIsDeleteFalse(coupon.getId(), LocalDateTime.now())
                     .stream()
                     .peek(couponEvent -> {
-                        if (couponEvent.getEventStatus() != EventStatus.END) {
+                        if (!(couponEvent.getEventStatus() == EventStatus.EXPIRED || couponEvent.getEventStatus() == EventStatus.MANUALLY_CLOSED)) {
                             throw new CustomCouponException(ErrorCode.EXIST_UNLIMITED_COUPON_EVENTS);
                         }
                     })

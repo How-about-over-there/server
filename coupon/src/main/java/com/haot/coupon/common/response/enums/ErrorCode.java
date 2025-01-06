@@ -27,7 +27,7 @@ public enum ErrorCode implements ResCodeIfs {
     COUPON_TYPE_NOT_MATCH(HttpStatus.BAD_REQUEST, "4011", "쿠폰 타입이 맞지 않습니다."),
     COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "4012", "Coupon not found."),
     EXIST_PRIORITY_COUPON_EVENTS(HttpStatus.CONFLICT, "4013", "이미 있는 이벤트의 선착순 쿠폰입니다."),
-    EXIST_UNLIMITED_COUPON_EVENTS(HttpStatus.CONFLICT, "4014", "대기중인 이벤트나 진행중인 이벤트의 무제한 쿠폰입니다."),
+    EXIST_UNLIMITED_COUPON_EVENTS(HttpStatus.CONFLICT, "4014", "이 무제한 쿠폰을 쓰는 이벤트가 종료되지 않았습니다."),
     ;
 
     private final HttpStatus httpStatus;
