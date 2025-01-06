@@ -1,17 +1,22 @@
 package com.haot.lodge.application.service;
 
 
+import com.haot.lodge.application.response.LodgeImageResponse;
 import com.haot.lodge.application.response.LodgeResponse;
+import com.haot.lodge.application.response.LodgeRuleResponse;
 import com.haot.lodge.application.service.Impl.LodgeDateService;
 import com.haot.lodge.application.service.Impl.LodgeImageService;
 import com.haot.lodge.application.service.Impl.LodgeRuleService;
 import com.haot.lodge.application.service.Impl.LodgeBasicService;
 import com.haot.lodge.domain.model.Lodge;
+import com.haot.lodge.domain.model.LodgeRule;
 import com.haot.lodge.presentation.request.LodgeCreateRequest;
+import com.haot.lodge.presentation.response.LodgeReadOneResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@org.springframework.stereotype.Service
+@Service
 @RequiredArgsConstructor
 @Transactional
 public class LodgeService {
@@ -31,6 +36,20 @@ public class LodgeService {
         lodgeRuleService.create(lodge, request.maxReservationDay(), request.maxPersonnel(), request.customization());
         lodgeDateService.create(lodge, request.startDate(), request.endDate(), request.excludeDates());
         return LodgeResponse.from(lodge);
+    }
+
+    @Transactional(readOnly = true)
+    public LodgeReadOneResponse readLodge(String lodgeId) {
+        Lodge lodge = lodgeBasicService.getLodgeById(lodgeId);
+        LodgeRule rule = lodgeRuleService.getLodgeRuleByLodgeId(lodgeId);
+        return new LodgeReadOneResponse(
+                LodgeResponse.from(lodge),
+                lodge.getImages()
+                        .stream()
+                        .map(LodgeImageResponse::from)
+                        .toList(),
+                LodgeRuleResponse.from(rule)
+        );
     }
 
 }

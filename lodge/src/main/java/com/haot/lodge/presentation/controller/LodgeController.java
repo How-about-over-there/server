@@ -2,7 +2,7 @@ package com.haot.lodge.presentation.controller;
 
 
 import com.haot.lodge.application.response.LodgeResponse;
-import com.haot.lodge.application.response.lodgeImageResponse;
+import com.haot.lodge.application.response.LodgeImageResponse;
 import com.haot.lodge.application.service.LodgeService;
 import com.haot.lodge.presentation.response.LodgeReadAllResponse;
 import com.haot.lodge.application.response.LodgeRuleResponse;
@@ -66,7 +66,7 @@ public class LodgeController {
                 .term(2)
                 .address("경기도 고양시 고양로 551")
                 .build();
-        lodgeImageResponse image = lodgeImageResponse.builder()
+        LodgeImageResponse image = LodgeImageResponse.builder()
                 .id("imageId")
                 .url("http://s3url")
                 .build();
@@ -88,29 +88,7 @@ public class LodgeController {
     public ApiResponse<LodgeReadOneResponse> readOne(
             @PathVariable String lodgeId
     ) {
-        LodgeResponse info = LodgeResponse.builder()
-                .id(lodgeId)
-                .name("이름")
-                .description("휴양지입니다.")
-                .term(2)
-                .address("경기도 고양시 고양로 551")
-                .build();
-        lodgeImageResponse image = lodgeImageResponse.builder()
-                .id("imageId")
-                .url("http://s3url")
-                .build();
-        LodgeRuleResponse rule = LodgeRuleResponse.builder()
-                .id("ruleId")
-                .maxPersonnel(12)
-                .maxReservationDay(5)
-                .customization("뛰지 말아주세요")
-                .build();
-        LodgeReadOneResponse response = LodgeReadOneResponse.builder()
-                .lodge(info)
-                .images(List.of(image))
-                .rule(rule)
-                .build();
-        return ApiResponse.success(response);
+        return ApiResponse.success(lodgeService.readLodge(lodgeId));
     }
 
     @ResponseStatus(HttpStatus.OK)

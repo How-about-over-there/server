@@ -49,10 +49,6 @@ public class Lodge {
     @Column(name = "basic_price", nullable = false)
     private Double basicPrice;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lodge_rule_id")
-    private LodgeRule rule;
-
     @OneToMany(mappedBy = "lodge")
     @Builder.Default
     private List<LodgeImage> images = new ArrayList<>();
