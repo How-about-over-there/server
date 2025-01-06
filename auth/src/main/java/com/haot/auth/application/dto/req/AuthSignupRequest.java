@@ -1,13 +1,13 @@
-package com.haot.user.application.dto.req;
+package com.haot.auth.application.dto.req;
 
-import com.haot.user.domain.model.enums.Gender;
-import com.haot.user.domain.model.enums.Role;
+import com.haot.auth.domain.enums.Gender;
+import com.haot.auth.domain.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
-public record UserCreateRequest(
+public record AuthSignupRequest(
     @NotBlank(message = "이름은 필수 항목입니다.")
     String name,
 

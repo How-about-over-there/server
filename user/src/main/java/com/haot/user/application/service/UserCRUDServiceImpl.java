@@ -2,7 +2,7 @@ package com.haot.user.application.service;
 
 import com.haot.user.application.dto.req.UserCreateRequest;
 import com.haot.user.application.dto.res.UserCreateResponse;
-import com.haot.user.common.exception.ApplicationException;
+import com.haot.user.common.exception.UserException;
 import com.haot.user.common.exception.ErrorCode;
 import com.haot.user.common.util.Argon2PasswordEncoder;
 import com.haot.user.domain.model.User;
@@ -23,7 +23,7 @@ public class UserCRUDServiceImpl implements UserCRUDService {
     // business logic
     // 1. request 의 Role 이 ADMIN 일 경우 생성 불가
     if (request.role().equals(Role.ADMIN)) {
-      throw new ApplicationException(ErrorCode.UNAUTHORIZED_EXCEPTION);
+      throw new UserException(ErrorCode.UNAUTHORIZED_EXCEPTION);
     }
 
     // 2. User 객체 생성

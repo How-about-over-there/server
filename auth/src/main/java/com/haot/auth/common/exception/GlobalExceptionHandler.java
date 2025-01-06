@@ -1,6 +1,6 @@
-package com.haot.user.common.exception;
+package com.haot.auth.common.exception;
 
-import com.haot.user.common.response.ApiResponse;
+import com.haot.auth.common.response.ApiResponse;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(UserException.class)
-  protected ResponseEntity<ApiResponse<Void>> handleUserException(UserException e) {
+  @ExceptionHandler(AuthException.class)
+  protected ResponseEntity<ApiResponse<Void>> handleAuthException(AuthException e) {
     log.error("{} {}", e, e.getErrorCode().toString());
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
         .body(ApiResponse.fail(e.getErrorCode()));

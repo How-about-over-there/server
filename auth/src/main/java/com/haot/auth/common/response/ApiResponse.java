@@ -1,7 +1,7 @@
-package com.haot.user.common.response;
+package com.haot.auth.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.haot.user.common.exception.ErrorCode;
+import com.haot.auth.common.exception.ErrorCode;
 import lombok.Builder;
 
 @Builder
@@ -36,4 +36,5 @@ public record ApiResponse<T>(
   public static <T> ApiResponse<T> fail(ErrorCode errorCode, T data) {
     return new ApiResponse<>(errorCode.getCode(), "ERROR", errorCode.getMessage(), data);
   }
+
 }
