@@ -5,9 +5,13 @@ import com.haot.coupon.common.response.enums.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
+@Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CouponDiscountRate {
 

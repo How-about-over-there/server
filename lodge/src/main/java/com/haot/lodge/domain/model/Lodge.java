@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_lodge")
-public class Lodge {
+public class Lodge extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
