@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_lodge_image")
-public class LodgeImage {
+public class LodgeImage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
