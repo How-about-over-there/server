@@ -21,7 +21,10 @@ public enum ErrorCode {
     START_DATE_AFTER_END_DATE(HttpStatus.BAD_REQUEST, "5102", "시작 날짜는 종료 날짜보다 이전이어야 합니다."),
     DATE_RANGE_TOO_SHORT(HttpStatus.BAD_REQUEST, "5103", "날짜 범위는 최소 30일 이상이어야 합니다."),
     DATE_RANGE_TOO_LONG(HttpStatus.BAD_REQUEST, "5104", "날짜 범위는 최대 365일을 초과할 수 없습니다."),
-    INVALID_DATE_STATUS(HttpStatus.BAD_REQUEST, "5105", "상태 타입이 유효하지 않습니다.");
+    INVALID_DATE_STATUS(HttpStatus.BAD_REQUEST, "5105", "상태 타입이 유효하지 않습니다."),
+
+    // 5500: Service Common
+    UNSUPPORTED_SORT_TYPE(HttpStatus.BAD_REQUEST, "5500", "지원하지 않는 정렬 방식입니다.");
 
     private final HttpStatus status;
     private final String code;
