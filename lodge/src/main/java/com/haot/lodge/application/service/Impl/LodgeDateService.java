@@ -1,6 +1,7 @@
 package com.haot.lodge.application.service.Impl;
 
 
+import com.haot.lodge.application.response.LodgeDateResponse;
 import com.haot.lodge.common.exception.ErrorCode;
 import com.haot.lodge.common.exception.LodgeException;
 import com.haot.lodge.domain.model.Lodge;
@@ -15,6 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +49,14 @@ public class LodgeDateService {
             currentDate = currentDate.plusDays(1);
         }
         lodgeDateRepository.saveAll(lodgeDates);
+    }
+
+    public Slice<LodgeDateResponse> readAll(
+            Pageable pageable, Lodge lodge, LocalDate start, LocalDate end
+    ) {
+        return lodgeDateRepository
+                .findAllLodgeDateByRange(pageable, lodge, start, end)
+                .map(LodgeDateResponse::from);
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package com.haot.lodge.application.service;
 
 
+import com.haot.lodge.application.response.LodgeDateResponse;
 import com.haot.lodge.application.response.LodgeImageResponse;
 import com.haot.lodge.application.response.LodgeResponse;
 import com.haot.lodge.application.response.LodgeRuleResponse;
@@ -11,8 +12,12 @@ import com.haot.lodge.application.service.Impl.LodgeBasicService;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeRule;
 import com.haot.lodge.presentation.request.LodgeCreateRequest;
+import com.haot.lodge.presentation.response.LodgeDateReadResponse;
 import com.haot.lodge.presentation.response.LodgeReadOneResponse;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +55,16 @@ public class LodgeService {
                         .toList(),
                 LodgeRuleResponse.from(rule)
         );
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<LodgeDateReadResponse> readLodgeDates(
+            Pageable pageable, String lodgeId, LocalDate start, LocalDate end
+    ) {
+        Lodge lodge = lodgeBasicService.getLodgeById(lodgeId);
+        return lodgeDateService
+                .readAll(pageable, lodge, start, end)
+                .map(LodgeDateReadResponse::new);
     }
 
 }
