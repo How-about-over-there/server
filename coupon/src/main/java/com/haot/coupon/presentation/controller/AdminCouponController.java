@@ -5,6 +5,7 @@ import com.haot.coupon.application.dto.request.coupons.CouponSearchRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponCreateResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponHistoryResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
+import com.haot.coupon.application.service.AdminCouponService;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.domain.model.enums.CouponType;
 import com.haot.coupon.domain.model.enums.DiscountPolicy;
@@ -25,6 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/admin/v1/coupons")
 public class AdminCouponController {
+
+    private final AdminCouponService adminCouponService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
@@ -64,15 +67,11 @@ public class AdminCouponController {
         return ApiResponse.success(new PageImpl<>(response, pageable, response.size()));
     }
 
+    // 쿠폰 생성 API
     @ResponseStatus(HttpStatus.OK)
     @PostMapping
     public ApiResponse<CouponCreateResponse> create(@Valid @RequestBody CouponCreateRequest request) {
-
-        CouponDiscountRate discountRate = new CouponDiscountRate(request.discountRate());
-
-        return ApiResponse.success(CouponCreateResponse.builder()
-                .couponId("snckxnvjcxnvj")
-                .build());
+        return ApiResponse.success(adminCouponService.create(request));
     }
 
     @ResponseStatus(HttpStatus.OK)
