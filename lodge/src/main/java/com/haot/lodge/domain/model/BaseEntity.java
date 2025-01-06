@@ -18,7 +18,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public abstract class BaseEntity {
     @Column(name="is_deleted", nullable = false)
     @ColumnDefault("false")
-    private Boolean isDeleted = false;
+    private boolean isDeleted = false;
 
     @CreatedDate
     @Column(name="created_at", updatable = false)
