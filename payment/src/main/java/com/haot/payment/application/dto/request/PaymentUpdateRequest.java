@@ -1,7 +1,9 @@
 package com.haot.payment.application.dto.request;
 
+import jakarta.validation.constraints.Min;
+
 public record PaymentUpdateRequest (
-        Double price,
+        @Min(0) Double price,
         String method,
         String status
 ) {}
