@@ -1,7 +1,6 @@
 package com.haot.lodge.application.service;
 
 
-import com.haot.lodge.application.response.LodgeDateResponse;
 import com.haot.lodge.application.response.LodgeImageResponse;
 import com.haot.lodge.application.response.LodgeResponse;
 import com.haot.lodge.application.response.LodgeRuleResponse;
