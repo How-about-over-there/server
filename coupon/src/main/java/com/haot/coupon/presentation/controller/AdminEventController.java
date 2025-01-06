@@ -3,7 +3,10 @@ package com.haot.coupon.presentation.controller;
 import com.haot.coupon.application.dto.request.events.EventCreateRequest;
 import com.haot.coupon.application.dto.request.events.EventModifyRequest;
 import com.haot.coupon.application.dto.response.events.EventCreateResponse;
+import com.haot.coupon.application.service.AdminEventService;
 import com.haot.coupon.common.response.ApiResponse;
+import com.haot.coupon.common.response.enums.SuccessCode;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +16,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/v1/events")
 public class AdminEventController {
 
+    private final AdminEventService adminEventService;
+
+    // TODO 로그인 된 admin만 가능하게
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ApiResponse<EventCreateResponse> create(@RequestBody EventCreateRequest eventCreateRequest) {
-        return ApiResponse.success(new EventCreateResponse(eventCreateRequest.couponId()));
+    public ApiResponse<EventCreateResponse> create(@Valid @RequestBody EventCreateRequest eventCreateRequest) {
+        return ApiResponse.SUCCESS(SuccessCode.CREATE_EVENT_SUCCESS, adminEventService.create(eventCreateRequest));
     }
 
     @ResponseStatus(HttpStatus.OK)

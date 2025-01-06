@@ -7,7 +7,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -38,5 +38,22 @@ public class CouponEvent {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EventStatus eventStatus;
+
+    @Column(name = "is_delete", nullable = false)
+    private boolean isDelete = false;
+
+
+    public void updateEventStatus(){
+
+        LocalDateTime now = LocalDateTime.now();
+
+        this.eventStatus = EventStatus.DEFAULT;
+
+        if(now.isAfter(this.eventEndDate)){
+            this.eventStatus = EventStatus.EXPIRED;
+
+        }
+
+    }
 
 }

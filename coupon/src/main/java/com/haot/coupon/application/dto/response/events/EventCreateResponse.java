@@ -4,6 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record EventCreateResponse(
-        String eventId
+        String eventId,
+        String couponId,
+        String eventStatus
 ) {
 }
