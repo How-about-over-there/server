@@ -1,11 +1,11 @@
-package com.haot.user.common.exception;
+package com.haot.auth.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ApplicationException extends RuntimeException {
+public class AuthException extends RuntimeException {
 
   public ErrorCode errorCode;
 }
