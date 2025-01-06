@@ -8,6 +8,6 @@ import org.springframework.data.domain.Slice;
 
 public interface LodgeDateCustomRepository {
     Slice<LodgeDate> findAllLodgeDateByRange(
-            Pageable pageable,Lodge lodge, LocalDate start, LocalDate end
+            Pageable pageable, Lodge lodge, LocalDate start, LocalDate end
     );
 }
