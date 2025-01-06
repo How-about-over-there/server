@@ -1,6 +1,7 @@
-package com.haot.auth.application.feign.adapter;
+package com.haot.auth.infrastructure.feign.adapter;
 
 import com.haot.auth.application.dto.req.AuthSignupRequest;
+import com.haot.auth.application.feign.port.UserClientPort;
 import com.haot.auth.domain.enums.Role;
 import com.haot.auth.infrastructure.feign.client.UserClient;
 import com.haot.auth.infrastructure.feign.dto.FeignUserCreateRequest;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserClientAdapter {
+public class UserClientAdapter implements UserClientPort {
 
   private final UserClient userClient;
 
