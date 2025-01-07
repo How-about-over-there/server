@@ -22,7 +22,13 @@ public enum ErrorCode implements ResCodeIfs {
     VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "0009", "입력 데이터 유효성 검증에 실패했습니다."),
 
     // 8000: Payment Error
-    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "80001", "결제 정보를 찾을 수 없습니다.");
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "8001", "결제 정보를 찾을 수 없습니다."),
+    PAYMENT_METHOD_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "8002", "지원하지 않는 결제 방식입니다."),
+    PAYMENT_STATUS_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "8003", "지원하지 않는 결제 상태입니다."),
+    PAYMENT_FAILED(HttpStatus.BAD_REQUEST, "8004", "결제가 실패했습니다."),
+    PAYMENT_PRICE_MISMATCH(HttpStatus.BAD_REQUEST, "8005", "결제 요청 금액과 실제 결제 금액이 일치하지 않습니다."),
+    INVALID_PAYMENT_REQUEST(HttpStatus.BAD_REQUEST, "8006", "잘못된 결제 요청입니다."),
+    PAYMENT_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "8007", "이미 처리된 결제입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
