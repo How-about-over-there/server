@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_point", schema = "point")
-public class Point {
+public class Point extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "point_id")

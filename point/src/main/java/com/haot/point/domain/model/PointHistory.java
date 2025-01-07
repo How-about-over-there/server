@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_point_history", schema = "point")
-public class PointHistory {
+public class PointHistory extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "point_history_id")
