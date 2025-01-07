@@ -12,6 +12,7 @@ import com.haot.lodge.application.service.implement.LodgeServiceImpl;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeRule;
 import com.haot.lodge.presentation.request.LodgeCreateRequest;
+import com.haot.lodge.presentation.request.LodgeUpdateRequest;
 import com.haot.lodge.presentation.response.LodgeReadOneResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,19 @@ public class LodgeFacade {
                         .map(LodgeImageResponse::from)
                         .toList(),
                 LodgeRuleResponse.from(rule)
+        );
+    }
+
+    @Transactional
+    public void updateLodge(String lodgeId, LodgeUpdateRequest request) {
+        Lodge lodge = lodgeService.getValidLodgeById(lodgeId);
+        lodgeService.update(
+                lodge,
+                request.name(),
+                request.description(),
+                request.address(),
+                request.term(),
+                request.basicPrice()
         );
     }
 

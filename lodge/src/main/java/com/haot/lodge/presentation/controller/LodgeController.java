@@ -97,6 +97,7 @@ public class LodgeController {
             @PathVariable String lodgeId,
             @Valid @RequestBody LodgeUpdateRequest request
     ) {
+        lodgeFacade.updateLodge(lodgeId, request);
         return ApiResponse.success();
     }
 
