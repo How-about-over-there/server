@@ -3,9 +3,8 @@ package com.haot.lodge.presentation.controller;
 
 import com.haot.lodge.application.response.LodgeResponse;
 import com.haot.lodge.application.response.LodgeImageResponse;
-import com.haot.lodge.application.service.LodgeService;
+import com.haot.lodge.application.facade.LodgeFacade;
 import com.haot.lodge.presentation.response.LodgeReadAllResponse;
-import com.haot.lodge.application.response.LodgeRuleResponse;
 import com.haot.lodge.presentation.request.LodgeCreateRequest;
 import com.haot.lodge.presentation.request.LodgeUpdateRequest;
 import com.haot.lodge.common.response.ApiResponse;
@@ -34,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LodgeController {
 
-    private final LodgeService lodgeService;
+    private final LodgeFacade lodgeFacade;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
@@ -42,7 +41,7 @@ public class LodgeController {
             @Valid LodgeCreateRequest request
     ) {
         String userId = "UUID"; // 임시 유저 ID (Header 에서 가져오도록 수정 필요)
-        LodgeResponse lodge = lodgeService.createLodge(userId, request);
+        LodgeResponse lodge = lodgeFacade.createLodge(userId, request);
         return ApiResponse.success(new LodgeCreateResponse(lodge));
     }
 
@@ -88,7 +87,7 @@ public class LodgeController {
     public ApiResponse<LodgeReadOneResponse> readOne(
             @PathVariable String lodgeId
     ) {
-        return ApiResponse.success(lodgeService.readLodge(lodgeId));
+        return ApiResponse.success(lodgeFacade.readLodge(lodgeId));
     }
 
     @ResponseStatus(HttpStatus.OK)

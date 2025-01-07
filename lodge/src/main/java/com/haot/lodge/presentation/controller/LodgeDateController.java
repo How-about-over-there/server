@@ -1,8 +1,9 @@
 package com.haot.lodge.presentation.controller;
 
 
-import com.haot.lodge.application.service.Impl.LodgeDateService;
-import com.haot.lodge.application.service.LodgeService;
+import com.haot.lodge.application.facade.LodgeDateFacade;
+import com.haot.lodge.application.service.implement.LodgeDateServiceImpl;
+import com.haot.lodge.application.facade.LodgeFacade;
 import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
 import com.haot.lodge.presentation.request.LodgeDateUpdateStatusRequest;
@@ -31,8 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LodgeDateController {
 
-    private final LodgeService lodgeService;
-    private final LodgeDateService lodgeDateService;
+    private final LodgeDateFacade lodgeDateFacade;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
@@ -45,7 +45,7 @@ public class LodgeDateController {
             @RequestParam(name = "end", required = false) LocalDate end
     ) {
         return ApiResponse.success(
-                lodgeService.readLodgeDates(pageable, lodgeId, start, end)
+                lodgeDateFacade.readLodgeDates(pageable, lodgeId, start, end)
         );
     }
 
@@ -63,7 +63,7 @@ public class LodgeDateController {
     public ApiResponse<Void> updateStatus(
             @Valid @RequestBody LodgeDateUpdateStatusRequest request
     ) {
-        lodgeDateService.updateStatus(request.lodgeDateIds(), request.status());
+        lodgeDateFacade.updateStatus(request.lodgeDateIds(), request.status());
         return ApiResponse.success();
     }
 
