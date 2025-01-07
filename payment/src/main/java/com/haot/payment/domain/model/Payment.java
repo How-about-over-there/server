@@ -52,4 +52,10 @@ public class Payment {
                 .status(status)
                 .build();
     }
+
+    public void complete(String merchantId, Double finalPrice, PaymentStatus status) {
+        this.merchantId = merchantId;
+        this.finalPrice = finalPrice;
+        this.status = status;
+    }
 }
