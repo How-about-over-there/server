@@ -26,12 +26,15 @@ public class LodgeServiceImpl implements LodgeService {
     public Lodge create(
             String userId, String name, String description, String address, Integer term, Double basicPrice
     ) {
-        if(lodgeRepository.findByHostIdAndName(userId, name).isPresent()) {
-            throw new LodgeException(ErrorCode.ALREADY_EXIST_LODGE_NAME);
-        }
+        nameValidation(userId, name);
         return lodgeRepository.save(Lodge.createLodge(
                 userId, name, description, address, term, basicPrice
         ));
     }
 
+    private void nameValidation(String hostId, String name) {
+        if(lodgeRepository.findByHostIdAndName(hostId, name).isPresent()) {
+            throw new LodgeException(ErrorCode.ALREADY_EXIST_LODGE_NAME);
+        }
+    }
 }
