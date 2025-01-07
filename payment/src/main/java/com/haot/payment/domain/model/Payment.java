@@ -42,4 +42,14 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PaymentStatus status;
+
+    public static Payment create(String userId, String reservationId, Double price, PaymentMethod method, PaymentStatus status) {
+        return Payment.builder()
+                .userId(userId)
+                .reservationId(reservationId)
+                .price(price)
+                .method(method)
+                .status(status)
+                .build();
+    }
 }
