@@ -32,6 +32,14 @@ public class LodgeServiceImpl implements LodgeService {
         ));
     }
 
+    @Override
+    public void update(
+            Lodge lodge, String name, String description, String address, Integer term, Double basicPrice
+    ) {
+        nameValidation(lodge.getHostId(), name);
+        lodge.update(name, description, address, term, basicPrice);
+    }
+
     private void nameValidation(String hostId, String name) {
         if(lodgeRepository.findByHostIdAndName(hostId, name).isPresent()) {
             throw new LodgeException(ErrorCode.ALREADY_EXIST_LODGE_NAME);

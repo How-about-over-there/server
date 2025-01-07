@@ -16,4 +16,13 @@ public interface LodgeService {
             Double basicPrice
     );
 
+    void update(
+            Lodge lodge,
+            String name,
+            String description,
+            String address,
+            Integer term,
+            Double basicPrice
+    );
+
 }
