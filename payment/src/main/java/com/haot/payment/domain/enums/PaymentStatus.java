@@ -1,7 +1,11 @@
 package com.haot.payment.domain.enums;
 
+import com.haot.payment.common.exception.CustomPaymentException;
+import com.haot.payment.common.exception.enums.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
@@ -15,4 +19,11 @@ public enum PaymentStatus {
     PARTIAL_CANCELLED("결제 부분 취소");
 
     private final String description;
+
+    public static PaymentStatus fromString(String status) {
+        return Arrays.stream(PaymentStatus.values())
+                .filter(enumValue -> enumValue.name().equalsIgnoreCase(status))   // 대소문자 구분 X
+                .findFirst()
+                .orElseThrow(() ->  new CustomPaymentException(ErrorCode.PAYMENT_STATUS_NOT_SUPPORTED));
+    }
 }
