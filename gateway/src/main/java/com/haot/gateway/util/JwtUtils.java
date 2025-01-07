@@ -1,6 +1,8 @@
 package com.haot.gateway.util;
 
 import com.haot.gateway.data.Role;
+import com.haot.gateway.exception.ErrorCode;
+import com.haot.gateway.exception.GatewayException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -65,7 +67,7 @@ public class JwtUtils {
       return tokenValue.substring(7);
     }
     log.error("Not Found Token");
-    throw new NullPointerException("Not Found Token");
+    throw new GatewayException(ErrorCode.TOKEN_NOT_FOUND_EXCEPTION);
   }
 
   // 토큰 검증
