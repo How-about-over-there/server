@@ -7,4 +7,7 @@ public interface PaymentService {
 
     // 결제 생성
     PaymentResponse createPayment(PaymentCreateRequest request);
+
+    // 결제 확인
+    PaymentResponse completePayment(String paymentId);
 }

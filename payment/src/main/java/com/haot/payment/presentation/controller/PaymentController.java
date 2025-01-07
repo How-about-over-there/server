@@ -46,6 +46,15 @@ public class PaymentController {
         ));
     }
 
+    // 결제 확인
+    @PostMapping("/{paymentId}/complete")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<PaymentResponse> completePayment(@PathVariable String paymentId) {
+        PaymentResponse payment = paymentService.completePayment(paymentId);
+        log.info("결제 완료 정보: {}", ApiResponse.success(payment)); // 결제 확인 출력
+        return ApiResponse.success(payment);
+    }
+
     // 결제 단건 조회
     @GetMapping("/{paymentId}")
     @ResponseStatus(HttpStatus.OK)
