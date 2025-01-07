@@ -20,6 +20,11 @@ public class UserCRUDServiceImpl implements UserCRUDService {
 
   @Transactional
   public UserCreateResponse createUser(UserCreateRequest request) {
+    // validation : 이미 해당 이메일을 가진 유저가 존재하는지 확인
+    if (userRepository.existsByEmail(request.email())) {
+      throw new UserException((ErrorCode.USER_ALREADY_EXIST_EXCEPTION));
+    }
+
     // business logic
     // 1. request 의 Role 이 ADMIN 일 경우 생성 불가
     if (request.role().equals(Role.ADMIN)) {

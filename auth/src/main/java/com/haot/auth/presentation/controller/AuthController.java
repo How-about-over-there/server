@@ -1,6 +1,8 @@
 package com.haot.auth.presentation.controller;
 
+import com.haot.auth.application.dto.req.AuthLoginRequest;
 import com.haot.auth.application.dto.req.AuthSignupRequest;
+import com.haot.auth.application.dto.res.AuthLoginResponse;
 import com.haot.auth.application.dto.res.AuthSignupResponse;
 import com.haot.auth.application.service.AuthService;
 import com.haot.auth.common.response.ApiResponse;
@@ -22,4 +24,10 @@ public class AuthController {
   public ApiResponse<AuthSignupResponse> signup(@Valid @RequestBody AuthSignupRequest request){
     return ApiResponse.success(authService.signup(request));
   }
+
+  @PostMapping("/login")
+  public ApiResponse<AuthLoginResponse> login(@Valid @RequestBody AuthLoginRequest request){
+    return ApiResponse.success(authService.login(request));
+  }
+
 }
