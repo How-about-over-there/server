@@ -1,6 +1,7 @@
-package com.haot.lodge.application.service.Impl;
+package com.haot.lodge.application.service.implement;
 
 
+import com.haot.lodge.application.service.LodgeImageService;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeImage;
 import com.haot.lodge.domain.repository.LodgeImageRepository;
@@ -10,10 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
-public class LodgeImageService {
+public class LodgeImageServiceImpl implements LodgeImageService {
 
     private final LodgeImageRepository lodgeImageRepository;
 
+    @Override
     public void create(
             Lodge lodge, MultipartFile file, String title, String description
     ) {

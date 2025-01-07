@@ -1,7 +1,8 @@
-package com.haot.lodge.application.service.Impl;
+package com.haot.lodge.application.service.implement;
 
 
 import com.haot.lodge.application.response.LodgeDateResponse;
+import com.haot.lodge.application.service.LodgeDateService;
 import com.haot.lodge.common.exception.ErrorCode;
 import com.haot.lodge.common.exception.LodgeException;
 import com.haot.lodge.domain.model.Lodge;
@@ -19,18 +20,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class LodgeDateService {
+public class LodgeDateServiceImpl implements LodgeDateService {
 
     private final LodgeDateRepository lodgeDateRepository;
     private final Integer MIN_RANGE = 30;
     private final Integer MAX_RANGE = 365;
 
 
-    @Transactional
+    @Override
+    public LodgeDate getValidLodgeDateById(String lodgeDateId) {
+        return lodgeDateRepository.findById(lodgeDateId)
+                .orElseThrow(()-> new LodgeException(ErrorCode.LODGE_DATE_NOT_FOUND));
+    }
+
+    @Override
     public void create(
             Lodge lodge, LocalDate startDate, LocalDate endDate, List<LocalDate> excludeDates
     ) {
@@ -51,6 +57,7 @@ public class LodgeDateService {
         lodgeDateRepository.saveAll(lodgeDates);
     }
 
+    @Override
     public Slice<LodgeDateResponse> readAll(
             Pageable pageable, Lodge lodge, LocalDate start, LocalDate end
     ) {
@@ -59,14 +66,11 @@ public class LodgeDateService {
                 .map(LodgeDateResponse::from);
     }
 
-    @Transactional
-    public void updateStatus(List<String> ids, String requestStatus) {
-        ReservationStatus status = ReservationStatus.fromString(requestStatus);
-        ids.forEach(id -> {
-            LodgeDate lodgeDate = lodgeDateRepository.findById(id)
-                    .orElseThrow(()-> new LodgeException(ErrorCode.LODGE_DATE_NOT_FOUND));
-            lodgeDate.updateStatus(status);
-        });
+    @Override
+    public void updateStatus(
+            LodgeDate lodgeDate, ReservationStatus status
+    ) {
+        lodgeDate.updateStatus(status);
     }
 
     /**
