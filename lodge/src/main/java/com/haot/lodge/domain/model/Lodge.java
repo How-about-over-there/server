@@ -70,4 +70,14 @@ public class Lodge extends BaseEntity{
                 .build();
     }
 
+    public void update(
+            String name, String description, String address, Integer term, Double basicPrice
+    ) {
+        if(name!=null) this.name = name;
+        if(description!=null) this.description = description;
+        if(address!=null) this.address = address;
+        if(term!=null) this.term = term;
+        if(basicPrice!=null) this.basicPrice = basicPrice;
+    }
+
 }
