@@ -57,6 +57,10 @@
             if (response.code) {
                 alert("결제 실패: " + response.message);
             } else {
+                await fetch(`/api/v1/payments/${paymentId}/complete`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
                 alert("결제 성공! Payment ID: " + response.paymentId);
             }
         } catch (error) {
