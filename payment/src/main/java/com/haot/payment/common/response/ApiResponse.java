@@ -13,19 +13,19 @@ public record ApiResponse<T> (
         T data
 ) {
     public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>("8000", "Success", "API 요청에 성공했습니다", data);
+        return new ApiResponse<>("8000", "SUCCESS", "API 요청에 성공했습니다", data);
     }
 
     public static ApiResponse<Void> success() {
-        return new ApiResponse<>("8000", "Success","API 요청에 성공했습니다", null);
+        return new ApiResponse<>("8000", "SUCCESS","API 요청에 성공했습니다", null);
     }
 
     public static ApiResponse<Object> error(ResCodeIfs resCodeIfs){
-        return new ApiResponse<>(resCodeIfs.getCode(), "Error", resCodeIfs.getMessage(), null, null);
+        return new ApiResponse<>(resCodeIfs.getCode(), "ERROR", resCodeIfs.getMessage(), null, null);
     }
 
     public static ApiResponse<Object> error(ResCodeIfs resCodeIfs, List<String> errorList) {
-        return new ApiResponse<>(resCodeIfs.getCode(), "Error", resCodeIfs.getMessage(), errorList, null);
+        return new ApiResponse<>(resCodeIfs.getCode(), "ERROR", resCodeIfs.getMessage(), errorList, null);
     }
 
     public ApiResponse(String statusCode, String status, String message, T data){
