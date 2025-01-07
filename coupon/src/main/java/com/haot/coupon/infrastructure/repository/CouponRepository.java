@@ -9,4 +9,7 @@ import java.util.Optional;
 public interface CouponRepository extends JpaRepository<Coupon, String> {
 
     Optional<Coupon> findByIdAndExpiredDateIsAfterAndIsDeleteFalse(String couponId, LocalDateTime eventEndDate);
+
+    Optional<Coupon> findByIdAndIsDeleteFalse(String couponId);
+
 }
