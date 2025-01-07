@@ -22,4 +22,11 @@ public class Point extends BaseEntity{
     @Column(name = "total_points", nullable = false)
     @Min(0)
     private Double totalPoints;
+
+    public static Point create(String userId, Double totalPoints) {
+        return Point.builder()
+                .userId(userId)
+                .totalPoints(totalPoints)
+                .build();
+    }
 }
