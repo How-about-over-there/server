@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_user_coupon")
+@Table(name = "p_user_coupon", schema = "coupon")
 public class UserCoupon {
 
     @Id
