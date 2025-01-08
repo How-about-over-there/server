@@ -30,7 +30,7 @@ public class PointController {
     // 본인 포인트 조회
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<PointResponse> getPointById(@RequestParam String userId) {
+    public ApiResponse<PointResponse> getPointById(@RequestParam(required = false) String userId) {
         return ApiResponse.success(pointService.getPoint(userId));
     }
 
