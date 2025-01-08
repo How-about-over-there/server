@@ -25,9 +25,9 @@ public enum ErrorCode implements ResCodeIfs {
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "8001", "결제 정보를 찾을 수 없습니다."),
     PAYMENT_METHOD_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "8002", "지원하지 않는 결제 방식입니다."),
     PAYMENT_STATUS_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "8003", "지원하지 않는 결제 상태입니다."),
-    PAYMENT_FAILED(HttpStatus.BAD_REQUEST, "8004", "결제가 실패했습니다."),
+    PORTONE_API_CALL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "8004", "외부 결제 시스템 호출이 실패했습니다."),
     PAYMENT_PRICE_MISMATCH(HttpStatus.BAD_REQUEST, "8005", "결제 요청 금액과 실제 결제 금액이 일치하지 않습니다."),
-    INVALID_PAYMENT_REQUEST(HttpStatus.BAD_REQUEST, "8006", "잘못된 결제 요청입니다."),
+    INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "8006", "결제가 완료되지 않았습니다."),
     PAYMENT_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "8007", "이미 처리된 결제입니다.");
 
     private final HttpStatus httpStatus;
