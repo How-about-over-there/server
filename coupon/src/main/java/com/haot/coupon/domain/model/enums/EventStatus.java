@@ -1,7 +1,11 @@
 package com.haot.coupon.domain.model.enums;
 
+import com.haot.coupon.common.exceptions.CustomCouponException;
+import com.haot.coupon.common.response.enums.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.stream.Stream;
 
 @Getter
 @AllArgsConstructor
@@ -15,5 +19,12 @@ public enum EventStatus {
     ;
 
     private final String description;
+
+    public static EventStatus checkEventStatus(String status) {
+        return Stream.of(EventStatus.values())
+                .filter(eventStatus -> eventStatus.name().equalsIgnoreCase(status))
+                .findFirst()
+                .orElseThrow(() -> new CustomCouponException(ErrorCode.EVENT_STATUS_NOT_MATCH));
+    }
 
 }

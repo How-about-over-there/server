@@ -58,4 +58,10 @@ public class Coupon {
     @Column(name = "is_delete", nullable = false)
     private boolean isDelete = false;
 
+    public void issue(){
+        this.issuedQuantity++;
+    }
+
+
+
 }
