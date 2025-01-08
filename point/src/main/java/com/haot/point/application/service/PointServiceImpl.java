@@ -33,6 +33,7 @@ public class PointServiceImpl implements PointService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PointResponse getPoint(String userId) {
         // TODO: 1. 권한 체크 후 userId 설정
 
