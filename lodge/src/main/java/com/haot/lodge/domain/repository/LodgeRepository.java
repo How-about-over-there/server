@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus
-public interface LodgeRepository extends JpaRepository<Lodge, String> {
+public interface LodgeRepository extends JpaRepository<Lodge, String>, LodgeCustomRepository {
     Optional<Lodge> findByHostIdAndName(String hostId, String name);
 }
