@@ -51,6 +51,7 @@ public class CouponServiceImpl implements CouponService {
         // TODO 무제한일때 kafka로 부하분산하고 redis로 비동기 처리? 트러블 슈팅
 
         // TODO 선착순일때 순서보장되야 된다. kafka나 Queue, redis등 무었을 쓸지 고민하여 넣어야 한다.
+        // TODO redis에 쿠폰 수량 저장해놔 동시성 문제 해결하기
         if(coupon.getType() == CouponType.PRIORITY){
             checkPriorityCouponStock(event, coupon);
         }
