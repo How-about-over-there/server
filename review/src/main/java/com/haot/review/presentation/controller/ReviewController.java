@@ -23,7 +23,6 @@ public class ReviewController {
 
   private final ReviewService reviewService;
 
-  @RoleCheck({Role.USER})
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   public ApiResponse<ReviewGetResponse> create(
