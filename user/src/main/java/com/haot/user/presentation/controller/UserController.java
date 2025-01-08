@@ -11,7 +11,7 @@ import com.haot.user.application.service.UserCRUDService;
 import com.haot.user.application.service.UserValidationService;
 import com.haot.user.common.response.ApiResponse;
 import com.haot.user.domain.model.enums.Gender;
-import com.haot.user.domain.model.enums.Role;
+import com.haot.user.submodule.role.Role;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
