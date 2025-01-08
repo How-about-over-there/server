@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_lodge_image")
+@Table(name = "p_review_image")
 public class ReviewImage {
 
   @Id
