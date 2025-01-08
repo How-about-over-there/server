@@ -45,8 +45,7 @@ public class PaymentServiceImpl implements PaymentService{
     @Transactional
     public PaymentResponse completePayment(String paymentId) {
         // 1. 결제 데이터 확인
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new CustomPaymentException(ErrorCode.PAYMENT_NOT_FOUND));
+        Payment payment = validPayment(paymentId);
 
         // 2. 포트원 결제 단건 조회 API 호출
         PortOneResponse paymentData = portOneService.getPaymentData(payment.getId());
@@ -77,5 +76,19 @@ public class PaymentServiceImpl implements PaymentService{
         // TODO: 5. 예약 상태 변경 API 호출
 
         return PaymentResponse.of(payment);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaymentResponse getPaymentById(String paymentId) {
+        // 결제 데이터 확인
+        Payment payment = validPayment(paymentId);
+
+        return PaymentResponse.of(payment);
+    }
+
+    private Payment validPayment(String paymentId) {
+        return paymentRepository.findByIdAndIsDeletedFalse(paymentId)
+                .orElseThrow(() -> new CustomPaymentException(ErrorCode.PAYMENT_NOT_FOUND));
     }
 }
