@@ -1,6 +1,9 @@
 package com.haot.lodge.application.service;
 
 import com.haot.lodge.domain.model.Lodge;
+import java.time.LocalDate;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 
 public interface LodgeService {
@@ -14,6 +17,16 @@ public interface LodgeService {
             String address,
             Integer term,
             Double basicPrice
+    );
+
+    Slice<Lodge> readAllBy(
+            Pageable pageable,
+            String name,
+            String address,
+            Integer maxReservationDay,
+            Integer maxPersonnel,
+            LocalDate checkInDate,
+            LocalDate checkOutDate
     );
 
     void update(

@@ -13,8 +13,13 @@ import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeRule;
 import com.haot.lodge.presentation.request.LodgeCreateRequest;
 import com.haot.lodge.presentation.request.LodgeUpdateRequest;
+import com.haot.lodge.presentation.response.LodgeReadAllResponse;
 import com.haot.lodge.presentation.response.LodgeReadOneResponse;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +59,24 @@ public class LodgeFacade {
         );
     }
 
+    @Transactional(readOnly = true)
+    public Slice<LodgeReadAllResponse> readAllLodgeBy(
+            Pageable pageable, String name, String address,
+            Integer maxReservationDay, Integer maxPersonnel,
+            LocalDate checkInDate, LocalDate checkOutDate
+    ) {
+
+        return lodgeService
+                .readAllBy(pageable, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
+                .map(lodge -> new LodgeReadAllResponse(
+                        LodgeResponse.from(lodge),
+                        lodge.getImages()
+                                .stream()
+                                .map(LodgeImageResponse::from)
+                                .toList()
+                ));
+    }
+
     @Transactional
     public void updateLodge(String lodgeId, LodgeUpdateRequest request) {
         Lodge lodge = lodgeService.getValidLodgeById(lodgeId);
@@ -66,6 +89,5 @@ public class LodgeFacade {
                 request.basicPrice()
         );
     }
-
 
 }

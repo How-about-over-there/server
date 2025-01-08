@@ -2,7 +2,6 @@ package com.haot.lodge.presentation.controller;
 
 
 import com.haot.lodge.application.response.LodgeResponse;
-import com.haot.lodge.application.response.LodgeImageResponse;
 import com.haot.lodge.application.facade.LodgeFacade;
 import com.haot.lodge.presentation.response.LodgeReadAllResponse;
 import com.haot.lodge.presentation.request.LodgeCreateRequest;
@@ -11,13 +10,14 @@ import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.presentation.response.LodgeCreateResponse;
 import com.haot.lodge.presentation.response.LodgeReadOneResponse;
 import jakarta.validation.Valid;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,39 +49,24 @@ public class LodgeController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public ApiResponse<Page<LodgeReadAllResponse>> readAll(
+    public ApiResponse<Slice<LodgeReadAllResponse>> readAll(
             @PageableDefault(size = 30)
-            Pageable pageable
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "createdAt", direction = Direction.DESC),
+                    @SortDefault(sort = "updatedAt", direction = Direction.DESC)
+            })
+            Pageable pageable,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "address", required = false) String address,
+            @RequestParam(name = "maxReservationDay", required = false) Integer maxReservationDay,
+            @RequestParam(name = "maxPersonnel", required = false) Integer maxPersonnel,
+            @RequestParam(name = "checkInDate", required = false) LocalDate checkInDate,
+            @RequestParam(name = "checkOutDate", required = false) LocalDate checkOutDate
     ) {
-        LodgeResponse info = LodgeResponse.builder()
-                .id("UUID")
-                .name("이름")
-                .description("휴양지입니다.")
-                .term(2)
-                .address("경기도 고양시 고양로 551")
-                .build();
-        LodgeResponse info2 = LodgeResponse.builder()
-                .id("UUID2")
-                .name("이름")
-                .description("휴양지입니다.")
-                .term(2)
-                .address("경기도 고양시 고양로 551")
-                .build();
-        LodgeImageResponse image = LodgeImageResponse.builder()
-                .id("imageId")
-                .url("http://s3url")
-                .build();
-        LodgeReadAllResponse data = LodgeReadAllResponse.builder()
-                .lodge(info)
-                .images(List.of(image))
-                .build();
-        LodgeReadAllResponse data2 = LodgeReadAllResponse.builder()
-                .lodge(info2)
-                .images(List.of(image))
-                .build();
-        List<LodgeReadAllResponse> list = List.of(data, data2);
-        Page<LodgeReadAllResponse> response = new PageImpl<>(list, pageable, list.size());
-        return ApiResponse.success(response);
+        return ApiResponse.success(
+                lodgeFacade.readAllLodgeBy(
+                        pageable, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
+        );
     }
 
     @ResponseStatus(HttpStatus.OK)
