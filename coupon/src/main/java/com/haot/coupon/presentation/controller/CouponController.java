@@ -81,7 +81,7 @@ public class CouponController {
         return ApiResponse.SUCCESS(SuccessCode.CUSTOMER_ISSUED_COUPON_SUCCESS);
     }
 
-    // TODO [예약 유효성 검사 Feign] userID 받아야된다.
+    // TODO [예약 유효성 검사 Feign] userID 받아야된다. Post로 변경해야 된다.
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{couponId}/verify")
     public ApiResponse<ReservationVerifyResponse> verify(@PathVariable String couponId, Double reservationPrice) {
