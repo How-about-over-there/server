@@ -1,6 +1,7 @@
 package com.haot.coupon.domain.model;
 
 import com.haot.coupon.domain.model.enums.CouponStatus;
+import com.haot.coupon.submodule.auditor.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_user_coupon", schema = "coupon")
-public class UserCoupon {
+public class UserCoupon extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
