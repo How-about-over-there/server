@@ -68,7 +68,7 @@ public class PaymentServiceImpl implements PaymentService{
             case PARTIAL_CANCELLED:
                 throw new CustomPaymentException(ErrorCode.PAYMENT_ALREADY_PROCESSED);
             default:
-                throw new CustomPaymentException(ErrorCode.PAYMENT_FAILED);
+                throw new CustomPaymentException(ErrorCode.INVALID_PAYMENT_STATUS);
         }
 
         // 4. 결제 상태 변경
