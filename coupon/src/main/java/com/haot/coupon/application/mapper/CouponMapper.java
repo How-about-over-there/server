@@ -2,6 +2,7 @@ package com.haot.coupon.application.mapper;
 
 import com.haot.coupon.application.dto.request.coupons.CouponCreateRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponCreateResponse;
+import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.domain.model.Coupon;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,5 +22,11 @@ public interface CouponMapper {
     Coupon toEntity(CouponCreateRequest couponCreateRequest);
 
     CouponCreateResponse responseId(String couponId);
+
+    @Mapping(source = "id", target = "couponId")
+    @Mapping(source = "name", target = "couponName")
+    @Mapping(source = "type", target = "couponType")
+    @Mapping(source = "discountRate.rate", target = "discountRate")
+    CouponSearchResponse toSearchResponse(Coupon coupon);
 
 }

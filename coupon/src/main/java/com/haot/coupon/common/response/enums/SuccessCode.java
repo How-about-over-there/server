@@ -13,6 +13,7 @@ public enum SuccessCode implements ResCodeIfs {
     CREATE_EVENT_SUCCESS(HttpStatus.CREATED, "4000", "이벤트가 성공적으로 생성되었습니다."),
     CUSTOMER_ISSUED_COUPON_SUCCESS(HttpStatus.OK, "4000", "사용자가 쿠폰을 성공적으로 발급하였습니다."),
     GET_DETAIL_EVENT_SUCCESS(HttpStatus.OK, "4000", "이벤트 상세조회 성공하였습니다."),
+    GET_DETAIL_COUPON_SUCCESS(HttpStatus.OK, "4000", "쿠폰 상세조회 성공하였습니다."),
     ;
 
     private final HttpStatus httpStatus;

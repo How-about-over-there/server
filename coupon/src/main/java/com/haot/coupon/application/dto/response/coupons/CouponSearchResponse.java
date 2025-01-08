@@ -10,15 +10,15 @@ import java.time.LocalDateTime;
 public record CouponSearchResponse(
         String couponId,
         String couponName,
-        LocalDateTime couponAvailableDate,
-        LocalDateTime couponExpiredDate,
-        CouponType couponType,
-        DiscountPolicy discountPolicy,
-        Double minimumAmount,
-        Double maximumAmount,
+        LocalDateTime availableDate,
+        LocalDateTime expiredDate,
+        String couponType,
+        String discountPolicy,
+        Double minAvailableAmount,
+        Double maxAvailableAmount,
         Integer discountRate,
         Double discountAmount,
-        Integer maxQuantity,
+        Integer totalQuantity,
         Integer issuedQuantity
 ) {
 }
