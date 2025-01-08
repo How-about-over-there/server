@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_point", schema = "point")
-public class Point {
+public class Point extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "point_id")
@@ -22,4 +22,11 @@ public class Point {
     @Column(name = "total_points", nullable = false)
     @Min(0)
     private Double totalPoints;
+
+    public static Point create(String userId, Double totalPoints) {
+        return Point.builder()
+                .userId(userId)
+                .totalPoints(totalPoints)
+                .build();
+    }
 }

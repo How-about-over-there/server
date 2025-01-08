@@ -4,8 +4,10 @@ import com.haot.point.application.dto.request.PointCreateRequest;
 import com.haot.point.application.dto.request.PointTransactionRequest;
 import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointResponse;
+import com.haot.point.application.service.PointService;
 import com.haot.point.common.response.ApiResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,19 +15,16 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v1/points")
+@RequiredArgsConstructor
 public class PointController {
+
+    private final PointService pointService;
 
     // 포인트 생성
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<PointResponse> createPoint(@Valid @RequestBody PointCreateRequest request) {
-        return ApiResponse.success(
-                new PointResponse(
-                        "POINT-UUID",
-                        request.userId(),
-                        request.totalPoints()
-                )
-        );
+        return ApiResponse.success(pointService.createPoint(request));
     }
 
     // 본인 포인트 단건 조회
