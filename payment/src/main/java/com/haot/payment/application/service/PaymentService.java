@@ -10,4 +10,7 @@ public interface PaymentService {
 
     // 결제 확인
     PaymentResponse completePayment(String paymentId);
+
+    // 본인 결제 단건 조회
+    PaymentResponse getPaymentById(String paymentId);
 }

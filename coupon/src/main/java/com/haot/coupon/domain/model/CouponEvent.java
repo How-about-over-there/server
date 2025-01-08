@@ -43,17 +43,21 @@ public class CouponEvent {
     private boolean isDelete = false;
 
 
-    public void updateEventStatus(){
+    public void updateExpiredEventStatus(){
 
         LocalDateTime now = LocalDateTime.now();
 
-        this.eventStatus = EventStatus.DEFAULT;
-
-        if(now.isAfter(this.eventEndDate)){
+        if (now.isAfter(this.eventEndDate)) {
             this.eventStatus = EventStatus.EXPIRED;
-
+        } else {
+            this.eventStatus = EventStatus.DEFAULT;
         }
 
     }
+
+    public void updateEventStatus(EventStatus eventStatus){
+        this.eventStatus = eventStatus;
+    }
+
 
 }
