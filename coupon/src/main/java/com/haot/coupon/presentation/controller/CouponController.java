@@ -53,20 +53,8 @@ public class CouponController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{couponId}")
-    public ApiResponse<CouponSearchResponse> getCouponDetails(@PathVariable String couponId) {
-        return ApiResponse.success(CouponSearchResponse.builder()
-                .couponId(couponId)
-                .couponName("테스트 쿠폰 1")
-                .couponAvailableDate(LocalDateTime.now().minusDays(1))
-                .couponExpiredDate(LocalDateTime.now().plusDays(1))
-                .couponType(CouponType.PRIORITY)
-                .discountPolicy(DiscountPolicy.PERCENTAGE)
-                .maximumAmount(500000.0)
-                .minimumAmount(50000.0)
-                .discountRate(10)
-                .maxQuantity(2000)
-                .issuedQuantity(300)
-                .build());
+    public ApiResponse<CouponSearchResponse> getCouponDetails(@PathVariable(value = "couponId") String couponId) {
+        return ApiResponse.SUCCESS(SuccessCode.GET_DETAIL_COUPON_SUCCESS, couponService.getCouponDetails(couponId));
     }
 
     // TODO userId 받아야 된다.

@@ -1,7 +1,9 @@
 package com.haot.coupon.application.service.impl;
 
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
+import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.application.kafka.CouponErrorProducer;
+import com.haot.coupon.application.mapper.CouponMapper;
 import com.haot.coupon.application.mapper.UserCouponMapper;
 import com.haot.coupon.application.service.CouponService;
 import com.haot.coupon.common.exceptions.CustomCouponException;
@@ -26,6 +28,7 @@ public class CouponServiceImpl implements CouponService {
     private final CouponEventRepository couponEventRepository;
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
+    private final CouponMapper couponMapper;
     private final UserCouponMapper userCouponMapper;
     private final CouponErrorProducer couponErrorProducer;
 
@@ -60,6 +63,16 @@ public class CouponServiceImpl implements CouponService {
 
         couponRepository.increaseIssuedQuantity(coupon.getId());
 
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public CouponSearchResponse getCouponDetails(String couponId) {
+
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new CustomCouponException(ErrorCode.COUPON_NOT_FOUND));
+
+        return couponMapper.toSearchResponse(coupon);
     }
 
     @Transactional
