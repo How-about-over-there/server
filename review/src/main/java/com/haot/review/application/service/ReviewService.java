@@ -25,7 +25,7 @@ public class ReviewService {
     // mock S3 서비스로 이미지를 업로드 및 String List 반환
     List<String> imageUrls = mockS3Service.uploadImages(request.images());
 
-    Review review = Review.createReview(userId, request.contents());
+    Review review = Review.createReview(userId, request.contents(), request.lodgeId());
     reviewRepository.save(review);
 
     List<ReviewImage> reviewImages = imageUrls.stream()

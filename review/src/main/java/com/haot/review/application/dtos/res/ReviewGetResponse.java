@@ -11,6 +11,7 @@ public record ReviewGetResponse(
     String reviewId,
     String userId,
     String contents,
+    String lodgeId,
     List<String> imageUrls
 
 ) {
@@ -20,6 +21,7 @@ public record ReviewGetResponse(
         .reviewId(review.getReviewId())
         .userId(review.getUserId())
         .contents(review.getContents())
+        .lodgeId(review.getLodgeId())
         .imageUrls(review.getImages().stream()
             .map(ReviewImage::getUrl)
             .toList()

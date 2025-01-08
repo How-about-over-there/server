@@ -32,6 +32,9 @@ public class Review extends BaseEntity {
   @Column(name = "user_id", nullable = false)
   private String userId;
 
+  @Column(name = "lodge_id", nullable = false)
+  private String lodgeId;
+
   @Column(name = "contents", nullable = false)
   private String contents;
 
@@ -39,9 +42,10 @@ public class Review extends BaseEntity {
   @Builder.Default
   private List<ReviewImage> images = new ArrayList<>();
 
-  public static Review createReview(String userId, String contents) {
+  public static Review createReview(String userId, String contents, String lodgeId) {
     return Review.builder()
         .userId(userId)
+        .lodgeId(lodgeId)
         .contents(contents)
         .build();
   }
