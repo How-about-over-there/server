@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: reservation-service
+    name: review-service
   datasource:
     url: jdbc:postgresql://localhost:5432/reservation
     username: ws
