@@ -55,22 +55,11 @@ public class PaymentController {
         return ApiResponse.success(payment);
     }
 
-    // 결제 단건 조회
+    // 본인 결제 단건 조회
     @GetMapping("/{paymentId}")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<PaymentResponse> getPaymentById(@PathVariable String paymentId) {
-        return ApiResponse.success(
-                new PaymentResponse(
-                        paymentId,
-                        "USER-UUID",
-                        "RESERVATION-UUID",
-                        "MERCHANT-ID",
-                        100000.0,
-                        100000.0,
-                        "CARD",
-                        "READY"
-                )
-        );
+        return ApiResponse.success(paymentService.getPaymentById(paymentId));
     }
 
     // 결제 전체 조회 및 검색
