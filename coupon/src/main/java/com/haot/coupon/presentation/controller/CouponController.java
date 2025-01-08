@@ -1,5 +1,6 @@
 package com.haot.coupon.presentation.controller;
 
+import com.haot.coupon.application.dto.feign.request.FeignVerifyRequest;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponReadMeResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
@@ -69,14 +70,10 @@ public class CouponController {
         return ApiResponse.SUCCESS(SuccessCode.CUSTOMER_ISSUED_COUPON_SUCCESS);
     }
 
-    // TODO [예약 유효성 검사 Feign] userID 받아야된다. Post로 변경해야 된다.
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{couponId}/verify")
-    public ApiResponse<ReservationVerifyResponse> verify(@PathVariable String couponId, Double reservationPrice) {
-        return ApiResponse.success(ReservationVerifyResponse.builder()
-                .reservationCouponId("dsknfsdvcxv")
-                .discountedPrice(35000.0)
-                .build());
+    @PostMapping("/verify")
+    public ApiResponse<ReservationVerifyResponse> verify(@RequestBody FeignVerifyRequest request) {
+        return ApiResponse.success(couponService.verify(request));
     }
 
     // [Feign] 예약 취소 or 확정 API TODO reservationStatus ENUM값 체크 하는 메서드 써서 체크하기

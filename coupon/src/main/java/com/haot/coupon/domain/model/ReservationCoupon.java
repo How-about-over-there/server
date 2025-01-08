@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_reservation_coupon")
+@Table(name = "p_reservation_coupon", schema = "coupon")
 public class ReservationCoupon {
 
     @Id
