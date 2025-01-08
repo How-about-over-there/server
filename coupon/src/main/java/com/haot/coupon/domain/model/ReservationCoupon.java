@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -23,7 +23,7 @@ public class ReservationCoupon extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "reservation_coupon_status")
-    private ReservationCouponStatus reservationCouponStatus = ReservationCouponStatus.PREEMPTION;
+    private ReservationCouponStatus reservationCouponStatus;
 
     @Column(nullable = false, name = "reservation_price")
     private Double reservationPrice;
@@ -32,5 +32,5 @@ public class ReservationCoupon extends BaseEntity {
     private Double reservationDiscountPrice;
 
     @Column(name = "is_delete", nullable = false)
-    private boolean isDelete = false;
+    private boolean isDelete;
 }

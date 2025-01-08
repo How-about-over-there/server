@@ -28,11 +28,11 @@ public class UserCoupon extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "coupon_status")
-    private CouponStatus couponStatus = CouponStatus.DISTRIBUTED;
+    private CouponStatus couponStatus;
 
     @Column(nullable = true, name = "used_date")
     private LocalDateTime usedDate;
 
     @Column(name = "is_delete", nullable = false)
-    private boolean isDelete = false;
+    private boolean isDelete;
 }

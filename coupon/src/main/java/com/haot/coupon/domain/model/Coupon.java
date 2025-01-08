@@ -57,7 +57,7 @@ public class Coupon extends BaseEntity {
     private Double discountAmount;
 
     @Column(name = "is_delete", nullable = false)
-    private boolean isDelete = false;
+    private boolean isDelete;
 
     public void issue(){
         this.issuedQuantity++;
