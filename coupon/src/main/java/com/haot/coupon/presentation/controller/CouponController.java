@@ -4,7 +4,9 @@ import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateReque
 import com.haot.coupon.application.dto.response.coupons.CouponReadMeResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.application.dto.response.coupons.ReservationVerifyResponse;
+import com.haot.coupon.application.service.CouponService;
 import com.haot.coupon.common.response.ApiResponse;
+import com.haot.coupon.common.response.enums.SuccessCode;
 import com.haot.coupon.domain.model.enums.CouponStatus;
 import com.haot.coupon.domain.model.enums.CouponType;
 import com.haot.coupon.domain.model.enums.DiscountPolicy;
@@ -14,11 +16,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/coupons")
 public class CouponController {
+
+    private final CouponService couponService;
 
     // TODO Header에서 userId 받아 사용
     @ResponseStatus(HttpStatus.OK)
@@ -48,29 +53,23 @@ public class CouponController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{couponId}")
-    public ApiResponse<CouponSearchResponse> getCouponDetails(@PathVariable String couponId) {
-        return ApiResponse.success(CouponSearchResponse.builder()
-                .couponId(couponId)
-                .couponName("테스트 쿠폰 1")
-                .couponAvailableDate(LocalDateTime.now().minusDays(1))
-                .couponExpiredDate(LocalDateTime.now().plusDays(1))
-                .couponType(CouponType.PRIORITY)
-                .discountPolicy(DiscountPolicy.PERCENTAGE)
-                .maximumAmount(500000.0)
-                .minimumAmount(50000.0)
-                .discountRate(10)
-                .maxQuantity(2000)
-                .issuedQuantity(300)
-                .build());
+    public ApiResponse<CouponSearchResponse> getCouponDetails(@PathVariable(value = "couponId") String couponId) {
+        return ApiResponse.SUCCESS(SuccessCode.GET_DETAIL_COUPON_SUCCESS, couponService.getCouponDetails(couponId));
     }
 
+    // TODO userId 받아야 된다.
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/issued")
-    public ApiResponse<Void> issueCoupon(@RequestBody CouponCustomerCreateRequest request, String userId) {
-        return ApiResponse.success();
+    public ApiResponse<Void> customerIssueCoupon(@RequestBody CouponCustomerCreateRequest request) {
+
+        String testUserId = UUID.randomUUID().toString();
+
+        couponService.customerIssueCoupon(request, testUserId);
+
+        return ApiResponse.SUCCESS(SuccessCode.CUSTOMER_ISSUED_COUPON_SUCCESS);
     }
 
-    // TODO [예약 유효성 검사 Feign] userID 받아야된다.
+    // TODO [예약 유효성 검사 Feign] userID 받아야된다. Post로 변경해야 된다.
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{couponId}/verify")
     public ApiResponse<ReservationVerifyResponse> verify(@PathVariable String couponId, Double reservationPrice) {

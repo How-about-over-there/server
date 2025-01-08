@@ -68,7 +68,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         CouponEvent event = mapper.toEntity(eventCreateRequest, coupon);
 
         // 현재 시간으로 eventStatus update
-        event.updateEventStatus();
+        event.updateExpiredEventStatus();
 
         return mapper.toCreateResponse(couponEventRepository.save(event));
     }

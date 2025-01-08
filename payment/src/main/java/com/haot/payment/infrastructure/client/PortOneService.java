@@ -47,7 +47,7 @@ public class PortOneService {
         } catch (Exception e) {
             // 오류 출력
             log.error("포트원 결제 조회 API 호출 실패 ::::: {}", e.getMessage(), e);
-            throw new CustomPaymentException(ErrorCode.PAYMENT_FAILED);
+            throw new CustomPaymentException(ErrorCode.PORTONE_API_CALL_FAILED);
         }
     }
 }

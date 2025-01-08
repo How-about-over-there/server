@@ -28,7 +28,15 @@ public enum ErrorCode implements ResCodeIfs {
     COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "4012", "Coupon not found."),
     EXIST_PRIORITY_COUPON_EVENTS(HttpStatus.CONFLICT, "4013", "이미 있는 이벤트의 선착순 쿠폰입니다."),
     EXIST_UNLIMITED_COUPON_EVENTS(HttpStatus.CONFLICT, "4014", "이 무제한 쿠폰을 쓰는 이벤트가 종료되지 않았습니다."),
+    EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "4015", "Event not found."),
+    DUPLICATED_ISSUED_COUPON(HttpStatus.BAD_REQUEST, "4016", "이미 발급 된 쿠폰입니다."),
+    CURRENT_EVENT_NOT_STARTED(HttpStatus.BAD_REQUEST, "4017", "현재 이벤트가 시작하지 않았습니다."),
+    EVENT_STATUS_NOT_MATCH(HttpStatus.BAD_REQUEST, "4018", "이벤트 상태가 맞지 않습니다."),
 
+
+
+    CURRENT_EVENT_EXPIRED(HttpStatus.CONFLICT, "4900", "이벤트가 종료되었습니다."),
+    CURRENT_EVENT_END_TO_OUT_OF_STOCK(HttpStatus.CONFLICT, "4910", "쿠폰 재고 마감으로 인해 이벤트가 종료되었습니다."),
     ;
 
     private final HttpStatus httpStatus;
