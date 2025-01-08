@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UserCouponRepository extends JpaRepository<UserCoupon, String> {
-    boolean existsByUserIdAndCouponId(String userId, String couponId);
+    boolean existsByUserIdAndCouponIdAndIsDeleteFalse(String userId, String couponId);
 
-    Optional<UserCoupon> findByUserIdAndCouponId(String userId, String couponId);
+    Optional<UserCoupon> findByUserIdAndCouponIdAndIsDeleteFalse(String userId, String couponId);
 }
