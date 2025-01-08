@@ -6,5 +6,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record PointTransactionRequest(
         @NotNull @Min(0) Double points,
-        @NotBlank String description
+        @NotBlank String type,
+        String contextId
 ) {}
