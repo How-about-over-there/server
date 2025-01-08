@@ -44,4 +44,16 @@ public class PointHistory extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PointStatus status;
+
+    public static PointHistory create(Point point, Double points, PointType type, String description, LocalDateTime expiredAt, PointStatus status) {
+        return PointHistory.builder()
+                .point(point)
+                .userId(point.getUserId())
+                .points(points)
+                .type(type)
+                .description(description)
+                .expiredAt(expiredAt)
+                .status(status)
+                .build();
+    }
 }
