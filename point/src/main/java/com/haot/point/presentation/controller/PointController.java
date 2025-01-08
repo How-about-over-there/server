@@ -27,17 +27,11 @@ public class PointController {
         return ApiResponse.success(pointService.createPoint(request));
     }
 
-    // 본인 포인트 단건 조회
-    @GetMapping("/{pointId}")
+    // 본인 포인트 조회
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<PointResponse> getPointById(@PathVariable String pointId) {
-        return ApiResponse.success(
-                new PointResponse(
-                        pointId,
-                        "USER-UUID",
-                        1000.0
-                )
-        );
+    public ApiResponse<PointResponse> getPointById(@RequestParam(required = false) String userId) {
+        return ApiResponse.success(pointService.getPoint(userId));
     }
 
     // 포인트 적립
