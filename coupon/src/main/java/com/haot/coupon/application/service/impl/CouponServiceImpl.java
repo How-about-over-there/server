@@ -15,10 +15,7 @@ import com.haot.coupon.domain.model.Coupon;
 import com.haot.coupon.domain.model.CouponEvent;
 import com.haot.coupon.domain.model.ReservationCoupon;
 import com.haot.coupon.domain.model.UserCoupon;
-import com.haot.coupon.domain.model.enums.CouponStatus;
-import com.haot.coupon.domain.model.enums.CouponType;
-import com.haot.coupon.domain.model.enums.DiscountPolicy;
-import com.haot.coupon.domain.model.enums.EventStatus;
+import com.haot.coupon.domain.model.enums.*;
 import com.haot.coupon.infrastructure.repository.CouponEventRepository;
 import com.haot.coupon.infrastructure.repository.CouponRepository;
 import com.haot.coupon.infrastructure.repository.ReservationCouponRepository;
@@ -97,11 +94,16 @@ public class CouponServiceImpl implements CouponService {
 
         UserCoupon userCoupon = findUserCoupon(request.userId(), coupon);
 
+        // 선점 체크
+        checkAlreadyReserved(userCoupon);
+
         // 쿠폰 상태가 USED인지 확인하고 에러 반환
         checkIfCouponUsed(userCoupon);
 
+        // 금액, 날짜 체크
         validateBeforeReservation(coupon, request);
 
+        //할인 정책에 따라 금액 계산
         double totalPrice = request.reservationPrice();
         double discountPrice = getDiscountedPrice(coupon, totalPrice);
 
@@ -112,10 +114,20 @@ public class CouponServiceImpl implements CouponService {
         return reservationCouponMapper.toVerifyFeignResponse(reservationCoupon.getId(), totalPrice - discountPrice);
     }
 
+    // 쿠폰 선점 상태인지 확인
+    private void checkAlreadyReserved(UserCoupon userCoupon) {
+
+        if(reservationCouponRepository.existsByUserCouponAndReservationCouponStatusAndIsDeleteFalse(
+                userCoupon, ReservationCouponStatus.PREEMPTION)
+        ){
+            throw new CustomCouponException(ErrorCode.COUPON_ALREADY_RESERVED);
+        }
+    }
+
     // UserCoupon 조회 메소드
     private UserCoupon findUserCoupon(String userId, Coupon coupon) {
-        return userCouponRepository.findByUserIdAndCouponId(userId, coupon.getId())
-                .orElseThrow(() -> new CustomCouponException(ErrorCode.COUPON_NOT_FOUND));
+        return userCouponRepository.findByUserIdAndCouponIdAndIsDeleteFalse(userId, coupon.getId())
+                .orElseThrow(() -> new CustomCouponException(ErrorCode.USER_COUPON_NOT_FOUND));
     }
 
     // 쿠폰 상태가 USED인지 확인
@@ -183,7 +195,7 @@ public class CouponServiceImpl implements CouponService {
     // 이미 발급된 쿠폰인지 check
     private void checkAlreadyIssued(String userId, String couponId) {
 
-        if(userCouponRepository.existsByUserIdAndCouponId(userId, couponId)){
+        if(userCouponRepository.existsByUserIdAndCouponIdAndIsDeleteFalse(userId, couponId)){
             throw new CustomCouponException(ErrorCode.DUPLICATED_ISSUED_COUPON);
         }
 

@@ -9,8 +9,6 @@ import com.haot.coupon.application.service.CouponService;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.common.response.enums.SuccessCode;
 import com.haot.coupon.domain.model.enums.CouponStatus;
-import com.haot.coupon.domain.model.enums.CouponType;
-import com.haot.coupon.domain.model.enums.DiscountPolicy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
