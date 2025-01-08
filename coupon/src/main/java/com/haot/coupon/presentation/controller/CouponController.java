@@ -73,7 +73,7 @@ public class CouponController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/verify")
     public ApiResponse<ReservationVerifyResponse> verify(@RequestBody FeignVerifyRequest request) {
-        return ApiResponse.success(couponService.verify(request));
+        return ApiResponse.SUCCESS(SuccessCode.VERIFY_COUPON_SUCCESS, couponService.verify(request));
     }
 
     // [Feign] 예약 취소 or 확정 API TODO reservationStatus ENUM값 체크 하는 메서드 써서 체크하기
