@@ -5,6 +5,8 @@ import com.haot.review.application.dtos.req.ReviewCreateRequest;
 import com.haot.review.application.dtos.res.ReviewGetResponse;
 import com.haot.review.application.service.ReviewService;
 import com.haot.review.common.response.ApiResponse;
+import com.haot.review.submodule.role.Role;
+import com.haot.review.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ public class ReviewController {
 
   private final ReviewService reviewService;
 
+  @RoleCheck({Role.USER})
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   public ApiResponse<ReviewGetResponse> create(

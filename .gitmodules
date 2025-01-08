@@ -1,0 +1,3 @@
+[submodule "review/src/main/java/com/haot/user/submodule"]
+	path = review/src/main/java/com/haot/user/submodule
+	url = https://github.com/How-about-over-there/submodule.git

@@ -1,5 +1,6 @@
 package com.haot.review.domain.model;
 
+import com.haot.review.submodule.auditor.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_review")
-public class Review {
+public class Review extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
