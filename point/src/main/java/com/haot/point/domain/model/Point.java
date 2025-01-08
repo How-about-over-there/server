@@ -16,7 +16,7 @@ public class Point extends BaseEntity{
     @Column(name = "point_id")
     private String id;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false, unique = true)
     private String userId;
 
     @Column(name = "total_points", nullable = false)
@@ -28,5 +28,9 @@ public class Point extends BaseEntity{
                 .userId(userId)
                 .totalPoints(totalPoints)
                 .build();
+    }
+
+    public void updateTotalPoint(Double totalPoints) {
+        this.totalPoints = totalPoints;
     }
 }
