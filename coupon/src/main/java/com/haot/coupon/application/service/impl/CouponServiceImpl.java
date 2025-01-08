@@ -52,14 +52,13 @@ public class CouponServiceImpl implements CouponService {
 
         // TODO 선착순일때 순서보장되야 된다. kafka나 Queue, redis등 무었을 쓸지 고민하여 넣어야 한다.
         if(coupon.getType() == CouponType.PRIORITY){
-
             checkPriorityCouponStock(event, coupon);
-
         }
 
         userCouponRepository.save(userCouponMapper.toEntity(userId, coupon));
 
-        coupon.issue();
+        couponRepository.increaseIssuedQuantity(coupon.getId());
+
     }
 
     @Transactional
