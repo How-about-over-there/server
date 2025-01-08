@@ -35,10 +35,10 @@ public class PointHistory extends BaseEntity{
     @Column(name = "type", nullable = false)
     private PointType type;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
 
-    @Column(name = "expired_at", nullable = false)
+    @Column(name = "expired_at")
     private LocalDateTime expiredAt;
 
     @Enumerated(EnumType.STRING)
