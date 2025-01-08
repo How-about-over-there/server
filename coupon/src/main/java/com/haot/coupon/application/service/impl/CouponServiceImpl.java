@@ -75,6 +75,7 @@ public class CouponServiceImpl implements CouponService {
         return couponMapper.toSearchResponse(coupon);
     }
 
+
     @Transactional
     public void updateEndEventStatus(String eventId, EventStatus newStatus) {
         CouponEvent event = couponEventRepository.findById(eventId)
