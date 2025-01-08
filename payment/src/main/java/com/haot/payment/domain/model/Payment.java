@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_payment", schema = "payment")
-public class Payment {
+public class Payment extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "payment_id")
@@ -24,17 +24,14 @@ public class Payment {
     @Column(name = "reservation_id", nullable = false)
     private String reservationId;
 
-    @Column(name = "imp_uid", nullable = false)
-    private String impUid;
-
-    @Column(name = "merchant_uid", nullable = false)
-    private String merchantUid;
+    @Column(name = "merchant_id")
+    private String merchantId;
 
     @Column(name = "price", nullable = false)
     @Min(0)
     private Double price;
 
-    @Column(name = "final_price", nullable = false)
+    @Column(name = "final_price")
     @Min(0)
     private Double finalPrice;
 
@@ -45,4 +42,20 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PaymentStatus status;
+
+    public static Payment create(String userId, String reservationId, Double price, PaymentMethod method, PaymentStatus status) {
+        return Payment.builder()
+                .userId(userId)
+                .reservationId(reservationId)
+                .price(price)
+                .method(method)
+                .status(status)
+                .build();
+    }
+
+    public void complete(String merchantId, Double finalPrice, PaymentStatus status) {
+        this.merchantId = merchantId;
+        this.finalPrice = finalPrice;
+        this.status = status;
+    }
 }
