@@ -1,6 +1,7 @@
 package com.haot.coupon.domain.model;
 
 import com.haot.coupon.domain.model.enums.EventStatus;
+import com.haot.coupon.submodule.auditor.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,8 +12,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_coupon_event")
-public class CouponEvent {
+@Table(name = "p_coupon_event", schema = "coupon")
+public class CouponEvent extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -40,7 +41,7 @@ public class CouponEvent {
     private EventStatus eventStatus;
 
     @Column(name = "is_delete", nullable = false)
-    private boolean isDelete = false;
+    private boolean isDelete;
 
 
     public void updateExpiredEventStatus(){
