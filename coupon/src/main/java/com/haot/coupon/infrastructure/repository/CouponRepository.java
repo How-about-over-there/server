@@ -16,6 +16,6 @@ public interface CouponRepository extends JpaRepository<Coupon, String> {
     Optional<Coupon> findByIdAndIsDeleteFalse(String couponId);
 
     @Modifying
-    @Query(value = "update p_coupon SET issued_quantity = issued_quantity + 1 WHERE id = :id", nativeQuery = true)
+    @Query(value = "update coupon.p_coupon SET issued_quantity = issued_quantity + 1 WHERE id = :id", nativeQuery = true)
     int increaseIssuedQuantity(@Param("id") String id);
 }
