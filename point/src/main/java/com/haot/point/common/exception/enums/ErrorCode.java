@@ -28,7 +28,8 @@ public enum ErrorCode implements ResCodeIfs {
     POINT_STATUS_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "9004", "지원하지 않는 포인트 상태입니다."),
     POINT_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "9005", "포인트 내역 정보를 찾을 수 없습니다."),
     POINT_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "9006", "이미 처리된 포인트 입니다." ),
-    POINT_CONTEXID_REQUIRED(HttpStatus.BAD_REQUEST, "9007", "요청에 contextId 정보가 필요합니다.");
+    POINT_CONTEXID_REQUIRED(HttpStatus.BAD_REQUEST, "9007", "요청에 contextId 정보가 필요합니다."),
+    PENDING_OPERATION_EXISTS(HttpStatus.BAD_REQUEST, "9008", "현재 처리 중인 포인트가 있어 요청을 수행할 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
