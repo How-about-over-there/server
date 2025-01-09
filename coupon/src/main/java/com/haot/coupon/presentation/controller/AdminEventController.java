@@ -28,8 +28,11 @@ public class AdminEventController {
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{eventId}")
-    public ApiResponse<Void> modify(@PathVariable String eventId, @RequestBody EventModifyRequest eventModifyRequest) {
-        return ApiResponse.success();
+    public ApiResponse<Void> modify(@PathVariable(value = "eventId") String eventId,
+                                    @Valid @RequestBody EventModifyRequest eventModifyRequest) {
+
+        adminEventService.modify(eventId, eventModifyRequest);
+        return ApiResponse.SUCCESS(SuccessCode.MODIFY_EVENT_SUCCESS);
     }
 
     @ResponseStatus(HttpStatus.OK)

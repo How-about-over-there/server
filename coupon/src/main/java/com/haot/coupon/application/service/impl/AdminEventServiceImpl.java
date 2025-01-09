@@ -1,7 +1,9 @@
 package com.haot.coupon.application.service.impl;
 
 import com.haot.coupon.application.dto.request.events.EventCreateRequest;
+import com.haot.coupon.application.dto.request.events.EventModifyRequest;
 import com.haot.coupon.application.dto.response.events.EventCreateResponse;
+import com.haot.coupon.application.kafka.CouponErrorProducer;
 import com.haot.coupon.application.mapper.EventMapper;
 import com.haot.coupon.application.service.AdminEventService;
 import com.haot.coupon.common.exceptions.CustomCouponException;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +28,10 @@ public class AdminEventServiceImpl implements AdminEventService {
 
     private final CouponEventRepository couponEventRepository;
     private final CouponRepository couponRepository;
+
     private final EventMapper mapper;
+
+    private final CouponErrorProducer couponErrorProducer;
 
     @Transactional
     @Override
@@ -71,5 +77,34 @@ public class AdminEventServiceImpl implements AdminEventService {
         event.updateExpiredEventStatus();
 
         return mapper.toCreateResponse(couponEventRepository.save(event));
+    }
+
+    // 이벤트 수정 API
+    @Transactional
+    @Override
+    public void modify(String eventId, EventModifyRequest request) {
+
+        validateNonEmptyFields(request.eventName(), request.eventDescription(), request.eventStatus());
+
+        CouponEvent event = couponEventRepository.findByIdAndIsDeleteFalse(eventId)
+                .orElseThrow(() -> new CustomCouponException(ErrorCode.EVENT_NOT_FOUND));
+
+        // 예시) event description -> 쿠폰에서 문제가 있어 이벤트 강제 종료.. 로 변경?
+        event.modifyEvent(request.eventName(), request.eventDescription());
+
+        // status 수정시 이벤트 관리자 강제 종료 -> 거의 이 용도로 쓰게 끔
+        if(request.eventStatus() != null){
+            couponErrorProducer.sendEventClosed(EventStatus.MANUALLY_CLOSED + " " + event.getId());
+        }
+    }
+
+    // 유효성 검사 함수: 필드들이 모두 비어 있을 경우 예외 던짐
+    private void validateNonEmptyFields(String eventName, String eventDescription, String eventStatus) {
+        boolean allFieldsEmpty = Stream.of(eventName, eventDescription, eventStatus)
+                .allMatch(field -> field == null || field.isEmpty());
+
+        if (allFieldsEmpty) {
+            throw new CustomCouponException(ErrorCode.MODIFY_EVENT_HAS_NO_PARAMETER);
+        }
     }
 }
