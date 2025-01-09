@@ -24,6 +24,7 @@ public enum ErrorCode {
     INVALID_DATE_STATUS(HttpStatus.BAD_REQUEST, "5105", "상태 타입이 유효하지 않습니다."),
 
     // 5500: Service Common
+    FORBIDDEN_ACCESS_LODGE(HttpStatus.FORBIDDEN,"5201", "해당 숙소의 관리자만 접근 가능합니다."),
     UNSUPPORTED_SORT_TYPE(HttpStatus.BAD_REQUEST, "5500", "지원하지 않는 정렬 방식입니다.");
 
     private final HttpStatus status;
