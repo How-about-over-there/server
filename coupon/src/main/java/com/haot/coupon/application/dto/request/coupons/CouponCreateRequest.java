@@ -20,7 +20,6 @@ public record CouponCreateRequest(
         LocalDateTime couponExpiredDate,
 
         @Pattern(regexp = "UNLIMITED|PRIORITY", message = "유효한 상태 값을 입력하세요.")
-
         @NotNull
         String couponType,
 

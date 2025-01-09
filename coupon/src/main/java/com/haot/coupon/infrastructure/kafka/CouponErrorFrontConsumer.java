@@ -19,7 +19,7 @@ public class CouponErrorFrontConsumer implements CouponErrorConsumer {
     @KafkaListener(topics = "coupon-event-end", groupId = "coupon-event-error")
     public void eventErrorListener(String message){
 
-        // Front 개발자가 front db에 저장을 했다는 가정, 이벤트 종료 처리해달라는 메시지를 받았다는 가정, 요청을 줄이기 위한 consumer
+        // Front 개발자가 front db에 저장을 한다는 가정, 이벤트 종료 처리해달라는 메시지를 받았다는 가정, 요청을 줄이기 위한 consumer
         log.info("Received Message: {}", message);
 
         String[] messageArr = message.split(" ");
@@ -33,7 +33,7 @@ public class CouponErrorFrontConsumer implements CouponErrorConsumer {
             return;
         }
 
-
+        // 원래 front로 보내는 용도로 쓰이는 곳
         switch (status){
             case EXPIRED -> log.info("eventId : {}, 이벤트 종료.", messageArr[1]);
             case OUT_OF_STOCK -> log.info("eventId : {}, 쿠폰 재고 소진으로 인한 이벤트 종료.", messageArr[1]);
