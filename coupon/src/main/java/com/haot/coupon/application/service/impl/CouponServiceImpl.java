@@ -3,7 +3,7 @@ package com.haot.coupon.application.service.impl;
 import com.haot.coupon.application.dto.feign.request.FeignVerifyRequest;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
-import com.haot.coupon.application.dto.response.coupons.ReservationVerifyResponse;
+import com.haot.coupon.application.dto.feign.response.ReservationVerifyResponse;
 import com.haot.coupon.application.kafka.CouponErrorProducer;
 import com.haot.coupon.application.mapper.CouponMapper;
 import com.haot.coupon.application.mapper.ReservationCouponMapper;

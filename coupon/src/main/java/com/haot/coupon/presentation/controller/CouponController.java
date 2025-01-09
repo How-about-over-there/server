@@ -4,7 +4,7 @@ import com.haot.coupon.application.dto.feign.request.FeignVerifyRequest;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponReadMeResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
-import com.haot.coupon.application.dto.response.coupons.ReservationVerifyResponse;
+import com.haot.coupon.application.dto.feign.response.ReservationVerifyResponse;
 import com.haot.coupon.application.service.CouponService;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.common.response.enums.SuccessCode;

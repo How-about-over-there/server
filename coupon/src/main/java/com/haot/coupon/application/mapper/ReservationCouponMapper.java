@@ -1,6 +1,6 @@
 package com.haot.coupon.application.mapper;
 
-import com.haot.coupon.application.dto.response.coupons.ReservationVerifyResponse;
+import com.haot.coupon.application.dto.feign.response.ReservationVerifyResponse;
 import com.haot.coupon.domain.model.ReservationCoupon;
 import com.haot.coupon.domain.model.UserCoupon;
 import org.mapstruct.Mapper;
