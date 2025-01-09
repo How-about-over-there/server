@@ -60,5 +60,17 @@ public class CouponEvent extends BaseEntity {
         this.eventStatus = eventStatus;
     }
 
+    public void modifyEvent(String eventName, String description){
+
+        if(eventName != null && !eventName.isEmpty()){
+            this.eventName = eventName;
+        }
+
+        if(description != null && !description.isEmpty()){
+            this.description = description;
+        }
+
+    }
+
 
 }
