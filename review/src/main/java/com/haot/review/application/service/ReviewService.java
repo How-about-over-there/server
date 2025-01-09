@@ -2,6 +2,8 @@ package com.haot.review.application.service;
 
 import com.haot.review.application.dtos.req.ReviewCreateRequest;
 import com.haot.review.application.dtos.res.ReviewGetResponse;
+import com.haot.review.common.exceptions.CustomReviewException;
+import com.haot.review.common.response.enums.ErrorCode;
 import com.haot.review.domain.model.Review;
 import com.haot.review.domain.model.ReviewImage;
 import com.haot.review.domain.repository.ReviewImageRepository;
@@ -34,6 +36,17 @@ public class ReviewService {
 
     review.getImages().addAll(reviewImages);
     reviewImageRepository.saveAll(reviewImages);
+
+    return ReviewGetResponse.of(review);
+  }
+
+  @Transactional(readOnly = true)
+  public ReviewGetResponse readOne(String reviewId) {
+
+    // Todo 삭제 API 구현 후 isDelete 조회 안 되도록 구현할 예정
+
+    Review review = reviewRepository.findById(reviewId)
+        .orElseThrow(() -> new CustomReviewException(ErrorCode.REVIEW_NOT_FOUND));
 
     return ReviewGetResponse.of(review);
   }
