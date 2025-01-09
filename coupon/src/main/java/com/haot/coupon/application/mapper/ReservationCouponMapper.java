@@ -13,6 +13,7 @@ public interface ReservationCouponMapper {
     @Mapping(target = "reservationPrice", source = "totalPrice")
     @Mapping(target = "reservationDiscountPrice", source = "discountPrice")
     @Mapping(target = "reservationCouponStatus", constant = "PREEMPTION")
+    @Mapping(target = "isDelete", ignore = true)
     ReservationCoupon toEntity(UserCoupon userCoupon, double totalPrice, double discountPrice);
 
     ReservationVerifyResponse toVerifyFeignResponse(String reservationCouponId, double discountedPrice);
