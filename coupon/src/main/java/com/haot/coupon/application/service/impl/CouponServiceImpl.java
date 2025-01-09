@@ -96,8 +96,8 @@ public class CouponServiceImpl implements CouponService {
 
         UserCoupon userCoupon = findUserCoupon(request.userId(), coupon);
 
-        // 선점 체크
-        checkAlreadyReserved(userCoupon);
+        // reservationCoupon 테이블 체크
+        checkReservedCouponAvailable(userCoupon);
 
         // 쿠폰 상태가 USED인지 확인하고 에러 반환
         checkIfCouponUsed(userCoupon);
@@ -172,7 +172,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     // user 쿠폰이 reservationCoupon 테이블에 CANCEL 상태가 아닌 다른 상태값이 DB에 있으면 사용불가
-    private void checkAlreadyReserved(UserCoupon userCoupon) {
+    private void checkReservedCouponAvailable(UserCoupon userCoupon) {
 
         if(reservationCouponRepository.existsByUserCouponAndReservationCouponStatusNotAndIsDeleteFalse(
                 userCoupon, ReservationCouponStatus.CANCEL)
