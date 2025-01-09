@@ -1,5 +1,6 @@
 package com.haot.payment.application.service;
 
+import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.common.exception.CustomPaymentException;
@@ -8,7 +9,9 @@ import com.haot.payment.domain.enums.PaymentMethod;
 import com.haot.payment.domain.enums.PaymentStatus;
 import com.haot.payment.domain.model.Payment;
 import com.haot.payment.infrastructure.client.PortOneService;
-import com.haot.payment.infrastructure.client.dto.PortOneResponse;
+import com.haot.payment.infrastructure.client.dto.request.PortOneCancelRequest;
+import com.haot.payment.infrastructure.client.dto.response.PortOneCancelResponse;
+import com.haot.payment.infrastructure.client.dto.response.PortOneResponse;
 import com.haot.payment.infrastructure.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,6 +87,42 @@ public class PaymentServiceImpl implements PaymentService{
         // 결제 데이터 확인
         Payment payment = validPayment(paymentId);
 
+        return PaymentResponse.of(payment);
+    }
+
+    @Override
+    @Transactional
+    public PaymentResponse cancelPayment(PaymentCancelRequest request, String paymentId) {
+        // 1. 결제 데이터 확인
+        Payment payment = validPayment(paymentId);
+
+        // 2. 결제 상태 확인
+        PaymentStatus status = payment.getStatus();
+        if (!status.name().equals("PAID")) {
+            throw new CustomPaymentException(ErrorCode.PAYMENT_ALREADY_PROCESSED);
+        }
+
+        // 환불 정책, 환불 계좌 등이 적용되면 추가 로직 필요
+        // 일단 결제 취소에 대한 요청은 결제한 방법으로 결제 전체 금액이 환불되도록 함
+        // -> 카드로 100,000원 결제 시, 카드로 100,000원 환불
+
+        // 3. PortOne 결제 취소 요청
+        PortOneCancelRequest cancelRequest = PortOneCancelRequest.builder().reason(request.reason()).build();
+        PortOneCancelResponse cancelData = portOneService.cancelPayment(cancelRequest, payment.getId());
+
+        // 4. PortOne 응답 상태 확인 및 처리
+        String portOneStatus = cancelData.cancellation().status();
+        switch (portOneStatus) {
+            case "SUCCEEDED":
+                payment.updateStatus(PaymentStatus.CANCELLED);
+                // 환불 테이블을 따로 둬서 환불 내역 관리하면 좋을 듯
+                break;
+            case "REQUESTED":
+                payment.updateStatus(PaymentStatus.CANCELLED_REQUESTED);
+                break;
+            default:
+                throw new CustomPaymentException(ErrorCode.INVALID_PAYMENT_STATUS);
+        }
         return PaymentResponse.of(payment);
     }
 

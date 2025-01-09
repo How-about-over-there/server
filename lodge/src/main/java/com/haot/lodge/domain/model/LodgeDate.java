@@ -44,6 +44,10 @@ public class LodgeDate extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
+    public void updatePrice(Double price) {
+        this.price = price;
+    }
+
     public void updateStatus(ReservationStatus status) {
         this.status = status;
     }

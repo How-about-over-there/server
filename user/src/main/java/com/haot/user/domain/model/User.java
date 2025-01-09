@@ -1,7 +1,8 @@
 package com.haot.user.domain.model;
 
+import com.haot.submodule.role.Role;
 import com.haot.user.domain.model.enums.Gender;
-import com.haot.user.domain.model.enums.Role;
+import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_user")
-public class User {
+public class User extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)

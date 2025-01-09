@@ -6,6 +6,7 @@ import com.haot.lodge.application.service.LodgeService;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeDate;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
+import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
 import com.haot.lodge.presentation.response.LodgeDateReadResponse;
 import java.time.LocalDate;
 import java.util.List;
@@ -31,6 +32,13 @@ public class LodgeDateFacade {
         return lodgeDateService
                 .readAll(pageable, lodge, start, end)
                 .map(LodgeDateReadResponse::new);
+    }
+
+    @Transactional
+    public void updatePrice(String dateId, Double requestPrice) {
+        LodgeDate lodgeDate = lodgeDateService.getValidLodgeDateByIdWithLock(dateId);
+        // TODO: 권한 HOST 라면 lodgeHostId와 로그인한 유저 아이디 같은지 확인 필요
+        lodgeDate.updatePrice(requestPrice);
     }
 
     @Transactional

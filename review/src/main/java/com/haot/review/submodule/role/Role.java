@@ -1,4 +1,4 @@
-package com.haot.user.domain.model.enums;
+package com.haot.review.submodule.role;
 
 import lombok.AllArgsConstructor;
 

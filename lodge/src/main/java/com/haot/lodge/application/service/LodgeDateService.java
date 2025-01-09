@@ -13,6 +13,8 @@ public interface LodgeDateService {
 
     LodgeDate getValidLodgeDateById(String lodgeDateId);
 
+    LodgeDate getValidLodgeDateByIdWithLock(String lodgeDateId);
+
     void create(
             Lodge lodge,
             LocalDate startDate,
@@ -23,7 +25,6 @@ public interface LodgeDateService {
     Slice<LodgeDateResponse> readAll(
             Pageable pageable, Lodge lodge, LocalDate start, LocalDate end
     );
-
 
     void updateStatus(LodgeDate lodgeDate, ReservationStatus requestStatus);
 }
