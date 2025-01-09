@@ -66,4 +66,9 @@ public class LodgeDate extends BaseEntity {
                 .status(ReservationStatus.EMPTY)
                 .build();
     }
+
+    public void verifyProperty(Role role, String userId) {
+        if(role==Role.HOST && !this.lodge.getHostId().equals(userId))
+            throw new LodgeException(ErrorCode.FORBIDDEN_ACCESS_LODGE);
+    }
 }

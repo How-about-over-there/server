@@ -80,4 +80,9 @@ public class Lodge extends BaseEntity {
         if(basicPrice!=null) this.basicPrice = basicPrice;
     }
 
+    public void verifyProperty(Role role, String userId) {
+        if(role==Role.HOST && !this.hostId.equals(userId))
+            throw new LodgeException(ErrorCode.FORBIDDEN_ACCESS_LODGE);
+    }
+
 }
