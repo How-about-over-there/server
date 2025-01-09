@@ -3,7 +3,7 @@ package com.haot.user.presentation.controller;
 import com.haot.user.application.dto.req.AdminUserUpdateRequest;
 import com.haot.user.application.dto.res.AdminUserGetResponse;
 import com.haot.user.common.response.ApiResponse;
-import com.haot.user.domain.model.enums.Role;
+import com.haot.user.submodule.role.Role;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
