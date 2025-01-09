@@ -100,18 +100,7 @@ public class PaymentController {
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<PaymentResponse> cancelPayment(@Valid @RequestBody PaymentCancelRequest request,
                                                       @PathVariable String paymentId) {
-        return ApiResponse.success(
-                new PaymentResponse(
-                        paymentId,
-                        "USER-UUID",
-                        "RESERVATION-UUID",
-                        "MERCHANT-ID",
-                        request.price(),
-                        100000.0,
-                        request.method(),
-                        "READY"
-                )
-        );
+        return ApiResponse.success(paymentService.cancelPayment(request, paymentId));
     }
 
 }
