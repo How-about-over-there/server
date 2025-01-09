@@ -58,4 +58,8 @@ public class Payment extends BaseEntity{
         this.finalPrice = finalPrice;
         this.status = status;
     }
+
+    public void updateStatus(PaymentStatus status) {
+        this.status = status;
+    }
 }
