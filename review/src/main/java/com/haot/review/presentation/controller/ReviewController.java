@@ -47,7 +47,7 @@ public class ReviewController {
   @DeleteMapping("/{reviewId}")
   public ApiResponse<Void> delete(
       @PathVariable String reviewId,
-       @RequestHeader(value = "X-User-Id", required = true) String userId,
+      @RequestHeader(value = "X-User-Id", required = true) String userId,
       @RequestHeader(value = "X-Role", required = true) String role
   ) {
     reviewService.deleteReview(reviewId, userId, role);
