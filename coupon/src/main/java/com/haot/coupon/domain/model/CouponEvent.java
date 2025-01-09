@@ -1,7 +1,7 @@
 package com.haot.coupon.domain.model;
 
 import com.haot.coupon.domain.model.enums.EventStatus;
-import com.haot.coupon.submodule.auditor.BaseEntity;
+import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
