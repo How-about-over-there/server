@@ -19,7 +19,7 @@ public class CouponEvent extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    // 추후 쿠폰을 돌려쓸 수도 있으니 Many to One으로
+    // TODO 무제한을 하면 List로 바꿔야 된다. 추후 쿠폰을 돌려쓸 수도 있으니 Many to One으로
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id", nullable = false)
     private Coupon coupon;

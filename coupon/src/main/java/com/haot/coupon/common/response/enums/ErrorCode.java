@@ -40,7 +40,7 @@ public enum ErrorCode implements ResCodeIfs {
     USER_COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "4023", "UserCoupon not found."),
     MODIFY_EVENT_HAS_NO_PARAMETER(HttpStatus.NOT_FOUND, "4024", "이벤트 수정 API 요청시 적어도 하나의 필드를 제공해야 합니다. "),
 
-    CURRENT_EVENT_EXPIRED(HttpStatus.CONFLICT, "4900", "이벤트가 종료되었습니다."),
+    CURRENT_EVENT_CLOSED(HttpStatus.CONFLICT, "4900", "이벤트가 이미 종료되었습니다."),
     CURRENT_EVENT_END_TO_OUT_OF_STOCK(HttpStatus.CONFLICT, "4910", "쿠폰 재고 마감으로 인해 이벤트가 종료되었습니다."),
     ;
 

@@ -79,23 +79,42 @@ public class AdminEventServiceImpl implements AdminEventService {
         return mapper.toCreateResponse(couponEventRepository.save(event));
     }
 
-    // 이벤트 수정 API
+    // 이벤트 수정 API, 문제가 생겼을때 확산 방지용 API or 이름, 설명 변경 API
     @Transactional
     @Override
-    public void modify(String eventId, EventModifyRequest request) {
+    public void modify(String userId, String eventId, EventModifyRequest request) {
 
         validateNonEmptyFields(request.eventName(), request.eventDescription(), request.eventStatus());
 
         CouponEvent event = couponEventRepository.findByIdAndIsDeleteFalse(eventId)
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.EVENT_NOT_FOUND));
 
-        // 예시) event description -> 쿠폰에서 문제가 있어 이벤트 강제 종료.. 로 변경?
-        event.modifyEvent(request.eventName(), request.eventDescription());
+        // status 수정시 이벤트 관리자 강제 종료
+        if(request.eventStatus() != null) {
 
-        // status 수정시 이벤트 관리자 강제 종료 -> 거의 이 용도로 쓰게 끔
-        if(request.eventStatus() != null){
-            couponErrorProducer.sendEventClosed(EventStatus.MANUALLY_CLOSED + " " + event.getId());
+            // 이미 끝난 이벤트는 status 수정 필요가 없게
+            if (event.getEventStatus() != EventStatus.DEFAULT) {
+                throw new CustomCouponException(ErrorCode.CURRENT_EVENT_CLOSED);
+            }
+
+            // 이벤트가 시작하기 전이면 상태값만 변경
+            if(LocalDateTime.now().isBefore(event.getEventStartDate())){
+                event.updateEventStatus(EventStatus.MANUALLY_CLOSED);
+            }else{
+                Coupon coupon = event.getCoupon();
+                deleteCoupon(coupon, userId);
+                couponErrorProducer.sendEventClosed(EventStatus.MANUALLY_CLOSED + " " + event.getId());
+            }
+
+        }else{
+            // 이름, description 수정
+            event.modifyEvent(request.eventName(), request.eventDescription());
         }
+    }
+
+    // 쿠폰 삭제
+    private void deleteCoupon(Coupon coupon, String userId){
+        coupon.deleteEntity(userId);
     }
 
     // 유효성 검사 함수: 필드들이 모두 비어 있을 경우 예외 던짐

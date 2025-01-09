@@ -218,7 +218,7 @@ public class CouponServiceImpl implements CouponService {
         if(!now.isBefore(event.getEventEndDate())){
                 // kafka send 명확해서 after commit이 없어도된다.
             couponErrorProducer.sendEventClosed(EventStatus.EXPIRED + " " + event.getId());
-            throw new CustomCouponException(ErrorCode.CURRENT_EVENT_EXPIRED);
+            throw new CustomCouponException(ErrorCode.CURRENT_EVENT_CLOSED);
         }
 
     }

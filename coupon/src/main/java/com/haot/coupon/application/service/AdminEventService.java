@@ -8,5 +8,5 @@ public interface AdminEventService {
 
     EventCreateResponse create(EventCreateRequest eventCreateRequest);
 
-    void modify(String eventId, EventModifyRequest eventModifyRequest);
+    void modify(String userId, String eventId, EventModifyRequest eventModifyRequest);
 }
