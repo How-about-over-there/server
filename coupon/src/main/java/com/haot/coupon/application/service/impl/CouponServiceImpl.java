@@ -3,6 +3,7 @@ package com.haot.coupon.application.service.impl;
 import com.haot.coupon.application.dto.feign.request.FeignConfirmReservationRequest;
 import com.haot.coupon.application.dto.feign.request.FeignVerifyRequest;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
+import com.haot.coupon.application.dto.response.coupons.CouponReadMeResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.application.dto.feign.response.ReservationVerifyResponse;
 import com.haot.coupon.application.kafka.CouponErrorProducer;
@@ -17,11 +18,10 @@ import com.haot.coupon.domain.model.CouponEvent;
 import com.haot.coupon.domain.model.ReservationCoupon;
 import com.haot.coupon.domain.model.UserCoupon;
 import com.haot.coupon.domain.model.enums.*;
-import com.haot.coupon.infrastructure.repository.CouponEventRepository;
-import com.haot.coupon.infrastructure.repository.CouponRepository;
-import com.haot.coupon.infrastructure.repository.ReservationCouponRepository;
-import com.haot.coupon.infrastructure.repository.UserCouponRepository;
+import com.haot.coupon.infrastructure.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +35,8 @@ public class CouponServiceImpl implements CouponService {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
     private final ReservationCouponRepository reservationCouponRepository;
+
+    private final UserCouponCustomRepository userCouponCustomRepository;
 
     private final CouponMapper couponMapper;
     private final UserCouponMapper userCouponMapper;
@@ -130,6 +132,12 @@ public class CouponServiceImpl implements CouponService {
 
         // 예약 상태 처리
         handleReservation(reservationCoupon, reservationCouponStatus);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<CouponReadMeResponse> getMyCoupons(String userId, Pageable pageable) {
+        return userCouponCustomRepository.checkMyCouponBox(userId, pageable);
     }
 
     // 선점 상태 검증

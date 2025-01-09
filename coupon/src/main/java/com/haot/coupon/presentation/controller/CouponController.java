@@ -9,13 +9,11 @@ import com.haot.coupon.application.dto.feign.response.ReservationVerifyResponse;
 import com.haot.coupon.application.service.CouponService;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.common.response.enums.SuccessCode;
-import com.haot.coupon.domain.model.enums.CouponStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,30 +23,12 @@ public class CouponController {
 
     private final CouponService couponService;
 
-    // TODO Header에서 userId 받아 사용
+    // TODO Header에서 userId 받아 사용 일단 request parama 사용
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/me")
-    public ApiResponse<List<CouponReadMeResponse>> getMyCoupons(String userId) {
-
-        List<CouponReadMeResponse> response = List.of(
-                CouponReadMeResponse.builder()
-                        .userCouponId("sdlkfsldknfsdaf")
-                        .couponName("테스트 쿠폰 1")
-                        .couponAvailableDate(LocalDateTime.now().minusDays(1))
-                        .couponExpiredDate(LocalDateTime.now().plusDays(1))
-                        .couponStatus(CouponStatus.DISTRIBUTED)
-                        .build()
-                ,
-                CouponReadMeResponse.builder()
-                        .userCouponId("sdlkfsldknsdfsdffsdaf")
-                        .couponName("테스트 쿠폰 2")
-                        .couponAvailableDate(LocalDateTime.now().minusDays(1))
-                        .couponExpiredDate(LocalDateTime.now().plusDays(1))
-                        .couponStatus(CouponStatus.UNUSED)
-                        .build()
-        );
-
-        return ApiResponse.success(response);
+    public ApiResponse<Page<CouponReadMeResponse>> getMyCoupons(@RequestHeader("X-User-Id") String userId,
+                                                                Pageable pageable) {
+        return ApiResponse.SUCCESS(SuccessCode.GET_USER_COUPONS_SUCCESS, couponService.getMyCoupons(userId, pageable));
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -83,7 +63,6 @@ public class CouponController {
                                                 @RequestBody FeignConfirmReservationRequest request) {
 
         couponService.confirmReservation(reservationCouponId, request);
-
         return ApiResponse.SUCCESS(SuccessCode.COUPON_RESERVATION_SUCCESS);
     }
 
