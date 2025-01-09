@@ -36,9 +36,11 @@ public enum ErrorCode implements ResCodeIfs {
 
     INVALID_PAYMENT_AMOUNT_FOR_COUPON(HttpStatus.BAD_REQUEST, "4020", "쿠폰 사용에 부적합한 결제 금액입니다."),
     COUPON_ALREADY_USED(HttpStatus.BAD_REQUEST, "4021", "이미 사용한 쿠폰입니다."),
-    COUPON_ALREADY_RESERVED(HttpStatus.LOCKED, "4022", "해당 쿠폰은 이미 예약 중입니다. 다른 쿠폰을 사용해주세요."),
+    COUPON_UNAVAILABLE(HttpStatus.CONFLICT, "4022", "쿠폰이 사용 중이거나 만료되었거나 이미 선점된 상태입니다."),
     USER_COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "4023", "UserCoupon not found."),
     MODIFY_EVENT_HAS_NO_PARAMETER(HttpStatus.NOT_FOUND, "4024", "이벤트 수정 API 요청시 적어도 하나의 필드를 제공해야 합니다. "),
+    RESERVATION_COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "4025", "ReservationCoupon not found."),
+    RESERVATION_COUPON_NOT_PREEMPTED(HttpStatus.NOT_FOUND, "4026", "선점된 쿠폰이 아닙니다"),
 
     CURRENT_EVENT_CLOSED(HttpStatus.CONFLICT, "4900", "이벤트가 이미 종료되었습니다."),
     CURRENT_EVENT_END_TO_OUT_OF_STOCK(HttpStatus.CONFLICT, "4910", "쿠폰 재고 마감으로 인해 이벤트가 종료되었습니다."),
