@@ -59,6 +59,11 @@ public class LodgeServiceImpl implements LodgeService {
         lodge.update(name, description, address, term, basicPrice);
     }
 
+    @Override
+    public void delete(String userId, Lodge lodge) {
+        lodge.deleteEntity(userId);
+    }
+
     private void nameValidation(String hostId, String name) {
         if(lodgeRepository.findByHostIdAndName(hostId, name).isPresent()) {
             throw new LodgeException(ErrorCode.ALREADY_EXIST_LODGE_NAME);
