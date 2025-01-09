@@ -2,6 +2,7 @@ package com.haot.payment.application.service;
 
 import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
+import com.haot.payment.application.dto.request.PaymentSearchRequest;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.common.exception.CustomPaymentException;
 import com.haot.payment.common.exception.enums.ErrorCode;
@@ -132,20 +133,15 @@ public class PaymentServiceImpl implements PaymentService{
 
     @Override
     @Transactional(readOnly = true)
-    public Page<PaymentResponse> getPayments(String userId, String reservationId, String merchantId,
-                                             String method, String status, Double minPrice, Double maxPrice,
-                                             LocalDate start, LocalDate end, Pageable pageable) {
-        // method, status 유효성 검사
-        PaymentMethod paymentMethod = method != null ? PaymentMethod.fromString(method) : null;
-        PaymentStatus paymentStatus = status != null ? PaymentStatus.fromString(status) : null;
-
+    public Page<PaymentResponse> getPayments(PaymentSearchRequest request, Pageable pageable) {
         // TODO: USER 요청의 경우 userId 헤더 값으로 지정
 
-        return paymentRepository.searchPayments(
-                userId, reservationId, merchantId,
-                paymentMethod, paymentStatus, minPrice, maxPrice,
-                start, end, pageable
-        );
+        // 페이지 크기 고정
+        int pageSize = pageable.getPageSize();
+        if (pageSize != 10 && pageSize != 30 && pageSize != 50) {
+            pageSize = 10; // 기본값으로 설정
+        }
+        return paymentRepository.searchPayments(request, pageable);
     }
 
     private Payment validPayment(String paymentId) {

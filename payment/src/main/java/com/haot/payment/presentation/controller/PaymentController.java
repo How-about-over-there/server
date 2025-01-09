@@ -2,6 +2,7 @@ package com.haot.payment.presentation.controller;
 
 import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
+import com.haot.payment.application.dto.request.PaymentSearchRequest;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.application.service.PaymentService;
 import com.haot.payment.common.response.ApiResponse;
@@ -15,7 +16,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.Map;
 
 @Slf4j(topic = "PaymentController")
@@ -67,22 +67,10 @@ public class PaymentController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<Page<PaymentResponse>> getPayments(
-            @RequestParam(required = false) String userId,
-            @RequestParam(required = false) String reservationId,
-            @RequestParam(required = false) String merchantId,
-            @RequestParam(required = false) String method,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice,
-            @RequestParam(required = false) LocalDate start,
-            @RequestParam(required = false) LocalDate end,
+            @ModelAttribute PaymentSearchRequest request,
             @PageableDefault(size = 10, direction = Sort.Direction.ASC, sort = "createdAt") Pageable pageable
     ) {
-        return ApiResponse.success(paymentService.getPayments(
-                userId, reservationId, merchantId,
-                method, status, minPrice, maxPrice,
-                start, end, pageable
-        ));
+        return ApiResponse.success(paymentService.getPayments(request, pageable));
     }
 
     // 결제 취소 요청
