@@ -15,8 +15,12 @@ import com.haot.payment.infrastructure.client.dto.response.PortOneResponse;
 import com.haot.payment.infrastructure.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Slf4j(topic = "PaymentServiceImpl")
 @Service
@@ -124,6 +128,24 @@ public class PaymentServiceImpl implements PaymentService{
                 throw new CustomPaymentException(ErrorCode.INVALID_PAYMENT_STATUS);
         }
         return PaymentResponse.of(payment);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PaymentResponse> getPayments(String userId, String reservationId, String merchantId,
+                                             String method, String status, Double minPrice, Double maxPrice,
+                                             LocalDate start, LocalDate end, Pageable pageable) {
+        // method, status 유효성 검사
+        PaymentMethod paymentMethod = method != null ? PaymentMethod.fromString(method) : null;
+        PaymentStatus paymentStatus = status != null ? PaymentStatus.fromString(status) : null;
+
+        // TODO: USER 요청의 경우 userId 헤더 값으로 지정
+
+        return paymentRepository.searchPayments(
+                userId, reservationId, merchantId,
+                paymentMethod, paymentStatus, minPrice, maxPrice,
+                start, end, pageable
+        );
     }
 
     private Payment validPayment(String paymentId) {

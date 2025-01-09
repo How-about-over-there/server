@@ -9,12 +9,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Map;
 
 @Slf4j(topic = "PaymentController")
@@ -65,34 +66,23 @@ public class PaymentController {
     // 결제 전체 조회 및 검색
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Page<PaymentResponse>> getPayments(Pageable pageable) {
-
-        List<PaymentResponse> list = List.of(
-                new PaymentResponse(
-                        "PAYMENT-UUID1",
-                        "USER-UUID",
-                        "RESERVATION-UUID",
-                        "MERCHANT-ID",
-                        100000.0,
-                        100000.0,
-                        "CARD",
-                        "READY"
-                ),
-                new PaymentResponse(
-                        "PAYMENT-UUID2",
-                        "USER-UUID",
-                        "RESERVATION-UUID",
-                        "MERCHANT-ID",
-                        100000.0,
-                        100000.0,
-                        "CARD",
-                        "READY"
-                )
-        );
-
-        return ApiResponse.success(
-            new PageImpl<>(list, pageable, list.size())
-        );
+    public ApiResponse<Page<PaymentResponse>> getPayments(
+            @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String reservationId,
+            @RequestParam(required = false) String merchantId,
+            @RequestParam(required = false) String method,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) LocalDate start,
+            @RequestParam(required = false) LocalDate end,
+            @PageableDefault(size = 10, direction = Sort.Direction.ASC, sort = "createdAt") Pageable pageable
+    ) {
+        return ApiResponse.success(paymentService.getPayments(
+                userId, reservationId, merchantId,
+                method, status, minPrice, maxPrice,
+                start, end, pageable
+        ));
     }
 
     // 결제 취소 요청
