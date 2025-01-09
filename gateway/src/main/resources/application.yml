@@ -54,7 +54,7 @@ spring:
         - id: lodge-service-lodges-dates-api
           uri: lb://lodge-service
           predicates:
-            - Path=/api/v1/lodges-dates/**
+            - Path=/api/v1/lodge-dates/**
         #Reveiw
         - id: review-service-api
           uri: lb://review-service
