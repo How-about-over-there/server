@@ -5,7 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignClients
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+		"com.haot.review",
+		"com.haot.submodule"
+})
 public class ReviewApplication {
 
 	public static void main(String[] args) {

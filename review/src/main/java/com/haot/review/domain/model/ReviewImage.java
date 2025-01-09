@@ -1,6 +1,6 @@
 package com.haot.review.domain.model;
 
-import com.haot.review.submodule.auditor.BaseEntity;
+import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
