@@ -1,6 +1,10 @@
 package com.haot.lodge.domain.model;
 
+import com.haot.lodge.common.exception.ErrorCode;
+import com.haot.lodge.common.exception.LodgeException;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
+import com.haot.submodule.auditor.BaseEntity;
+import com.haot.submodule.role.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -61,5 +65,10 @@ public class LodgeDate extends BaseEntity {
                 .price(price)
                 .status(ReservationStatus.EMPTY)
                 .build();
+    }
+
+    public void verifyProperty(Role role, String userId) {
+        if(role==Role.HOST && !this.lodge.getHostId().equals(userId))
+            throw new LodgeException(ErrorCode.FORBIDDEN_ACCESS_LODGE);
     }
 }

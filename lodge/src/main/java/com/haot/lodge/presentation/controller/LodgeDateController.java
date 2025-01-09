@@ -8,6 +8,8 @@ import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
 import com.haot.lodge.presentation.request.LodgeDateUpdateStatusRequest;
 import com.haot.lodge.presentation.response.LodgeDateReadResponse;
+import com.haot.submodule.role.Role;
+import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -51,11 +54,14 @@ public class LodgeDateController {
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{dateId}")
+    @RoleCheck({Role.ADMIN, Role.HOST})
     public ApiResponse<Void> update(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("X-User-Role") Role userRole,
             @PathVariable String dateId,
             @RequestBody LodgeDateUpdateRequest request
     ) {
-        lodgeDateFacade.updatePrice(dateId, request.price());
+        lodgeDateFacade.updatePrice(userRole, userId, dateId, request.price());
         return ApiResponse.success();
     }
 

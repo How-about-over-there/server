@@ -15,6 +15,7 @@ import com.haot.lodge.presentation.request.LodgeCreateRequest;
 import com.haot.lodge.presentation.request.LodgeUpdateRequest;
 import com.haot.lodge.presentation.response.LodgeReadAllResponse;
 import com.haot.lodge.presentation.response.LodgeReadOneResponse;
+import com.haot.submodule.role.Role;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +66,6 @@ public class LodgeFacade {
             Integer maxReservationDay, Integer maxPersonnel,
             LocalDate checkInDate, LocalDate checkOutDate
     ) {
-
         return lodgeService
                 .readAllBy(pageable, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
                 .map(lodge -> new LodgeReadAllResponse(
@@ -78,8 +78,11 @@ public class LodgeFacade {
     }
 
     @Transactional
-    public void updateLodge(String lodgeId, LodgeUpdateRequest request) {
+    public void updateLodge(
+            Role userRole, String userId, String lodgeId, LodgeUpdateRequest request
+    ) {
         Lodge lodge = lodgeService.getValidLodgeById(lodgeId);
+        lodge.verifyProperty(userRole, userId);
         lodgeService.update(
                 lodge,
                 request.name(),

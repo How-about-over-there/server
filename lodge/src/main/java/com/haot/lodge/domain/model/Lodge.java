@@ -1,16 +1,16 @@
 package com.haot.lodge.domain.model;
 
 
-import jakarta.persistence.CascadeType;
+import com.haot.lodge.common.exception.ErrorCode;
+import com.haot.lodge.common.exception.LodgeException;
+import com.haot.submodule.auditor.BaseEntity;
+import com.haot.submodule.role.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_lodge")
-public class Lodge extends BaseEntity{
+public class Lodge extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -78,6 +78,11 @@ public class Lodge extends BaseEntity{
         if(address!=null) this.address = address;
         if(term!=null) this.term = term;
         if(basicPrice!=null) this.basicPrice = basicPrice;
+    }
+
+    public void verifyProperty(Role role, String userId) {
+        if(role==Role.HOST && !this.hostId.equals(userId))
+            throw new LodgeException(ErrorCode.FORBIDDEN_ACCESS_LODGE);
     }
 
 }

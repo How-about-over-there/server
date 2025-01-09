@@ -6,7 +6,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 
 @EnableFeignClients
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+		"com.haot.lodge",
+		"com.haot.submodule"
+})
 public class LodgeApplication {
 
 	public static void main(String[] args) {

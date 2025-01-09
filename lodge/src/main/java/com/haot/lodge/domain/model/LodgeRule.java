@@ -1,6 +1,7 @@
 package com.haot.lodge.domain.model;
 
 
+import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_lodge_rule")
-public class LodgeRule extends BaseEntity{
+public class LodgeRule extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
