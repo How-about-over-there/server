@@ -1,7 +1,7 @@
 package com.haot.user.application.dto.res;
 
 import com.haot.user.domain.model.enums.Gender;
-import com.haot.user.submodule.role.Role;
+import com.haot.submodule.role.Role;
 import lombok.Builder;
 
 @Builder

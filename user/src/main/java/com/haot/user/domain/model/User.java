@@ -1,8 +1,8 @@
 package com.haot.user.domain.model;
 
+import com.haot.submodule.role.Role;
 import com.haot.user.domain.model.enums.Gender;
-import com.haot.user.submodule.auditor.BaseEntity;
-import com.haot.user.submodule.role.Role;
+import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

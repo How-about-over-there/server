@@ -1,7 +1,7 @@
 package com.haot.user.application.dto.req;
 
 import com.haot.user.domain.model.enums.Gender;
-import com.haot.user.submodule.role.Role;
+import com.haot.submodule.role.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
