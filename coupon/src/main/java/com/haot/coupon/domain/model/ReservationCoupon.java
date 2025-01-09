@@ -1,16 +1,17 @@
 package com.haot.coupon.domain.model;
 
 import com.haot.coupon.domain.model.enums.ReservationCouponStatus;
+import com.haot.coupon.submodule.auditor.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_reservation_coupon")
-public class ReservationCoupon {
+@Table(name = "p_reservation_coupon", schema = "coupon")
+public class ReservationCoupon extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,7 +23,7 @@ public class ReservationCoupon {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "reservation_coupon_status")
-    private ReservationCouponStatus reservationCouponStatus = ReservationCouponStatus.PREEMPTION;
+    private ReservationCouponStatus reservationCouponStatus;
 
     @Column(nullable = false, name = "reservation_price")
     private Double reservationPrice;
@@ -31,5 +32,5 @@ public class ReservationCoupon {
     private Double reservationDiscountPrice;
 
     @Column(name = "is_delete", nullable = false)
-    private boolean isDelete = false;
+    private boolean isDelete;
 }

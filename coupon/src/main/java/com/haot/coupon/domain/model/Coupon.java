@@ -3,6 +3,7 @@ package com.haot.coupon.domain.model;
 import com.haot.coupon.domain.model.enums.CouponType;
 import com.haot.coupon.domain.model.enums.DiscountPolicy;
 import com.haot.coupon.domain.model.vo.CouponDiscountRate;
+import com.haot.coupon.submodule.auditor.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,8 +14,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_coupon")
-public class Coupon {
+@Table(name = "p_coupon", schema = "coupon")
+public class Coupon extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -56,7 +57,7 @@ public class Coupon {
     private Double discountAmount;
 
     @Column(name = "is_delete", nullable = false)
-    private boolean isDelete = false;
+    private boolean isDelete;
 
     public void issue(){
         this.issuedQuantity++;
