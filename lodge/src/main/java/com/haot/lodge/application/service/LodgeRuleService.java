@@ -13,4 +13,6 @@ public interface LodgeRuleService {
             Integer maxPersonnel,
             String customization
     );
+
+    void deleteByLodge(Lodge lodge, String userId);
 }
