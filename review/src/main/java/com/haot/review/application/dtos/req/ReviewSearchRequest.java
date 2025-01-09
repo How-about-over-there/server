@@ -1,17 +1,13 @@
 package com.haot.review.application.dtos.req;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-public class ReviewSearchRequest {
+public record ReviewSearchRequest(
+    String lodgeId,
 
-    private String lodgeId;
-
-    private String userId;
+    String userId,
     @JsonProperty("deleted")
-    private boolean isDeleted;
+    Boolean isDeleted
+) {
 
 }

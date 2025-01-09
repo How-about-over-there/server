@@ -48,8 +48,8 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 
   private BooleanBuilder conditions(String role, ReviewSearchRequest request) {
     BooleanBuilder builder = new BooleanBuilder()
-        .and(lodgeIdEq(request.getLodgeId()))
-        .and(userIdEq(request.getUserId()));
+        .and(lodgeIdEq(request.lodgeId()))
+        .and(userIdEq(request.userId()));
 
     if ("MASTER".equals(role) || "HOST".equals(role)) {
       builder.and(deletedEq(request.isDeleted()));
