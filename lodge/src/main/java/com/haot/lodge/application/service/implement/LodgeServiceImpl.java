@@ -6,7 +6,10 @@ import com.haot.lodge.common.exception.ErrorCode;
 import com.haot.lodge.common.exception.LodgeException;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.repository.LodgeRepository;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,6 +33,22 @@ public class LodgeServiceImpl implements LodgeService {
         return lodgeRepository.save(Lodge.createLodge(
                 userId, name, description, address, term, basicPrice
         ));
+    }
+
+    @Override
+    public Slice<Lodge> readAllBy(
+            Pageable pageable,
+            String name, String address,
+            Integer maxReservationDay, Integer maxPersonnel,
+            LocalDate checkInDate, LocalDate checkOutDate
+    ) {
+        if(checkInDate!= null && checkOutDate == null){
+            checkOutDate = checkInDate.plusDays(1);
+        }
+        return lodgeRepository
+                .findAllByConditionOf(
+                        pageable, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate
+                );
     }
 
     @Override

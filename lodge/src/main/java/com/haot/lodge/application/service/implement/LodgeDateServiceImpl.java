@@ -37,6 +37,12 @@ public class LodgeDateServiceImpl implements LodgeDateService {
     }
 
     @Override
+    public LodgeDate getValidLodgeDateByIdWithLock(String lodgeDateId) {
+        return lodgeDateRepository.findByIdWithLock(lodgeDateId)
+                .orElseThrow(()-> new LodgeException(ErrorCode.LODGE_DATE_NOT_FOUND));
+    }
+
+    @Override
     public void create(
             Lodge lodge, LocalDate startDate, LocalDate endDate, List<LocalDate> excludeDates
     ) {
