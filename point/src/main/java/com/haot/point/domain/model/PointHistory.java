@@ -35,13 +35,25 @@ public class PointHistory extends BaseEntity{
     @Column(name = "type", nullable = false)
     private PointType type;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
 
-    @Column(name = "expired_at", nullable = false)
+    @Column(name = "expired_at")
     private LocalDateTime expiredAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PointStatus status;
+
+    public static PointHistory create(Point point, Double points, PointType type, String description, LocalDateTime expiredAt, PointStatus status) {
+        return PointHistory.builder()
+                .point(point)
+                .userId(point.getUserId())
+                .points(points)
+                .type(type)
+                .description(description)
+                .expiredAt(expiredAt)
+                .status(status)
+                .build();
+    }
 }
