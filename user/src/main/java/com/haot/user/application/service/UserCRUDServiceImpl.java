@@ -7,7 +7,7 @@ import com.haot.user.common.exception.ErrorCode;
 import com.haot.user.common.util.Argon2PasswordEncoder;
 import com.haot.user.domain.model.User;
 import com.haot.user.infrastructure.repository.UserRepository;
-import com.haot.user.submodule.role.Role;
+import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
