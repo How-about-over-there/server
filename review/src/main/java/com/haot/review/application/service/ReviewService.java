@@ -47,8 +47,7 @@ public class ReviewService {
   @Transactional(readOnly = true)
   public ReviewGetResponse readOne(String reviewId) {
 
-    Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
-        .orElseThrow(() -> new CustomReviewException(ErrorCode.REVIEW_NOT_FOUND));
+    Review review = findActiveReviewById(reviewId);
 
     return ReviewGetResponse.of(review);
   }
@@ -59,8 +58,7 @@ public class ReviewService {
 
     // submodule aop 사용할 예정입니다.
     if ("USER".equals(role)) {
-      Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
-          .orElseThrow(() -> new CustomReviewException(ErrorCode.REVIEW_NOT_FOUND));
+      Review review = findActiveReviewById(reviewId);
 
       if (!review.getUserId().equals(userId)) {
         throw new CustomReviewException(ErrorCode.FORBIDDEN_OPERATION);
@@ -72,8 +70,7 @@ public class ReviewService {
   @Transactional
   public void deleteReview(String reviewId, String userId, String role) {
 
-    Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
-        .orElseThrow(() -> new CustomReviewException(ErrorCode.REVIEW_NOT_FOUND));
+    Review review = findActiveReviewById(reviewId);
 
     if (!hasPermissionToDeleteReview(review, userId, role)) {
       throw new CustomReviewException(ErrorCode.FORBIDDEN_OPERATION);
@@ -82,10 +79,10 @@ public class ReviewService {
     review.deleteReview(userId);
   }
 
-//  private Review findActiveReviewById(String reviewId) {
-//    return reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
-//        .orElseThrow(() -> new CustomReviewException(ErrorCode.REVIEW_NOT_FOUND));
-//  }
+  private Review findActiveReviewById(String reviewId) {
+    return reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
+        .orElseThrow(() -> new CustomReviewException(ErrorCode.REVIEW_NOT_FOUND));
+  }
 
   private boolean hasPermissionToDeleteReview(Review review, String userId, String role) {
     return switch (role) {
