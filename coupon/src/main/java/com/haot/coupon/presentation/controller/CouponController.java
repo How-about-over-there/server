@@ -1,5 +1,6 @@
 package com.haot.coupon.presentation.controller;
 
+import com.haot.coupon.application.dto.feign.request.FeignConfirmReservationRequest;
 import com.haot.coupon.application.dto.feign.request.FeignVerifyRequest;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponReadMeResponse;
@@ -68,18 +69,22 @@ public class CouponController {
         return ApiResponse.SUCCESS(SuccessCode.CUSTOMER_ISSUED_COUPON_SUCCESS);
     }
 
+    // 유효성 검사 API
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/verify")
     public ApiResponse<ReservationVerifyResponse> verify(@RequestBody FeignVerifyRequest request) {
         return ApiResponse.SUCCESS(SuccessCode.VERIFY_COUPON_SUCCESS, couponService.verify(request));
     }
 
-    // [Feign] 예약 취소 or 확정 API TODO reservationStatus ENUM값 체크 하는 메서드 써서 체크하기
+    // [Feign] 예약 취소 or 확정 API
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{reservationCouponId}")
-    public ApiResponse<Void> confirmReservation(@PathVariable(value = "reservationCouponId") String reservationCouponId
-            , String reservationStatus) {
-        return ApiResponse.success();
+    public ApiResponse<Void> confirmReservation(@PathVariable(value = "reservationCouponId") String reservationCouponId,
+                                                @RequestBody FeignConfirmReservationRequest request) {
+
+        couponService.confirmReservation(reservationCouponId, request);
+
+        return ApiResponse.SUCCESS(SuccessCode.COUPON_RESERVATION_SUCCESS);
     }
 
 

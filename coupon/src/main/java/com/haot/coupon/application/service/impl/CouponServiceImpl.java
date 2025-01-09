@@ -1,5 +1,6 @@
 package com.haot.coupon.application.service.impl;
 
+import com.haot.coupon.application.dto.feign.request.FeignConfirmReservationRequest;
 import com.haot.coupon.application.dto.feign.request.FeignVerifyRequest;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
@@ -41,6 +42,7 @@ public class CouponServiceImpl implements CouponService {
 
     private final CouponErrorProducer couponErrorProducer;
 
+    // 쿠폰 발급 API
     @Transactional
     @Override
     public void customerIssueCoupon(CouponCustomerCreateRequest request, String userId) {
@@ -114,13 +116,68 @@ public class CouponServiceImpl implements CouponService {
         return reservationCouponMapper.toVerifyFeignResponse(reservationCoupon.getId(), totalPrice - discountPrice);
     }
 
-    // 쿠폰 선점 상태인지 확인
+    // [Feign] 쿠폰 상태 변경 API
+    @Transactional
+    @Override
+    public void confirmReservation(String reservationCouponId, FeignConfirmReservationRequest request) {
+        ReservationCoupon reservationCoupon = reservationCouponRepository.findById(reservationCouponId)
+                .orElseThrow(() -> new CustomCouponException(ErrorCode.RESERVATION_COUPON_NOT_FOUND));
+
+        // 선점 상태가 아닌 경우 에러 반환
+        validateReservationPreemption(reservationCoupon);
+
+        ReservationCouponStatus reservationCouponStatus = ReservationCouponStatus.checkReservationCouponStatus(request.reservationStatus());
+
+        // 예약 상태 처리
+        handleReservation(reservationCoupon, reservationCouponStatus);
+    }
+
+    // 선점 상태 검증
+    private void validateReservationPreemption(ReservationCoupon reservationCoupon) {
+        if (reservationCoupon.getReservationCouponStatus() != ReservationCouponStatus.PREEMPTION) {
+            throw new CustomCouponException(ErrorCode.RESERVATION_COUPON_NOT_PREEMPTED);
+        }
+    }
+
+    // 예약 상태 처리
+    private void handleReservation(ReservationCoupon reservationCoupon, ReservationCouponStatus reservationCouponStatus) {
+        switch (reservationCouponStatus) {
+            case COMPLETED -> handleReservationCompleted(reservationCoupon);
+            case CANCEL -> handleReservationCanceled(reservationCoupon);
+            default -> throw new CustomCouponException(ErrorCode.RESERVATION_STATUS_NOT_MATCH);
+        }
+    }
+
+    // 예약 완료 처리
+    private void handleReservationCompleted(ReservationCoupon reservationCoupon) {
+        UserCoupon userCoupon = reservationCoupon.getUserCoupon();
+
+        // 쿠폰 상태 및 완료 처리
+        userCoupon.reservationComplete();
+        reservationCoupon.confirmReservationStatus(ReservationCouponStatus.COMPLETED);
+    }
+
+    // 예약 취소 처리
+    private void handleReservationCanceled(ReservationCoupon reservationCoupon) {
+        UserCoupon userCoupon = reservationCoupon.getUserCoupon();
+        Coupon coupon = userCoupon.getCoupon();
+
+        // 만료 시간 기준 상태 결정
+        ReservationCouponStatus status = LocalDateTime.now().isAfter(coupon.getExpiredDate()) ?
+                ReservationCouponStatus.EXPIRED : ReservationCouponStatus.CANCEL;
+
+        // 쿠폰 상태 및 취소 처리
+        userCoupon.reservationCancel();
+        reservationCoupon.confirmReservationStatus(status);
+    }
+
+    // user 쿠폰이 reservationCoupon 테이블에 CANCEL 상태가 아닌 다른 상태값이 DB에 있으면 사용불가
     private void checkAlreadyReserved(UserCoupon userCoupon) {
 
-        if(reservationCouponRepository.existsByUserCouponAndReservationCouponStatusAndIsDeleteFalse(
-                userCoupon, ReservationCouponStatus.PREEMPTION)
+        if(reservationCouponRepository.existsByUserCouponAndReservationCouponStatusNotAndIsDeleteFalse(
+                userCoupon, ReservationCouponStatus.CANCEL)
         ){
-            throw new CustomCouponException(ErrorCode.COUPON_ALREADY_RESERVED);
+            throw new CustomCouponException(ErrorCode.COUPON_UNAVAILABLE);
         }
     }
 
