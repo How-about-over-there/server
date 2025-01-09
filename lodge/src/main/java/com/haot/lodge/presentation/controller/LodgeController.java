@@ -102,6 +102,7 @@ public class LodgeController {
             @RequestHeader("X-User-Role") Role userRole,
             @PathVariable String lodgeId
     ) {
+        lodgeFacade.deleteLodge(userRole, userId, lodgeId);
         return ApiResponse.success();
     }
 

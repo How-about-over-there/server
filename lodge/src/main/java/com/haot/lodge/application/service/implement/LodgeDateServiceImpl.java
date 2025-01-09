@@ -79,6 +79,22 @@ public class LodgeDateServiceImpl implements LodgeDateService {
         lodgeDate.updateStatus(status);
     }
 
+    @Override
+    public void deleteAllByLodge(Lodge lodge, String userId) {
+        lodge.getDates().forEach(lodgeDate -> {
+            dateDeleteValidation(lodgeDate);
+            lodgeDate.deleteEntity(userId);
+        });
+    }
+
+    private void dateDeleteValidation(LodgeDate lodgeDate) {
+        if(lodgeDate.getDate().isAfter(LocalDate.now())
+                && lodgeDate.getStatus()==ReservationStatus.COMPLETE
+        ) {
+            throw new LodgeException(ErrorCode.CANNOT_DELETE_SCHEDULED_DATE);
+        }
+    }
+
     /**
      * 입력된 날짜 유효성 검사
      * @param startDate 숙소 시작 날짜

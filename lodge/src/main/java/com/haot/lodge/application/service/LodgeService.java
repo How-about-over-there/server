@@ -38,4 +38,6 @@ public interface LodgeService {
             Double basicPrice
     );
 
+    void delete(String userId, Lodge lodge);
+
 }

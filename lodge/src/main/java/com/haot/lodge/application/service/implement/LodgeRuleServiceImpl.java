@@ -32,4 +32,10 @@ public class LodgeRuleServiceImpl implements LodgeRuleService {
         );
     }
 
+    @Override
+    public void deleteByLodge(Lodge lodge, String userId) {
+        LodgeRule rule = getLodgeRuleByLodgeId(lodge.getId());
+        rule.deleteEntity(userId);
+    }
+
 }

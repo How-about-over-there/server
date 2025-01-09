@@ -24,6 +24,17 @@ public class LodgeImageServiceImpl implements LodgeImageService {
         );
     }
 
+    @Override
+    public void deleteAllByLodge(Lodge lodge, String userId) {
+        lodge.getImages().forEach(image -> {
+            deleteFromS3(image.getUrl());
+            image.deleteEntity(userId);
+        });
+    }
+
+    private void deleteFromS3(String url) {
+    }
+
     // TODO: S3 연결 필요
     private String convertToUrl(MultipartFile file) {
         return "http://S3";

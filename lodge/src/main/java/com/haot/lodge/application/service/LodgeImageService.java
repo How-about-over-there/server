@@ -11,4 +11,6 @@ public interface LodgeImageService {
             String title,
             String description
     );
+
+    void deleteAllByLodge(Lodge lodge, String userId);
 }
