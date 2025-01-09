@@ -49,6 +49,11 @@ public class Review extends BaseEntity {
         .contents(contents)
         .build();
   }
+
+  public void updateReview( String contents) {
+    this.contents = contents;
+  }
+
   public void deleteReview(String userId) {
     deleteEntity(userId);
   }
