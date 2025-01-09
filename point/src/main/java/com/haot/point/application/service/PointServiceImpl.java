@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j(topic = "PointServiceImpl")
 @Service
 @RequiredArgsConstructor
@@ -55,48 +57,45 @@ public class PointServiceImpl implements PointService{
     @Transactional
     public PointAllResponse usePoint(PointTransactionRequest request, String pointId) {
 
-        // 1. 기존 Point 조회
-        Point point = validPoint(pointId);
+        // 1. 포인트 타입 유효성 검사
+        PointType type = PointType.fromString(request.type());
+        if (!(type.equals(PointType.USE) || type.equals(PointType.REFUND))) {
+            throw new CustomPointException(ErrorCode.POINT_TYPE_NOT_SUPPORTED);
+        }
 
-        // 2. 포인트 잔액 확인
+        // 2. Pending 상태 확인
+        Optional<PointHistory> pendingHistory = pointHistoryRepository.findPendingHistory(pointId);
+        if (pendingHistory.isPresent()) {
+            throw new CustomPointException(ErrorCode.PENDING_OPERATION_EXISTS);
+        }
+
+        // 3. 기존 Point 조회 및 잔액 확인
+        Point point = validPoint(pointId);
         if (request.points() > point.getTotalPoints()) {
             throw new CustomPointException(ErrorCode.POINT_INSUFFICIENT);
         }
 
-        // 3. 포인트 타입 유효성 검사
-        PointType type = PointType.fromString(request.type());
-        String description = "";
-        PointStatus status = PointStatus.PENDING;
+        // 4. 포인트 차감
+        point.updateTotalPoint(point.getTotalPoints() - request.points());
 
-        // 4. 포인트 타입에 따라 처리
-        if (type.equals(PointType.USE)) {
-            // TODO : 동시성 제어(DB 락 or Redis or Kafka 필요)
-        } else {
-            if (request.contextId() == null) {
-                throw new CustomPointException(ErrorCode.POINT_CONTEXID_REQUIRED);
-            }
-            description = createDescription(request.contextId(), type);
-            status = PointStatus.PROCESSED;
-            // 보유 포인트 차감
-            point.updateTotalPoint(point.getTotalPoints() - request.points());
-        }
-
-        // 5. 포인트 내역 저장
+        // 5. PointHistory 생성
         PointHistory pointHistory = PointHistory.create(
                 point,
                 request.points(),
                 type,
-                description,
+                "포인트 사용 대기",
                 null,
-                status
+                PointStatus.PENDING
         );
         pointHistoryRepository.save(pointHistory);
+
         return PointAllResponse.of(point, pointHistory);
     }
 
+
     // 포인트 설명 생성
     public String createDescription(String contextId, PointType type) {
-        return contextId + " " + type + " 포인트";
+        return contextId + " " + type.getDescription() + " 포인트";
     }
 
     private Point validPoint(String pointId) {
