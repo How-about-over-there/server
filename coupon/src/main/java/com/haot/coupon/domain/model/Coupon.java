@@ -3,7 +3,7 @@ package com.haot.coupon.domain.model;
 import com.haot.coupon.domain.model.enums.CouponType;
 import com.haot.coupon.domain.model.enums.DiscountPolicy;
 import com.haot.coupon.domain.model.vo.CouponDiscountRate;
-import com.haot.coupon.submodule.auditor.BaseEntity;
+import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

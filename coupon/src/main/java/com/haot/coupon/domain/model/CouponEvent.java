@@ -1,7 +1,7 @@
 package com.haot.coupon.domain.model;
 
 import com.haot.coupon.domain.model.enums.EventStatus;
-import com.haot.coupon.submodule.auditor.BaseEntity;
+import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +19,7 @@ public class CouponEvent extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    // 추후 쿠폰을 돌려쓸 수도 있으니 Many to One으로
+    // 추후 이벤트에 무제한 쿠폰을 돌려쓸 수도 있으니 Many to One으로
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id", nullable = false)
     private Coupon coupon;
@@ -58,6 +58,18 @@ public class CouponEvent extends BaseEntity {
 
     public void updateEventStatus(EventStatus eventStatus){
         this.eventStatus = eventStatus;
+    }
+
+    public void modifyEvent(String eventName, String description){
+
+        if(eventName != null && !eventName.isEmpty()){
+            this.eventName = eventName;
+        }
+
+        if(description != null && !description.isEmpty()){
+            this.description = description;
+        }
+
     }
 
 

@@ -14,7 +14,7 @@ public class CouponErrorFrontProducer implements CouponErrorProducer {
     private final KafkaTemplate<String, String> errorKafkaTemplate;
 
     @Override
-    public void sendEventExpired(String message) {
+    public void sendEventClosed(String message) {
 
         errorKafkaTemplate.send(
                 MessageBuilder.withPayload(message)
@@ -22,16 +22,5 @@ public class CouponErrorFrontProducer implements CouponErrorProducer {
                         .build())
                 ;
     }
-
-    @Override
-    public void sendEventOutOfStock(String message) {
-
-        errorKafkaTemplate.send(
-                MessageBuilder.withPayload(message)
-                        .setHeader(KafkaHeaders.TOPIC, "coupon-event-end")
-                        .build())
-                        ;
-    }
-
 
 }

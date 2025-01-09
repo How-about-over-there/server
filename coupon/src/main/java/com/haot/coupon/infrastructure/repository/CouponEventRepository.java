@@ -15,4 +15,6 @@ public interface CouponEventRepository extends JpaRepository<CouponEvent, String
     List<CouponEvent> findByCouponIdAndEventEndDateIsAfterAndIsDeleteFalse(String id, LocalDateTime now);
 
     Optional<CouponEvent> findByIdAndEventStatusAndIsDeleteFalse(String id, EventStatus eventStatus);
+
+    Optional<CouponEvent> findByIdAndIsDeleteFalse(String eventId);
 }

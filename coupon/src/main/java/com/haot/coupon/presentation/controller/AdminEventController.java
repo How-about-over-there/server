@@ -26,10 +26,15 @@ public class AdminEventController {
         return ApiResponse.SUCCESS(SuccessCode.CREATE_EVENT_SUCCESS, adminEventService.create(eventCreateRequest));
     }
 
+    // TODO header로 userId 받아야 한다.
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{eventId}")
-    public ApiResponse<Void> modify(@PathVariable String eventId, @RequestBody EventModifyRequest eventModifyRequest) {
-        return ApiResponse.success();
+    public ApiResponse<Void> modify(@RequestHeader(value = "X-User-Id", required = true) String userId,
+                                    @PathVariable(value = "eventId") String eventId,
+                                    @Valid @RequestBody EventModifyRequest eventModifyRequest) {
+
+        adminEventService.modify(userId, eventId, eventModifyRequest);
+        return ApiResponse.SUCCESS(SuccessCode.MODIFY_EVENT_SUCCESS);
     }
 
     @ResponseStatus(HttpStatus.OK)

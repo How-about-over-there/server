@@ -1,7 +1,9 @@
 package com.haot.coupon.application.service.impl;
 
 import com.haot.coupon.application.dto.request.events.EventCreateRequest;
+import com.haot.coupon.application.dto.request.events.EventModifyRequest;
 import com.haot.coupon.application.dto.response.events.EventCreateResponse;
+import com.haot.coupon.application.kafka.CouponErrorProducer;
 import com.haot.coupon.application.mapper.EventMapper;
 import com.haot.coupon.application.service.AdminEventService;
 import com.haot.coupon.common.exceptions.CustomCouponException;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +28,10 @@ public class AdminEventServiceImpl implements AdminEventService {
 
     private final CouponEventRepository couponEventRepository;
     private final CouponRepository couponRepository;
+
     private final EventMapper mapper;
+
+    private final CouponErrorProducer couponErrorProducer;
 
     @Transactional
     @Override
@@ -71,5 +77,53 @@ public class AdminEventServiceImpl implements AdminEventService {
         event.updateExpiredEventStatus();
 
         return mapper.toCreateResponse(couponEventRepository.save(event));
+    }
+
+    // 이벤트 수정 API, 문제가 생겼을때 확산 방지용 API or 이름, 설명 변경 API
+    @Transactional
+    @Override
+    public void modify(String userId, String eventId, EventModifyRequest request) {
+
+        validateNonEmptyFields(request.eventName(), request.eventDescription(), request.eventStatus());
+
+        CouponEvent event = couponEventRepository.findByIdAndIsDeleteFalse(eventId)
+                .orElseThrow(() -> new CustomCouponException(ErrorCode.EVENT_NOT_FOUND));
+
+        // status 수정시 이벤트 관리자 강제 종료
+        if(request.eventStatus() != null) {
+
+            // 이미 끝난 이벤트는 status 수정 필요가 없게
+            if (event.getEventStatus() != EventStatus.DEFAULT) {
+                throw new CustomCouponException(ErrorCode.CURRENT_EVENT_CLOSED);
+            }
+
+            // 이벤트가 시작하기 전이면 상태값만 변경 -> 할당된 쿠폰은 쓰지 못하고 확인 후 delete 해야될듯
+            if(LocalDateTime.now().isBefore(event.getEventStartDate())){
+                event.updateEventStatus(EventStatus.MANUALLY_CLOSED);
+            }else{
+                Coupon coupon = event.getCoupon();
+                deleteCoupon(coupon, userId);
+                couponErrorProducer.sendEventClosed(EventStatus.MANUALLY_CLOSED + " " + event.getId());
+            }
+
+        }else{
+            // 이름, description 수정
+            event.modifyEvent(request.eventName(), request.eventDescription());
+        }
+    }
+
+    // 쿠폰 삭제
+    private void deleteCoupon(Coupon coupon, String userId){
+        coupon.deleteEntity(userId);
+    }
+
+    // 유효성 검사 함수: 필드들이 모두 비어 있을 경우 예외 던짐
+    private void validateNonEmptyFields(String eventName, String eventDescription, String eventStatus) {
+        boolean allFieldsEmpty = Stream.of(eventName, eventDescription, eventStatus)
+                .allMatch(field -> field == null || field.isEmpty());
+
+        if (allFieldsEmpty) {
+            throw new CustomCouponException(ErrorCode.MODIFY_EVENT_HAS_NO_PARAMETER);
+        }
     }
 }
