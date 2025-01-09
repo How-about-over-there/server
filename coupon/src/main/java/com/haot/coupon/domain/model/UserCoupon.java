@@ -35,4 +35,13 @@ public class UserCoupon extends BaseEntity {
 
     @Column(name = "is_delete", nullable = false)
     private boolean isDelete;
+
+    public void reservationComplete() {
+        this.couponStatus = CouponStatus.USED;
+        this.usedDate = LocalDateTime.now();
+    }
+
+    public void reservationCancel() {
+        this.couponStatus = CouponStatus.UNUSED;
+    }
 }

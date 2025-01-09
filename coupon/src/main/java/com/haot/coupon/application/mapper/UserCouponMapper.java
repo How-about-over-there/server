@@ -10,6 +10,8 @@ public interface UserCouponMapper {
 
     @Mapping(target = "coupon.id", source = "coupon.id")
     @Mapping(target = "couponStatus", constant = "DISTRIBUTED")
+    @Mapping(target = "usedDate", ignore = true)
+    @Mapping(target = "isDelete", ignore = true)
     UserCoupon toEntity(String userId, Coupon coupon);
 
 

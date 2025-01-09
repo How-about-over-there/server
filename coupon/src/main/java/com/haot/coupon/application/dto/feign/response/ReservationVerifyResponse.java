@@ -1,4 +1,4 @@
-package com.haot.coupon.application.dto.response.coupons;
+package com.haot.coupon.application.dto.feign.response;
 
 import lombok.Builder;
 

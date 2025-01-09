@@ -19,8 +19,8 @@ public enum ReservationCouponStatus {
     private final String description;
 
     // String 값으로 해당하는 Enum 값을 반환하는 메서드
-    public static CouponStatus checkReservationCouponStatus(String status) {
-        return Stream.of(CouponStatus.values())
+    public static ReservationCouponStatus checkReservationCouponStatus(String status) {
+        return Stream.of(ReservationCouponStatus.values())
                 .filter(couponStatus -> couponStatus.name().equalsIgnoreCase(status))
                 .findFirst()
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.RESERVATION_STATUS_NOT_MATCH));
