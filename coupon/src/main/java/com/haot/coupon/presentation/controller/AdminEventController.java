@@ -29,7 +29,7 @@ public class AdminEventController {
     // TODO header로 userId 받아야 한다.
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{eventId}")
-    public ApiResponse<Void> modify(@RequestParam(value = "userId") String userId,
+    public ApiResponse<Void> modify(@RequestHeader(value = "X-User-Id", required = true) String userId,
                                     @PathVariable(value = "eventId") String eventId,
                                     @Valid @RequestBody EventModifyRequest eventModifyRequest) {
 

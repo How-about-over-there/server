@@ -97,7 +97,7 @@ public class AdminEventServiceImpl implements AdminEventService {
                 throw new CustomCouponException(ErrorCode.CURRENT_EVENT_CLOSED);
             }
 
-            // 이벤트가 시작하기 전이면 상태값만 변경
+            // 이벤트가 시작하기 전이면 상태값만 변경 -> 할당된 쿠폰은 쓰지 못하고 확인 후 delete 해야될듯
             if(LocalDateTime.now().isBefore(event.getEventStartDate())){
                 event.updateEventStatus(EventStatus.MANUALLY_CLOSED);
             }else{
