@@ -36,9 +36,11 @@ public class LodgeDateFacade {
     }
 
     @Transactional
-    public void updatePrice(String dateId, Double requestPrice) {
+    public void updatePrice(
+            Role role, String userId, String dateId, Double requestPrice
+    ) {
         LodgeDate lodgeDate = lodgeDateService.getValidLodgeDateByIdWithLock(dateId);
-        // TODO: 권한 HOST 라면 lodgeHostId와 로그인한 유저 아이디 같은지 확인 필요
+        lodgeDate.verifyProperty(role, userId);
         lodgeDate.updatePrice(requestPrice);
     }
 

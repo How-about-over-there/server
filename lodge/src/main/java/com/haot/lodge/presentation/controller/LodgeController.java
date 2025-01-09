@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -41,10 +42,11 @@ public class LodgeController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @RoleCheck({Role.ADMIN, Role.HOST})
     public ApiResponse<LodgeCreateResponse> create(
+            @RequestHeader("X-User-Id") String userId,
             @Valid LodgeCreateRequest request
     ) {
-        String userId = "UUID"; // 임시 유저 ID (Header 에서 가져오도록 수정 필요)
         LodgeResponse lodge = lodgeFacade.createLodge(userId, request);
         return ApiResponse.success(new LodgeCreateResponse(lodge));
     }
@@ -81,17 +83,23 @@ public class LodgeController {
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{lodgeId}")
-    public ApiResponse<Void>update(
+    @RoleCheck({Role.ADMIN, Role.HOST})
+    public ApiResponse<Void> update(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("X-User-Role") Role userRole,
             @PathVariable String lodgeId,
             @Valid @RequestBody LodgeUpdateRequest request
     ) {
-        lodgeFacade.updateLodge(lodgeId, request);
+        lodgeFacade.updateLodge(userRole, userId, lodgeId, request);
         return ApiResponse.success();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{lodgeId}")
+    @RoleCheck({Role.ADMIN, Role.HOST})
     public ApiResponse<Void> delete(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("X-User-Role") Role userRole,
             @PathVariable String lodgeId
     ) {
         return ApiResponse.success();
