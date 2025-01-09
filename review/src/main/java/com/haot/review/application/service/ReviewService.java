@@ -8,6 +8,8 @@ import com.haot.review.domain.model.Review;
 import com.haot.review.domain.model.ReviewImage;
 import com.haot.review.domain.repository.ReviewImageRepository;
 import com.haot.review.domain.repository.ReviewRepository;
+import com.haot.review.presentation.client.LodgeClient;
+import com.haot.review.presentation.dto.LodgeReadOneResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class ReviewService {
   private final ReviewRepository reviewRepository;
   private final ReviewImageRepository reviewImageRepository;
   private final MockS3Service mockS3Service;
+  private final LodgeClient lodgeClient;
 
   @Transactional
   public ReviewGetResponse createReview(String userId, ReviewCreateRequest request) {
@@ -43,11 +46,36 @@ public class ReviewService {
   @Transactional(readOnly = true)
   public ReviewGetResponse readOne(String reviewId) {
 
-    // Todo 삭제 API 구현 후 isDelete 조회 안 되도록 구현할 예정
-
-    Review review = reviewRepository.findById(reviewId)
+    Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
         .orElseThrow(() -> new CustomReviewException(ErrorCode.REVIEW_NOT_FOUND));
 
     return ReviewGetResponse.of(review);
+  }
+
+  @Transactional
+  public void deleteReview(String reviewId, String userId, String role) {
+
+    Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
+        .orElseThrow(() -> new CustomReviewException(ErrorCode.REVIEW_NOT_FOUND));
+
+    if (!hasPermissionToDeleteReview(review, userId, role)) {
+      throw new CustomReviewException(ErrorCode.FORBIDDEN_OPERATION);
+    }
+
+    review.deleteReview(userId);
+  }
+
+  private boolean hasPermissionToDeleteReview(Review review, String userId, String role) {
+    return switch (role) {
+      case "USER" -> review.getUserId().equals(userId);
+      case "HOST" -> isLodgeHost(userId, review.getLodgeId());
+      case "ADMIN" -> true;
+      default -> false;
+    };
+  }
+
+  private boolean isLodgeHost(String hostId, String lodgeId) {
+    LodgeReadOneResponse response = lodgeClient.readOne(lodgeId).data();
+    return hostId.equals(response.lodge().hostId());
   }
 }

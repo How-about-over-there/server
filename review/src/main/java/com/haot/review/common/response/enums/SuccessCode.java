@@ -7,10 +7,9 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorCode implements ResCodeIfs {
+public enum SuccessCode implements ResCodeIfs {
 
-  REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "6001", "Review not found."),
-  FORBIDDEN_OPERATION(HttpStatus.FORBIDDEN, "6002", "Access denied.");
+  DELETE_REVIEW_SUCCESS(HttpStatus.CREATED, "6000", "리뷰가 성공적으로 삭제 되었습니다.");
 
   private final HttpStatus httpStatus;
   private final String code;
