@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode implements ResCodeIfs {
 
-  REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "6001", "Review not found.");
+  REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "6001", "Review not found."),
+  FORBIDDEN_OPERATION(HttpStatus.FORBIDDEN, "6002", "Access denied.");
 
   private final HttpStatus httpStatus;
   private final String code;

@@ -45,9 +45,30 @@ public class ReviewService {
 
     // Todo 삭제 API 구현 후 isDelete 조회 안 되도록 구현할 예정
 
-    Review review = reviewRepository.findById(reviewId)
+    Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
         .orElseThrow(() -> new CustomReviewException(ErrorCode.REVIEW_NOT_FOUND));
 
     return ReviewGetResponse.of(review);
+  }
+
+  @Transactional
+  public void deleteReview(String reviewId, String userId, String role) {
+
+    Review review = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
+        .orElseThrow(() -> new CustomReviewException(ErrorCode.REVIEW_NOT_FOUND));
+
+    if (!hasPermissionToDeleteReview(review, userId, role)) {
+      throw new CustomReviewException(ErrorCode.FORBIDDEN_OPERATION);
+    }
+
+    review.deleteReview(userId);
+  }
+
+  private boolean hasPermissionToDeleteReview(Review review, String userId, String role) {
+    return switch (role) {
+      case "USER" -> review.getUserId().equals(userId);
+      case "ADMIN", "HOST" -> true;
+      default -> false;
+    };
   }
 }

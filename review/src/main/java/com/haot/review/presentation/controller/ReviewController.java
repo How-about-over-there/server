@@ -5,12 +5,11 @@ import com.haot.review.application.dtos.req.ReviewCreateRequest;
 import com.haot.review.application.dtos.res.ReviewGetResponse;
 import com.haot.review.application.service.ReviewService;
 import com.haot.review.common.response.ApiResponse;
-import com.haot.review.submodule.role.Role;
-import com.haot.review.submodule.role.RoleCheck;
+import com.haot.review.common.response.enums.SuccessCode;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.GET;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,4 +43,14 @@ public class ReviewController {
     return ApiResponse.success(reviewService.readOne(reviewId));
   }
 
+  @ResponseStatus(HttpStatus.OK)
+  @DeleteMapping("/{reviewId}")
+  public ApiResponse<Void> delete(
+      @PathVariable String reviewId,
+       @RequestHeader(value = "X-User-Id", required = true) String userId,
+      @RequestHeader(value = "X-Role", required = true) String role
+  ) {
+    reviewService.deleteReview(reviewId, userId, role);
+    return ApiResponse.success(SuccessCode.DELETE_REVIEW_SUCCESS);
+  }
 }
