@@ -55,6 +55,7 @@ public class LodgeDateController {
             @PathVariable String dateId,
             @RequestBody LodgeDateUpdateRequest request
     ) {
+        lodgeDateFacade.updatePrice(dateId, request.price());
         return ApiResponse.success();
     }
 
