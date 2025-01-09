@@ -15,6 +15,7 @@ import com.haot.lodge.presentation.request.LodgeCreateRequest;
 import com.haot.lodge.presentation.request.LodgeUpdateRequest;
 import com.haot.lodge.presentation.response.LodgeReadAllResponse;
 import com.haot.lodge.presentation.response.LodgeReadOneResponse;
+import com.haot.submodule.role.Role;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

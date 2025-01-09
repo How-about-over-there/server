@@ -1,6 +1,7 @@
 package com.haot.lodge.domain.model;
 
 
+import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

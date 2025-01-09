@@ -9,6 +9,8 @@ import com.haot.lodge.presentation.request.LodgeUpdateRequest;
 import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.presentation.response.LodgeCreateResponse;
 import com.haot.lodge.presentation.response.LodgeReadOneResponse;
+import com.haot.submodule.role.Role;
+import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.Map;

@@ -8,6 +8,7 @@ import com.haot.lodge.domain.model.LodgeDate;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
 import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
 import com.haot.lodge.presentation.response.LodgeDateReadResponse;
+import com.haot.submodule.role.Role;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
