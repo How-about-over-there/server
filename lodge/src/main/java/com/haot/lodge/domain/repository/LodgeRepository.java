@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LodgeRepository extends JpaRepository<Lodge, String>, LodgeCustomRepository {
+    boolean existsByIdAndIsDeletedFalse(String id);
     Optional<Lodge> findByHostIdAndName(String hostId, String name);
 }

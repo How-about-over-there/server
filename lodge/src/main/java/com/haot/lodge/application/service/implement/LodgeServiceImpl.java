@@ -19,6 +19,11 @@ public class LodgeServiceImpl implements LodgeService {
     private final LodgeRepository lodgeRepository;
 
     @Override
+    public boolean isValidLodgeId(String lodgeId) {
+        return lodgeRepository.existsByIdAndIsDeletedFalse(lodgeId);
+    }
+
+    @Override
     public Lodge getValidLodgeById(String lodgeId) {
         return lodgeRepository.findById(lodgeId)
                 .orElseThrow(()->new LodgeException(ErrorCode.LODGE_NOT_FOUND));

@@ -38,9 +38,13 @@ public class LodgeFacade {
     private final LodgeRuleService lodgeRuleService;
     private final LodgeDateService lodgeDateService;
 
+    @Transactional(readOnly = true)
+    public boolean lodgeValidation(String lodgeId) {
+        return lodgeService.isValidLodgeId(lodgeId);
+    }
+
     @Transactional
     public LodgeResponse createLodge(String userId, LodgeCreateRequest request) {
-        // TODO: UserId 유효성 검증
         Lodge lodge = lodgeService.create(
                 userId, request.name(), request.description(),
                 request.address(), request.term(), request.basicPrice());
