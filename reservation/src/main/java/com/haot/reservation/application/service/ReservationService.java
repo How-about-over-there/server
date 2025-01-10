@@ -12,8 +12,13 @@ import com.haot.reservation.domain.model.Reservation;
 import com.haot.reservation.domain.model.ReservationDate;
 import com.haot.reservation.domain.repository.ReservationDateRepository;
 import com.haot.reservation.domain.repository.ReservationRepository;
+import com.haot.reservation.infrastructure.client.CouponClient;
 import com.haot.reservation.infrastructure.client.LodgeClient;
+import com.haot.reservation.infrastructure.dtos.CouponDataResponse;
 import com.haot.reservation.infrastructure.dtos.LodgeDataGetResponse;
+import com.haot.reservation.infrastructure.dtos.coupon.FeignConfirmReservationRequest;
+import com.haot.reservation.infrastructure.dtos.coupon.FeignVerifyRequest;
+import com.haot.reservation.infrastructure.dtos.coupon.ReservationVerifyResponse;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateReadResponse;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateUpdateStatusRequest;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeReadOneResponse;
@@ -27,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -34,35 +40,40 @@ import org.springframework.stereotype.Service;
 public class ReservationService {
 
   private final LodgeClient lodgeClient;
+  private final CouponClient couponClient;
   private final ReservationRepository reservationRepository;
   private final ReservationDateRepository reservationDateRepository;
 
+  @Transactional
   public ReservationGetResponse createReservation(
       ReservationCreateRequest request,
       String userId,
       String role
   ) throws JsonProcessingException {
 
-    // Todo 권한 로직 추가
-
     Double totalPrice = 0.0;
     String lodgeName = getLodgeName(request.lodgeId());
     String reservationCouponId = "";
     String paymentId = "";
-
-    System.out.println(lodgeName);
 
     List<LodgeDateReadResponse> availableDates = getAvailableDates(
         request.lodgeId(),
         request.checkInDate(),
         request.checkOutDate()
     );
-    System.out.println(availableDates);
+
     LodgeDataGetResponse lodgeDataGetResponse = applyLodge(request, availableDates);
     totalPrice = lodgeDataGetResponse.totalPrice();
 
     // 예약 상태 업데이트하는 List
     List<String> lodgeDateIds = lodgeDataGetResponse.lodgeDateIds();
+
+    // 쿠폰 적용 가격(totalPrice) 업데이트 및 reservationCouponId 반환
+    CouponDataResponse couponResponse = applyCoupon(userId, request.couponId(), totalPrice);
+    if (couponResponse != null) {
+      reservationCouponId = couponResponse.reservationCouponId();
+      totalPrice = couponResponse.totalPrice();
+    }
 
     Reservation reservation = Reservation.createReservation(
         userId,
@@ -154,6 +165,36 @@ public class ReservationService {
       lodgeClient.updateStatus(new LodgeDateUpdateStatusRequest(lodgeDateIds, status));
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    }
+  }
+
+  // 쿠폰 적용 (totalPrice 적용 및 reservationCouponId 반환 )
+  private CouponDataResponse applyCoupon(String userId, String userCouponId, double lodgePrice)
+      throws JsonProcessingException {
+    if (userCouponId == null) {
+      return null;
+    }
+    try {
+      ApiResponse<ReservationVerifyResponse> response = couponClient.verify(
+          new FeignVerifyRequest( userCouponId, userId, lodgePrice)
+      );
+
+      return CouponDataResponse.of(
+          response.data().reservationCouponId(),
+          response.data().discountedPrice()
+      );
+    } catch (FeignException e) {
+      throw FeignExceptionUtils.parseFeignException(e);
+    }
+  }
+
+  private void updateCouponStatus(String couponId, String status) throws JsonProcessingException {
+    if (couponId != null) {
+      try {
+        couponClient.confirmReservation(couponId, new FeignConfirmReservationRequest(status));
+      } catch (FeignException e) {
+        throw FeignExceptionUtils.parseFeignException(e);
+      }
     }
   }
 }

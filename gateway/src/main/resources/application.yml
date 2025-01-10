@@ -67,7 +67,7 @@ spring:
             - Path=/admin/v1/reviews/**
 
         #Reservation
-        - id: reservation-service-api
+        - id: reservation-service
           uri: lb://reservation-service
           predicates:
             - Path=/api/v1/reservations/**
