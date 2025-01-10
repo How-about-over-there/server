@@ -42,6 +42,9 @@ public enum ErrorCode implements ResCodeIfs {
     RESERVATION_COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "4025", "ReservationCoupon not found."),
     RESERVATION_COUPON_NOT_PREEMPTED(HttpStatus.NOT_FOUND, "4026", "선점된 쿠폰이 아닙니다"),
 
+    // event 조회 API Error
+    INVALID_PARAMETERS_FOR_NON_ADMIN(HttpStatus.BAD_REQUEST, "4100", "User 권한을 가진 사용자가 요청 할 수 없는 파라미터 입니다."),
+
     // service common Error
     UNSUPPORTED_SORT_TYPE(HttpStatus.BAD_REQUEST, "4500", "지원하지 않는 정렬 방식입니다."),
 
