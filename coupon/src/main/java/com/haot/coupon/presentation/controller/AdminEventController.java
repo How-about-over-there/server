@@ -26,7 +26,7 @@ public class AdminEventController {
         return ApiResponse.SUCCESS(SuccessCode.CREATE_EVENT_SUCCESS, adminEventService.create(eventCreateRequest));
     }
 
-    // TODO header로 userId 받아야 한다.
+    // 이벤트 수정 API
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{eventId}")
     public ApiResponse<Void> modify(@RequestHeader(value = "X-User-Id", required = true) String userId,

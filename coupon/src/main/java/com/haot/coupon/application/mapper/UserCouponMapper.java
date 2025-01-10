@@ -15,6 +15,7 @@ public interface UserCouponMapper {
     @Mapping(target = "isDelete", ignore = true)
     UserCoupon toEntity(String userId, Coupon coupon);
 
+    // QueryDsl mapping
     @Mapping(source = "coupon.id", target = "couponId")
     @Mapping(source = "coupon.name", target = "couponName")
     @Mapping(source = "coupon.availableDate", target = "couponAvailableDate")
