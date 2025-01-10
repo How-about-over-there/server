@@ -14,11 +14,14 @@ import com.haot.point.infrastructure.repository.PointHistoryRepository;
 import com.haot.point.infrastructure.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j(topic = "PointServiceImpl")
@@ -132,6 +135,73 @@ public class PointServiceImpl implements PointService{
         return PointAllResponse.of(point, pointHistory);
     }
 
+    @Override
+    @Transactional
+    public boolean expirePoints(LocalDateTime targetDate, int page, int batchSize) {
+        // 1. 날짜 범위 계산
+        LocalDateTime startOfDay = targetDate.toLocalDate().atStartOfDay(); // 자정 시작
+        LocalDateTime endOfDay = targetDate.toLocalDate().atTime(LocalTime.MAX); // 자정 끝
+
+        // 2. 페이징 처리
+        PageRequest pageRequest = PageRequest.of(page, batchSize);
+
+        // 3. 만료 대상 조회 - isDeleted == false, type == EARN, status == PROCESSED, yesterday < expiredAt <= now
+        Page<PointHistory> expiredPoints = pointHistoryRepository.findExpiredPoints(
+                startOfDay, endOfDay, pageRequest
+        );
+
+        // 4. 만료 처리
+        for (PointHistory pointHistory : expiredPoints) {
+            double expirePoint = getExpirePoint(pointHistory);
+
+            if (expirePoint <= 0) {
+                continue;   // 적립 포인트가 모두 사용됨
+            }
+
+            // 5. 만료 포인트 차감
+            Point point = pointHistory.getPoint();
+            point.updateTotalPoint(point.getTotalPoints() - expirePoint);
+
+            // 6. 만료 내역 생성
+            PointHistory.create(
+                    point,
+                    expirePoint,
+                    PointType.EXPIRE,
+                    pointHistory.getDescription() + PointType.EXPIRE.getDescription(),
+                    null,
+                    PointStatus.PROCESSED
+            );
+
+            // 7. 저장
+            pointHistoryRepository.saveAll(expiredPoints.getContent());
+        }
+        return false;
+    }
+
+    // 만료 포인트 계산
+    public double getExpirePoint(PointHistory pointHistory) {
+        if (pointHistory.getType() != PointType.EARN || pointHistory.getStatus() != PointStatus.PROCESSED) {
+            return 0.0;
+        }
+
+        // 사용 내역 조회 및 남은 포인트 계산
+        List<PointHistory> usedHistories = pointHistoryRepository.
+                findUsedHistories(pointHistory.getPoint().getId(), pointHistory.getCreatedAt());
+
+        // 포인트 계산
+        double expirePoint = pointHistory.getPoints();
+        for (PointHistory usedHistory : usedHistories) {
+            // 만료 포인트
+            double deductPoint = Math.min(expirePoint, usedHistory.getPoints());
+            expirePoint -= deductPoint;
+
+            if (expirePoint <= 0) {
+                break; // 적립 포인트가 모두 사용됨
+            }
+        }
+
+        return Math.max(expirePoint, 0.0);
+    }
 
     private Point validPoint(String pointId) {
         return pointRepository.findByIdAndIsDeletedFalse(pointId)
