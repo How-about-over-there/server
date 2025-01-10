@@ -10,3 +10,6 @@
 [submodule "lodge/src/main/java/com/haot/submodule"]
 	path = lodge/src/main/java/com/haot/submodule
 	url = https://github.com/How-about-over-there/submodule.git
+[submodule "point/src/main/java/com/haot/submodule"]
+	path = point/src/main/java/com/haot/submodule
+	url = https://github.com/How-about-over-there/submodule.git
