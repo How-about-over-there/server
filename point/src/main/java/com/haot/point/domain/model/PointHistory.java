@@ -56,4 +56,11 @@ public class PointHistory extends BaseEntity{
                 .status(status)
                 .build();
     }
+
+    public void updateStatus(String description, PointStatus status) {
+        if (description != null) {
+            this.description = description;
+        }
+        this.status = status;
+    }
 }

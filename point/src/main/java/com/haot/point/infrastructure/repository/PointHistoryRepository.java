@@ -11,4 +11,5 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Stri
    @Query("SELECT ph FROM PointHistory ph WHERE ph.point.id = :pointId AND ph.status = 'PENDING'")
     Optional<PointHistory> findPendingHistory(@Param("pointId") String pointId);
 
+    Optional<PointHistory> findByIdAndIsDeletedFalse(String historyId);
 }

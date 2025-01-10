@@ -59,7 +59,7 @@ public class PointServiceImpl implements PointService{
 
         // 1. 포인트 타입 유효성 검사
         PointType type = PointType.fromString(request.type());
-        if (!(type.equals(PointType.USE) || type.equals(PointType.REFUND))) {
+        if (!(type.equals(PointType.USE))) {
             throw new CustomPointException(ErrorCode.POINT_TYPE_NOT_SUPPORTED);
         }
 
@@ -90,12 +90,6 @@ public class PointServiceImpl implements PointService{
         pointHistoryRepository.save(pointHistory);
 
         return PointAllResponse.of(point, pointHistory);
-    }
-
-
-    // 포인트 설명 생성
-    public String createDescription(String contextId, PointType type) {
-        return contextId + " " + type.getDescription() + " 포인트";
     }
 
     private Point validPoint(String pointId) {
