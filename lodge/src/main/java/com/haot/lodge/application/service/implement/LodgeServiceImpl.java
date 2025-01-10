@@ -25,9 +25,8 @@ public class LodgeServiceImpl implements LodgeService {
 
     @Override
     public Lodge getValidLodgeById(String lodgeId) {
-        return lodgeRepository.findById(lodgeId)
+        return lodgeRepository.findByIdAndIsDeletedFalse(lodgeId)
                 .orElseThrow(()->new LodgeException(ErrorCode.LODGE_NOT_FOUND));
-        // TODO: isDeleted = true 인 경우 제외되도록 해야 함
     }
 
     @Override
