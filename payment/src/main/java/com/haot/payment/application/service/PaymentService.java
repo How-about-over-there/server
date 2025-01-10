@@ -4,15 +4,14 @@ import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
 import com.haot.payment.application.dto.request.PaymentSearchRequest;
 import com.haot.payment.application.dto.response.PaymentResponse;
+import com.haot.submodule.role.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.time.LocalDate;
 
 public interface PaymentService {
 
     // 결제 생성
-    PaymentResponse createPayment(PaymentCreateRequest request);
+    PaymentResponse createPayment(PaymentCreateRequest request, String userId, Role role);
 
     // 결제 확인
     PaymentResponse completePayment(String paymentId);

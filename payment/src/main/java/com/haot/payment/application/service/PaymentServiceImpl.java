@@ -14,14 +14,13 @@ import com.haot.payment.infrastructure.client.dto.request.PortOneCancelRequest;
 import com.haot.payment.infrastructure.client.dto.response.PortOneCancelResponse;
 import com.haot.payment.infrastructure.client.dto.response.PortOneResponse;
 import com.haot.payment.infrastructure.repository.PaymentRepository;
+import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 
 @Slf4j(topic = "PaymentServiceImpl")
 @Service
@@ -33,9 +32,14 @@ public class PaymentServiceImpl implements PaymentService{
 
     @Override
     @Transactional
-    public PaymentResponse createPayment(PaymentCreateRequest request) {
+    public PaymentResponse createPayment(PaymentCreateRequest request, String userId, Role role) {
 
-        // TODO: 1. 요청 데이터 유효성 검사
+        // 1. userId 요청 데이터 유효성 검사
+        if (role == Role.USER) {
+            if (request.userId() != null && !request.userId().equals(userId)) {
+                throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
+            }
+        }
 
         // 2. 결제 정보 저장
         Payment payment = Payment.create(

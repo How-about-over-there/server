@@ -9,6 +9,7 @@ import com.haot.point.domain.enums.PointType;
 import com.haot.point.domain.model.Point;
 import com.haot.point.domain.model.PointHistory;
 import com.haot.point.infrastructure.repository.PointHistoryRepository;
+import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,19 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 
     @Override
     @Transactional
-    public PointAllResponse updateStatusPoint(PointStatusRequest request, String historyId) {
+    public PointAllResponse updateStatusPoint(PointStatusRequest request, String historyId, String userId, Role role) {
 
         // 1. 기존 point 내역 조회
         PointHistory pointHistory = pointHistoryRepository.findByIdAndIsDeletedFalse(historyId)
                 .orElseThrow(() -> new CustomPointException(ErrorCode.POINT_NOT_FOUND));
         Point point = pointHistory.getPoint();
+
+        // userId 검증
+        if (role == Role.USER) {
+            if (!pointHistory.getUserId().equals(userId)) {
+                throw new CustomPointException(ErrorCode.USER_NOT_MATCHED);
+            }
+        }
 
         // 2. 현재 상태가 ROLLBACK 또는 CANCELLED 인 경우 상태 전이 불가
         if (pointHistory.getStatus().equals(PointStatus.ROLLBACK) || pointHistory.getStatus().equals(PointStatus.CANCELLED)) {
