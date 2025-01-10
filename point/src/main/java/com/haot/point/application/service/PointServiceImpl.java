@@ -145,7 +145,7 @@ public class PointServiceImpl implements PointService{
         // 2. 페이징 처리
         PageRequest pageRequest = PageRequest.of(page, batchSize);
 
-        // 3. 만료 대상 조회 - isDeleted == false, type == EARN, status == PROCESSED, yesterday < expiredAt <= now
+        // 3. 만료 대상 조회 - isDeleted == false, type == EARN, status == PROCESSED, startOfDay < expiredAt <= endOfDay
         Page<PointHistory> expiredPoints = pointHistoryRepository.findExpiredPoints(
                 startOfDay, endOfDay, pageRequest
         );
@@ -163,7 +163,7 @@ public class PointServiceImpl implements PointService{
             point.updateTotalPoint(point.getTotalPoints() - expirePoint);
 
             // 6. 만료 내역 생성
-            PointHistory.create(
+            PointHistory expireHistory = PointHistory.create(
                     point,
                     expirePoint,
                     PointType.EXPIRE,
@@ -173,9 +173,10 @@ public class PointServiceImpl implements PointService{
             );
 
             // 7. 저장
-            pointHistoryRepository.saveAll(expiredPoints.getContent());
+            pointHistoryRepository.save(expireHistory);
         }
-        return false;
+        // 8. 페이징 종료 조건
+        return !expiredPoints.isEmpty(); // 더 이상 만료할 데이터가 없으면 false 반환
     }
 
     // 만료 포인트 계산
