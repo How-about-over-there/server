@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j(topic = "PointServiceImpl")
@@ -91,6 +92,45 @@ public class PointServiceImpl implements PointService{
 
         return PointAllResponse.of(point, pointHistory);
     }
+
+    @Override
+    @Transactional
+    public PointAllResponse earnPoint(PointTransactionRequest request, String pointId) {
+
+        // 1. 기존 Point 조회
+        Point point = validPoint(pointId);
+
+        // 2. 포인트 타입 유효성 검사 및 contextId 확인
+        PointType type = PointType.fromString(request.type());
+        if (type != PointType.EARN) {
+            throw new CustomPointException(ErrorCode.POINT_TYPE_NOT_SUPPORTED);
+        }
+        if (request.contextId() == null) {
+            throw new CustomPointException(ErrorCode.POINT_CONTEXID_REQUIRED);
+        }
+
+        // 3. 만료 기간 설정
+        // 적립 유형에 따른 포인트 적립 정책이 적용되면 추가 로직 필요
+        // 일단 모든 적립 포인트는 6개월 후 만료되도록 설정
+        LocalDateTime expiredAt = LocalDateTime.now().plusMonths(6);
+
+        // 3. PointHistory 생성
+        PointHistory pointHistory = PointHistory.create(
+                point,
+                request.points(),
+                type,
+                PointType.createDescription(request.contextId(), type),
+                expiredAt,
+                PointStatus.PROCESSED
+        );
+        pointHistoryRepository.save(pointHistory);
+
+        // 4. 포인트 적립
+        point.updateTotalPoint(point.getTotalPoints() + request.points());
+
+        return PointAllResponse.of(point, pointHistory);
+    }
+
 
     private Point validPoint(String pointId) {
         return pointRepository.findByIdAndIsDeletedFalse(pointId)

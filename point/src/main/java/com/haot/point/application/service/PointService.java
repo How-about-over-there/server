@@ -15,4 +15,7 @@ public interface PointService {
 
     // 포인트 사용
     PointAllResponse usePoint(PointTransactionRequest request, String pointId);
+
+    // 포인트 적립
+    PointAllResponse earnPoint(PointTransactionRequest request, String pointId);
 }

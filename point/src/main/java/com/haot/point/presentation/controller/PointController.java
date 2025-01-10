@@ -39,19 +39,7 @@ public class PointController {
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<PointAllResponse> earnPoint(@Valid @RequestBody PointTransactionRequest request,
                                                    @PathVariable String pointId) {
-        return ApiResponse.success(
-                new PointAllResponse(
-                        pointId,
-                        "HISTORY-UUID",
-                        "USER-UUID",
-                        request.points(),
-                        1000.0 + request.points(),
-                        "EARN",
-                        "RESERVATION-UUID EARN POINT",
-                        LocalDateTime.now().plusMonths(3),
-                        "ACTIVE"
-                )
-        );
+        return ApiResponse.success(pointService.earnPoint(request, pointId));
     }
 
     // 포인트 사용
