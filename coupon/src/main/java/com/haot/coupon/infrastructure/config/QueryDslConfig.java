@@ -15,11 +15,4 @@ public class QueryDslConfig {
         return new JPAQueryFactory(entityManager);
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule()); // LocalDateTime 처리
-        return mapper;
-    }
-
 }
