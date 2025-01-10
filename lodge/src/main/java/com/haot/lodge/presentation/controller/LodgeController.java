@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
@@ -71,7 +70,8 @@ public class LodgeController {
     ) {
         return ApiResponse.success(SliceResponse.of(
                 lodgeFacade.readAllLodgeBy(
-                        pageable, hostId, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
+                        pageable,
+                        hostId, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
         ));
     }
 
