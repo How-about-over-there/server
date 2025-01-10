@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Slf4j(topic = "PointServiceImpl")
@@ -111,8 +112,8 @@ public class PointServiceImpl implements PointService{
 
         // 3. 만료 기간 설정
         // 적립 유형에 따른 포인트 적립 정책이 적용되면 추가 로직 필요
-        // 일단 모든 적립 포인트는 6개월 후 만료되도록 설정
-        LocalDateTime expiredAt = LocalDateTime.now().plusMonths(6);
+        // 일단 모든 적립 포인트는 6개월 뒤 자정에 만료되도록 설정
+        LocalDateTime expiredAt = LocalDateTime.now().plusMonths(6).with(LocalTime.MAX);
 
         // 3. PointHistory 생성
         PointHistory pointHistory = PointHistory.create(
