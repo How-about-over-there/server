@@ -42,8 +42,13 @@ public enum ErrorCode implements ResCodeIfs {
     RESERVATION_COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "4025", "ReservationCoupon not found."),
     RESERVATION_COUPON_NOT_PREEMPTED(HttpStatus.NOT_FOUND, "4026", "선점된 쿠폰이 아닙니다"),
 
+    // service common Error
+    UNSUPPORTED_SORT_TYPE(HttpStatus.BAD_REQUEST, "4500", "지원하지 않는 정렬 방식입니다."),
+
+    // 4900 ~ front 단에 같이 나가게 되는 Error
     CURRENT_EVENT_CLOSED(HttpStatus.CONFLICT, "4900", "이벤트가 이미 종료되었습니다."),
     CURRENT_EVENT_END_TO_OUT_OF_STOCK(HttpStatus.CONFLICT, "4910", "쿠폰 재고 마감으로 인해 이벤트가 종료되었습니다."),
+
     ;
 
     private final HttpStatus httpStatus;

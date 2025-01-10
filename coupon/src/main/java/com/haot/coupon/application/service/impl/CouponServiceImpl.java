@@ -36,8 +36,6 @@ public class CouponServiceImpl implements CouponService {
     private final UserCouponRepository userCouponRepository;
     private final ReservationCouponRepository reservationCouponRepository;
 
-    private final UserCouponCustomRepository userCouponCustomRepository;
-
     private final CouponMapper couponMapper;
     private final UserCouponMapper userCouponMapper;
     private final ReservationCouponMapper reservationCouponMapper;
@@ -137,7 +135,7 @@ public class CouponServiceImpl implements CouponService {
     @Transactional(readOnly = true)
     @Override
     public Page<CouponReadMeResponse> getMyCoupons(String userId, Pageable pageable) {
-        return userCouponCustomRepository.checkMyCouponBox(userId, pageable);
+        return userCouponRepository.checkMyCouponBox(userId, pageable);
     }
 
     // 선점 상태 검증
