@@ -35,4 +35,11 @@ public class ReservationDate extends BaseEntity {
 
   @Column(name = "date_id", nullable = false)
   private String dateId;
+
+  public static ReservationDate create(Reservation reservation, String dateId ) {
+    return ReservationDate.builder()
+        .reservation(reservation)
+        .dateId(dateId)
+        .build();
+  }
 }
