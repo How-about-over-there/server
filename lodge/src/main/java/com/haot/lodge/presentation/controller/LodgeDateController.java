@@ -5,6 +5,7 @@ import com.haot.lodge.application.facade.LodgeDateFacade;
 import com.haot.lodge.application.service.implement.LodgeDateServiceImpl;
 import com.haot.lodge.application.facade.LodgeFacade;
 import com.haot.lodge.common.response.ApiResponse;
+import com.haot.lodge.common.response.SliceResponse;
 import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
 import com.haot.lodge.presentation.request.LodgeDateUpdateStatusRequest;
 import com.haot.lodge.presentation.response.LodgeDateReadResponse;
@@ -39,7 +40,7 @@ public class LodgeDateController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public ApiResponse<Slice<LodgeDateReadResponse>> read(
+    public ApiResponse<SliceResponse<LodgeDateReadResponse>> read(
             @PageableDefault(size = 30)
             @SortDefault(sort = "date", direction = Direction.ASC)
             Pageable pageable,
@@ -47,9 +48,9 @@ public class LodgeDateController {
             @RequestParam(name = "start", required = false) LocalDate start,
             @RequestParam(name = "end", required = false) LocalDate end
     ) {
-        return ApiResponse.success(
+        return ApiResponse.success(SliceResponse.of(
                 lodgeDateFacade.readLodgeDates(pageable, lodgeId, start, end)
-        );
+        ));
     }
 
     @ResponseStatus(HttpStatus.OK)

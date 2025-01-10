@@ -66,12 +66,13 @@ public class LodgeFacade {
 
     @Transactional(readOnly = true)
     public Slice<LodgeReadAllResponse> readAllLodgeBy(
-            Pageable pageable, String name, String address,
+            Pageable pageable,
+            String hostId, String name, String address,
             Integer maxReservationDay, Integer maxPersonnel,
             LocalDate checkInDate, LocalDate checkOutDate
     ) {
         return lodgeService
-                .readAllBy(pageable, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
+                .readAllBy(pageable, hostId, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
                 .map(lodge -> new LodgeReadAllResponse(
                         LodgeResponse.from(lodge),
                         lodge.getImages()
