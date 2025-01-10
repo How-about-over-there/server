@@ -5,6 +5,8 @@ import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointHistoryResponse;
 import com.haot.point.application.service.PointHistoryService;
 import com.haot.point.common.response.ApiResponse;
+import com.haot.submodule.role.Role;
+import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -77,9 +79,12 @@ public class PointHistoryController {
     // 포인트 상태 변경
     @PostMapping("/{historyId}/status")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck({Role.ADMIN, Role.USER})
     public ApiResponse<PointAllResponse> updateStatusPoint(@Valid @RequestBody PointStatusRequest request,
-                                                           @PathVariable String historyId) {
-        return ApiResponse.success(pointHistoryService.updateStatusPoint(request, historyId));
+                                                           @PathVariable String historyId,
+                                                           @RequestHeader("X-User-Id") String userId,
+                                                           @RequestHeader("X-User-Role") Role role) {
+        return ApiResponse.success(pointHistoryService.updateStatusPoint(request, historyId, userId, role));
     }
 
 }

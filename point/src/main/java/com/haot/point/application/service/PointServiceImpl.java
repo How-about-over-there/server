@@ -12,6 +12,7 @@ import com.haot.point.domain.model.Point;
 import com.haot.point.domain.model.PointHistory;
 import com.haot.point.infrastructure.repository.PointHistoryRepository;
 import com.haot.point.infrastructure.repository.PointRepository;
+import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,8 +35,14 @@ public class PointServiceImpl implements PointService{
 
     @Override
     @Transactional
-    public PointResponse createPoint(PointCreateRequest request) {
-        // TODO: 1. userId 유효성 검사
+    public PointResponse createPoint(PointCreateRequest request, String userId, Role role) {
+
+        // userId 검증
+        if (role == Role.USER) {
+            if (request.userId() != null && !request.userId().equals(userId)) {
+                throw new CustomPointException(ErrorCode.USER_NOT_MATCHED);
+            }
+        }
 
         // 2. 포인트 정보 저장
         Point point = Point.create(
@@ -48,8 +55,13 @@ public class PointServiceImpl implements PointService{
 
     @Override
     @Transactional(readOnly = true)
-    public PointResponse getPoint(String userId) {
-        // TODO: 1. 권한 체크 후 userId 설정
+    public PointResponse getPoint(String userId, String headerUserId, Role role) {
+        // 1. 권한 체크 후 userId 설정
+        if (role == Role.USER) {
+            if (userId.equals(headerUserId)) {
+                throw new CustomPointException(ErrorCode.USER_NOT_MATCHED);
+            }
+        }
 
         // 2. 기존 point 조회
         Point point = pointRepository.findByUserIdAndIsDeletedFalse(userId)
@@ -60,7 +72,15 @@ public class PointServiceImpl implements PointService{
 
     @Override
     @Transactional
-    public PointAllResponse usePoint(PointTransactionRequest request, String pointId) {
+    public PointAllResponse usePoint(PointTransactionRequest request, String pointId, String userId, Role role) {
+
+        // 기존 포인트 조회 및 userId 검증
+        Point point = validPoint(pointId);
+        if (role == Role.USER) {
+            if (!point.getUserId().equals(userId)) {
+                throw new CustomPointException(ErrorCode.USER_NOT_MATCHED);
+            }
+        }
 
         // 1. 포인트 타입 유효성 검사
         PointType type = PointType.fromString(request.type());
@@ -74,8 +94,7 @@ public class PointServiceImpl implements PointService{
             throw new CustomPointException(ErrorCode.PENDING_OPERATION_EXISTS);
         }
 
-        // 3. 기존 Point 조회 및 잔액 확인
-        Point point = validPoint(pointId);
+        // 3. 잔액 확인
         if (request.points() > point.getTotalPoints()) {
             throw new CustomPointException(ErrorCode.POINT_INSUFFICIENT);
         }
@@ -99,10 +118,15 @@ public class PointServiceImpl implements PointService{
 
     @Override
     @Transactional
-    public PointAllResponse earnPoint(PointTransactionRequest request, String pointId) {
+    public PointAllResponse earnPoint(PointTransactionRequest request, String pointId, String userId, Role role) {
 
-        // 1. 기존 Point 조회
+        // 1. 기존 Point 조회 및 userId 검증
         Point point = validPoint(pointId);
+        if (role == Role.USER) {
+            if (!point.getUserId().equals(userId)) {
+                throw new CustomPointException(ErrorCode.USER_NOT_MATCHED);
+            }
+        }
 
         // 2. 포인트 타입 유효성 검사 및 contextId 확인
         PointType type = PointType.fromString(request.type());
