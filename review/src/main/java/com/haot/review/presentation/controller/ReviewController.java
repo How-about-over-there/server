@@ -2,6 +2,7 @@ package com.haot.review.presentation.controller;
 
 
 import com.haot.review.application.dtos.req.ReviewCreateRequest;
+import com.haot.review.application.dtos.req.ReviewSearchRequest;
 import com.haot.review.application.dtos.req.ReviewUpdateRequest;
 import com.haot.review.application.dtos.res.ReviewGetResponse;
 import com.haot.review.application.service.ReviewService;
@@ -9,6 +10,8 @@ import com.haot.review.common.response.ApiResponse;
 import com.haot.review.common.response.enums.SuccessCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +47,16 @@ public class ReviewController {
       @PathVariable String reviewId
   ) {
     return ApiResponse.success(reviewService.readOne(reviewId));
+  }
+
+  @ResponseStatus(HttpStatus.OK)
+  @GetMapping
+  public ApiResponse<Page<ReviewGetResponse>> search(
+      @RequestHeader(value = "X-Role", required = true) String role,
+      ReviewSearchRequest request,
+      Pageable pageable
+  ) {
+    return ApiResponse.success(reviewService.searchReview(role, request, pageable));
   }
 
   @ResponseStatus(HttpStatus.OK)

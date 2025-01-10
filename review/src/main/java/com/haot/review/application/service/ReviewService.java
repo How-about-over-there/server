@@ -1,6 +1,7 @@
 package com.haot.review.application.service;
 
 import com.haot.review.application.dtos.req.ReviewCreateRequest;
+import com.haot.review.application.dtos.req.ReviewSearchRequest;
 import com.haot.review.application.dtos.req.ReviewUpdateRequest;
 import com.haot.review.application.dtos.res.ReviewGetResponse;
 import com.haot.review.common.exceptions.CustomReviewException;
@@ -13,6 +14,9 @@ import com.haot.review.presentation.client.LodgeClient;
 import com.haot.review.presentation.dto.LodgeReadOneResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +56,21 @@ public class ReviewService {
     return ReviewGetResponse.of(review);
   }
 
+  @Transactional(readOnly = true)
+  public Page<ReviewGetResponse> searchReview(String role, ReviewSearchRequest request, Pageable pageable) {
+
+    int pageSize = (pageable.getPageSize() == 30
+        || pageable.getPageSize() == 50)
+        ? pageable.getPageSize() : 10;
+
+    Pageable customPageable = PageRequest.of(
+        pageable.getPageNumber(),
+        pageSize,
+        pageable.getSort()
+    );
+
+    return reviewRepository.searchReview(role, request, customPageable).map(ReviewGetResponse::of);
+  }
 
   @Transactional
   public void updateReview(String reviewId, ReviewUpdateRequest request, String userId, String role) {
@@ -97,5 +116,4 @@ public class ReviewService {
     LodgeReadOneResponse response = lodgeClient.readOne(lodgeId).data();
     return hostId.equals(response.lodge().hostId());
   }
-
 }
