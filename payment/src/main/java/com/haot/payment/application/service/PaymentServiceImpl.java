@@ -2,6 +2,7 @@ package com.haot.payment.application.service;
 
 import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
+import com.haot.payment.application.dto.request.PaymentSearchRequest;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.common.exception.CustomPaymentException;
 import com.haot.payment.common.exception.enums.ErrorCode;
@@ -15,8 +16,12 @@ import com.haot.payment.infrastructure.client.dto.response.PortOneResponse;
 import com.haot.payment.infrastructure.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Slf4j(topic = "PaymentServiceImpl")
 @Service
@@ -124,6 +129,19 @@ public class PaymentServiceImpl implements PaymentService{
                 throw new CustomPaymentException(ErrorCode.INVALID_PAYMENT_STATUS);
         }
         return PaymentResponse.of(payment);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PaymentResponse> getPayments(PaymentSearchRequest request, Pageable pageable) {
+        // TODO: USER 요청의 경우 userId 헤더 값으로 지정
+
+        // 페이지 크기 고정
+        int pageSize = pageable.getPageSize();
+        if (pageSize != 10 && pageSize != 30 && pageSize != 50) {
+            pageSize = 10; // 기본값으로 설정
+        }
+        return paymentRepository.searchPayments(request, pageable);
     }
 
     private Payment validPayment(String paymentId) {
