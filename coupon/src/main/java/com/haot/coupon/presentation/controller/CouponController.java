@@ -9,6 +9,8 @@ import com.haot.coupon.application.dto.feign.response.ReservationVerifyResponse;
 import com.haot.coupon.application.service.CouponService;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.common.response.enums.SuccessCode;
+import com.haot.submodule.role.Role;
+import com.haot.submodule.role.RoleCheck;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,9 +25,9 @@ public class CouponController {
 
     private final CouponService couponService;
 
-    // TODO Header에서 userId 받아 사용 일단 request parama 사용
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/me")
+    @RoleCheck({Role.ADMIN, Role.USER})
     public ApiResponse<Page<CouponReadMeResponse>> getMyCoupons(@RequestHeader("X-User-Id") String userId,
                                                                 Pageable pageable) {
         return ApiResponse.SUCCESS(SuccessCode.GET_USER_COUPONS_SUCCESS, couponService.getMyCoupons(userId, pageable));
