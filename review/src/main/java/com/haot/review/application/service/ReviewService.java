@@ -75,15 +75,12 @@ public class ReviewService {
   @Transactional
   public void updateReview(String reviewId, ReviewUpdateRequest request, String userId, String role) {
 
-    // submodule aop 사용할 예정입니다.
-    if ("USER".equals(role)) {
       Review review = findActiveReviewById(reviewId);
 
       if (!review.getUserId().equals(userId)) {
         throw new CustomReviewException(ErrorCode.FORBIDDEN_OPERATION);
       }
       review.updateReview(request.contents());
-    }
   }
 
   @Transactional
