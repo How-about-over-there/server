@@ -1,5 +1,6 @@
 package com.haot.coupon.application.dto.request.events;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,8 @@ public class EventSearchRequest {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Boolean isDelete;   // 삭제된 이벤트 여부
+
+    @Pattern(regexp = "DEFAULT|MANUALLY_CLOSED|EXPIRED|OUT_OF_STOCK", message = "유효한 상태 값을 입력하세요.")
     private String eventStatus;
 
     public void setDelete(Boolean delete) {

@@ -19,12 +19,13 @@ public class EventController {
 
     private final EventService eventService;
 
-    // TODO 전체 조회할때 일반 user는 삭제된 event는 보여주지 않게!
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{eventId}")
     public ApiResponse<EventSearchResponse> getEvent(@PathVariable(value = "eventId") String eventId) {
         return ApiResponse.SUCCESS(SuccessCode.GET_DETAIL_EVENT_SUCCESS, eventService.getEvent(eventId));
     }
+
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
