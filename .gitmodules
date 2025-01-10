@@ -7,3 +7,6 @@
 [submodule "review/src/main/java/com/haot/submodule"]
 	path = review/src/main/java/com/haot/submodule
 	url = https://github.com/How-about-over-there/submodule.git
+[submodule "reservation/src/main/java/com/haot/submodule"]
+	path = reservation/src/main/java/com/haot/submodule
+	url = https://github.com/How-about-over-there/submodule.git

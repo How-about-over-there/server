@@ -1,5 +1,6 @@
 package com.haot.reservation.domain.model;
 
+import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_reservation_date")
-public class ReservationDate {
+public class ReservationDate extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
