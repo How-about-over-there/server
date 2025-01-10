@@ -5,6 +5,8 @@ import com.haot.point.application.dto.request.PointTransactionRequest;
 import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointResponse;
 
+import java.time.LocalDateTime;
+
 public interface PointService {
 
     // 포인트 생성
@@ -15,4 +17,10 @@ public interface PointService {
 
     // 포인트 사용
     PointAllResponse usePoint(PointTransactionRequest request, String pointId);
+
+    // 포인트 적립
+    PointAllResponse earnPoint(PointTransactionRequest request, String pointId);
+
+    // 포인트 만료
+    boolean expirePoints(LocalDateTime targetDate, int page, int batchSize);
 }
