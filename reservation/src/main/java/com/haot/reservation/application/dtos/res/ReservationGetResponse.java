@@ -16,7 +16,8 @@ public record ReservationGetResponse(
     String request,
     Double totalPrice,
     ReservationStatus status,
-    String paymentId
+    String paymentId,
+    String pointHistoryId
 
 ) {
 
@@ -32,6 +33,7 @@ public record ReservationGetResponse(
         .totalPrice(reservation.getTotalPrice())
         .status(reservation.getStatus())
         .paymentId(reservation.getPaymentId())
+        .pointHistoryId(reservation.getPointHistoryId())
         .build();
   }
 }

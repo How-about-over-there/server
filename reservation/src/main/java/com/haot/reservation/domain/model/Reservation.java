@@ -1,6 +1,7 @@
 package com.haot.reservation.domain.model;
 
 import com.haot.submodule.auditor.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -57,8 +58,8 @@ public class Reservation extends BaseEntity {
   @Column(name = "reservation_status", nullable = false)
   private ReservationStatus status;
 
-  @Column(name = "point_id", nullable = true)
-  private String pointId;
+  @Column(name = "point_history_id", nullable = true)
+  private String pointHistoryId;
 
   @Column(name = "payment_id", nullable = true)
   private String paymentId;
@@ -66,7 +67,7 @@ public class Reservation extends BaseEntity {
   @Column(name = "reservation_coupon_id", nullable = true)
   private String reservationCouponId;
 
-  @OneToMany(mappedBy = "reservation")
+  @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<ReservationDate> dates = new ArrayList<>();
 
@@ -78,9 +79,9 @@ public class Reservation extends BaseEntity {
       Integer numGuests,
       String request,
       Double totalPrice,
-      String pointId,
       String paymentId,
-      String reservationCouponId
+      String reservationCouponId,
+      String pointHistoryId
   ) {
     return Reservation.builder()
         .userId(userId)
@@ -91,9 +92,9 @@ public class Reservation extends BaseEntity {
         .request(request)
         .totalPrice(totalPrice)
         .status(ReservationStatus.PENDING)
-        .pointId(pointId)
         .paymentId(paymentId)
         .reservationCouponId(reservationCouponId)
+        .pointHistoryId(pointHistoryId)
         .build();
   }
 }
