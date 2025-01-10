@@ -7,8 +7,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,12 +56,43 @@ public class Reservation {
   @Column(name = "reservation_status", nullable = false)
   private ReservationStatus status;
 
-  @Column(name = "point_id", nullable = false)
+  @Column(name = "point_id", nullable = true)
   private String pointId;
 
-  @Column(name = "payment_id", nullable = false)
+  @Column(name = "payment_id", nullable = true)
   private String paymentId;
-  // null 로 있다가 생성되면 값이 넣어짐
+
   @Column(name = "reservation_coupon_id", nullable = true)
   private String reservationCouponId;
+
+  @OneToMany(mappedBy = "reservation")
+  @Builder.Default
+  private List<ReservationDate> dates = new ArrayList<>();
+
+  public static Reservation createReservation(
+      String userId,
+      String lodgeName,
+      LocalDate checkInDate,
+      LocalDate checkOutDate,
+      Integer numGuests,
+      String request,
+      Double totalPrice,
+      String pointId,
+      String paymentId,
+      String reservationCouponId
+  ) {
+    return Reservation.builder()
+        .userId(userId)
+        .lodgeName(lodgeName)
+        .checkInDate(checkInDate)
+        .checkOutDate(checkOutDate)
+        .numGuests(numGuests)
+        .request(request)
+        .totalPrice(totalPrice)
+        .status(ReservationStatus.PENDING)
+        .pointId(pointId)
+        .paymentId(paymentId)
+        .reservationCouponId(reservationCouponId)
+        .build();
+  }
 }
