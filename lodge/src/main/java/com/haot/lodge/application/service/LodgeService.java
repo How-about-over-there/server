@@ -8,6 +8,8 @@ import org.springframework.data.domain.Slice;
 
 public interface LodgeService {
 
+    boolean isValidLodgeId(String lodgeId);
+
     Lodge getValidLodgeById(String lodgeId);
 
     Lodge create(

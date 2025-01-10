@@ -108,17 +108,12 @@ public class LodgeController {
         return ApiResponse.success();
     }
 
-    /**
-     * 숙소 유효성 검사 API
-     * @param lodgeId 검사를 진행 할 숙소 ID
-     * @return 유효성
-     */
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{lodgeId}/verify")
     public Map<String, Boolean> verify(
             @PathVariable(name = "lodgeId") String lodgeId
     ) {
-        return Map.of("validity", true);
+        return Map.of("validity", lodgeFacade.lodgeValidation(lodgeId));
     }
 
 }
