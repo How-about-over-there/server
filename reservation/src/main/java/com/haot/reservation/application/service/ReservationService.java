@@ -10,10 +10,11 @@ import com.haot.reservation.common.response.SliceResponse;
 import com.haot.reservation.common.response.enums.ErrorCode;
 import com.haot.reservation.domain.model.Reservation;
 import com.haot.reservation.domain.model.ReservationDate;
-import com.haot.reservation.domain.repository.ReservationDateRepository;
 import com.haot.reservation.domain.repository.ReservationRepository;
 import com.haot.reservation.infrastructure.client.CouponClient;
 import com.haot.reservation.infrastructure.client.LodgeClient;
+import com.haot.reservation.infrastructure.client.PaymentClient;
+import com.haot.reservation.infrastructure.client.PointClient;
 import com.haot.reservation.infrastructure.dtos.CouponDataResponse;
 import com.haot.reservation.infrastructure.dtos.LodgeDataGetResponse;
 import com.haot.reservation.infrastructure.dtos.coupon.FeignConfirmReservationRequest;
@@ -22,11 +23,16 @@ import com.haot.reservation.infrastructure.dtos.coupon.ReservationVerifyResponse
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateReadResponse;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateUpdateStatusRequest;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeReadOneResponse;
+import com.haot.reservation.infrastructure.dtos.payment.PaymentCreateRequest;
+import com.haot.reservation.infrastructure.dtos.point.PointStatusRequest;
+import com.haot.reservation.infrastructure.dtos.point.PointTransactionRequest;
 import com.haot.reservation.infrastructure.enums.ReservationStatus;
+import com.haot.submodule.role.Role;
 import feign.FeignException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -41,20 +47,22 @@ public class ReservationService {
 
   private final LodgeClient lodgeClient;
   private final CouponClient couponClient;
+  private final PointClient pointClient;
+  private final PaymentClient paymentClient;
   private final ReservationRepository reservationRepository;
-  private final ReservationDateRepository reservationDateRepository;
 
   @Transactional
   public ReservationGetResponse createReservation(
       ReservationCreateRequest request,
       String userId,
-      String role
+      Role role
   ) throws JsonProcessingException {
 
     Double totalPrice = 0.0;
     String lodgeName = getLodgeName(request.lodgeId());
     String reservationCouponId = "";
     String paymentId = "";
+    String pointHistoryId = "";
 
     List<LodgeDateReadResponse> availableDates = getAvailableDates(
         request.lodgeId(),
@@ -75,6 +83,11 @@ public class ReservationService {
       totalPrice = couponResponse.totalPrice();
     }
 
+    if (request.pointId() != null) {
+      pointHistoryId = applyPoint(request.pointId(), request.point(), userId, role);
+      totalPrice -= request.point();
+    }
+
     Reservation reservation = Reservation.createReservation(
         userId,
         lodgeName,
@@ -83,9 +96,9 @@ public class ReservationService {
         request.numGuests(),
         request.request(),
         totalPrice,
-        request.pointId(),
         paymentId,
-        reservationCouponId
+        reservationCouponId,
+        pointHistoryId
     );
 
     List<ReservationDate> reservationDateList = lodgeDateIds.stream()
@@ -93,11 +106,12 @@ public class ReservationService {
         .toList();
 
     reservation.getDates().addAll(reservationDateList);
-
     reservationRepository.save(reservation);
-    reservationDateRepository.saveAll(reservationDateList);
 
-    return ReservationGetResponse.of(reservation);
+    // 결제 요청
+    String url = requestPayment(reservation, userId, role);
+
+    return ReservationGetResponse.of(reservation, url);
   }
 
   private String getLodgeName(String lodgeId) throws JsonProcessingException {
@@ -176,7 +190,7 @@ public class ReservationService {
     }
     try {
       ApiResponse<ReservationVerifyResponse> response = couponClient.verify(
-          new FeignVerifyRequest( userCouponId, userId, lodgePrice)
+          new FeignVerifyRequest(userCouponId, userId, lodgePrice)
       );
 
       return CouponDataResponse.of(
@@ -188,6 +202,7 @@ public class ReservationService {
     }
   }
 
+  // 쿠폰 상태 변경
   private void updateCouponStatus(String couponId, String status) throws JsonProcessingException {
     if (couponId != null) {
       try {
@@ -195,6 +210,113 @@ public class ReservationService {
       } catch (FeignException e) {
         throw FeignExceptionUtils.parseFeignException(e);
       }
+    }
+  }
+
+  private String applyPoint(String pointId, Double usePoint, String userId, Role role)
+      throws JsonProcessingException {
+    try {
+      return pointClient.usePoint(new PointTransactionRequest(usePoint, "USE", "포인트 사용"), pointId,
+              userId, role)
+          .data().historyId();
+    } catch (FeignException e) {
+      throw FeignExceptionUtils.parseFeignException(e);
+    }
+  }
+
+  private void updatePointStatus(PointStatusRequest request, String pointHistoryId, String userId,
+      Role role)
+      throws JsonProcessingException {
+    try {
+      pointClient.updateStatusPoint(request, pointHistoryId, userId, role);
+    } catch (FeignException e) {
+      throw FeignExceptionUtils.parseFeignException(e);
+    }
+  }
+
+  public void updateReservation(String status, String reservationId, String userId, Role role)
+      throws JsonProcessingException {
+
+    Reservation reservation = reservationRepository.findById(reservationId)
+        .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
+
+    switch (status) {
+      case "COMPLETED" -> completeReservation(reservation, userId, role);
+      case "CANCELED" -> cancelReservation(reservation, userId, role);
+      default -> throw new IllegalArgumentException("Invalid status");
+    }
+  }
+
+  private void completeReservation(Reservation reservation, String userId, Role role)
+      throws JsonProcessingException {
+
+    List<ReservationDate> reservationDateList = reservation.getDates();
+    List<String> dateIds = reservationDateList.stream()
+        .map(ReservationDate::getDateId)
+        .toList();
+
+    PointStatusRequest request = new PointStatusRequest(
+        reservation.getReservationId(),
+        "PROCESSED",
+        "예약 완료"
+    );
+
+    try {
+      updateLodgeStatus(dateIds, "COMPLETE");
+      if (reservation.getReservationCouponId() != null) {
+        updateCouponStatus(reservation.getReservationCouponId(), "COMPLETED");
+      }
+      if (reservation.getPointHistoryId() != null) {
+        updatePointStatus(request, reservation.getPointHistoryId(), userId, role);
+      }
+    } catch (FeignException e) {
+      throw FeignExceptionUtils.parseFeignException(e);
+    }
+  }
+
+  private void cancelReservation(Reservation reservation, String userId, Role role)
+      throws JsonProcessingException {
+
+    List<ReservationDate> reservationDateList = reservation.getDates();
+    List<String> dateIds = reservationDateList.stream()
+        .map(ReservationDate::getDateId)
+        .toList();
+
+    PointStatusRequest request = new PointStatusRequest(
+        reservation.getReservationId(),
+        "ROLLBACK",
+        "예약 취소"
+    );
+
+    try {
+      updateLodgeStatus(dateIds, "EMPTY");
+      if (reservation.getReservationCouponId() != null) {
+        updateCouponStatus(reservation.getReservationCouponId(), "CANCEL");
+      }
+      if (reservation.getPointHistoryId() != null) {
+        updatePointStatus(request, reservation.getPointHistoryId(), userId, role);
+      }
+    } catch (FeignException e) {
+      throw FeignExceptionUtils.parseFeignException(e);
+    }
+  }
+
+  private String requestPayment(Reservation reservation, String userId, Role role)
+      throws JsonProcessingException {
+    try {
+      ApiResponse<Map<String, Object>> response = paymentClient.createPayment(
+          new PaymentCreateRequest(
+              reservation.getUserId(),
+              reservation.getReservationId(),
+              reservation.getTotalPrice(),
+              "CARD"),
+          userId,
+          role
+      );
+      Map<String, Object> data = response.data();
+      return (String) data.get("paymentPageUrl");
+    } catch (FeignException e) {
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 }

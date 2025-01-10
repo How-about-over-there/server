@@ -37,7 +37,7 @@ public class ReservationController {
   public ApiResponse<ReservationGetResponse> createReservation(
       @RequestBody ReservationCreateRequest reservationCreateRequest,
       @RequestHeader(value = "X-User-Id", required = true) String userId,
-      @RequestHeader(value = "X-User-Role", required = true) String role
+      @RequestHeader(value = "X-User-Role", required = true) Role role
   ) throws JsonProcessingException {
     return ApiResponse.success(reservationService.createReservation(reservationCreateRequest, userId, role));
   }
