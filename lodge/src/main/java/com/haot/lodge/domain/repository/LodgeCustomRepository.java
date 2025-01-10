@@ -9,6 +9,7 @@ import org.springframework.data.domain.Slice;
 public interface LodgeCustomRepository {
     Slice<Lodge> findAllByConditionOf(
             Pageable pageable,
+            String hostId,
             String name,
             String address,
             Integer maxReservationDay,

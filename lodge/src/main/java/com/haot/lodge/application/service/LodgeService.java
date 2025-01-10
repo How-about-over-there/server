@@ -21,6 +21,7 @@ public interface LodgeService {
 
     Slice<Lodge> readAllBy(
             Pageable pageable,
+            String hostId,
             String name,
             String address,
             Integer maxReservationDay,
