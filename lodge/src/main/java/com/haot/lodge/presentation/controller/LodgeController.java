@@ -3,6 +3,7 @@ package com.haot.lodge.presentation.controller;
 
 import com.haot.lodge.application.response.LodgeResponse;
 import com.haot.lodge.application.facade.LodgeFacade;
+import com.haot.lodge.common.response.SliceResponse;
 import com.haot.lodge.presentation.response.LodgeReadAllResponse;
 import com.haot.lodge.presentation.request.LodgeCreateRequest;
 import com.haot.lodge.presentation.request.LodgeUpdateRequest;
@@ -16,7 +17,6 @@ import java.time.LocalDate;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
@@ -53,13 +53,14 @@ public class LodgeController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public ApiResponse<Slice<LodgeReadAllResponse>> readAll(
+    public ApiResponse<SliceResponse<LodgeReadAllResponse>> readAll(
             @PageableDefault(size = 30)
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "createdAt", direction = Direction.DESC),
                     @SortDefault(sort = "updatedAt", direction = Direction.DESC)
             })
             Pageable pageable,
+            @RequestParam(name = "hostId", required = false) String hostId,
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "address", required = false) String address,
             @RequestParam(name = "maxReservationDay", required = false) Integer maxReservationDay,
@@ -67,10 +68,11 @@ public class LodgeController {
             @RequestParam(name = "checkInDate", required = false) LocalDate checkInDate,
             @RequestParam(name = "checkOutDate", required = false) LocalDate checkOutDate
     ) {
-        return ApiResponse.success(
+        return ApiResponse.success(SliceResponse.of(
                 lodgeFacade.readAllLodgeBy(
-                        pageable, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
-        );
+                        pageable,
+                        hostId, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
+        ));
     }
 
     @ResponseStatus(HttpStatus.OK)

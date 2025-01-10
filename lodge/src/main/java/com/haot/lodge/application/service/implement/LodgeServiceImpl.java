@@ -38,7 +38,7 @@ public class LodgeServiceImpl implements LodgeService {
     @Override
     public Slice<Lodge> readAllBy(
             Pageable pageable,
-            String name, String address,
+            String hostId, String name, String address,
             Integer maxReservationDay, Integer maxPersonnel,
             LocalDate checkInDate, LocalDate checkOutDate
     ) {
@@ -47,7 +47,7 @@ public class LodgeServiceImpl implements LodgeService {
         }
         return lodgeRepository
                 .findAllByConditionOf(
-                        pageable, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate
+                        pageable, hostId, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate
                 );
     }
 
