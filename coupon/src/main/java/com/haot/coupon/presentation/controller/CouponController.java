@@ -68,7 +68,7 @@ public class CouponController {
                                                        @PathVariable(value = "reservationCouponId") String reservationCouponId){
 
         couponService.rollbackReservationCoupon(reservationCouponId);
-        return ApiResponse.success();
+        return ApiResponse.SUCCESS(SuccessCode.COUPON_RESERVATION_ROLLBACK_SUCCESS);
     }
 
     // [Feign] 예약 취소 or 확정 API
