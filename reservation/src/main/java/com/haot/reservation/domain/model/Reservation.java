@@ -97,4 +97,8 @@ public class Reservation extends BaseEntity {
         .pointHistoryId(pointHistoryId)
         .build();
   }
+
+  public void getPayment(String paymentId) {
+    this.paymentId = paymentId;
+  }
 }

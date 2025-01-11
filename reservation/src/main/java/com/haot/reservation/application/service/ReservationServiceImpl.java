@@ -24,6 +24,7 @@ import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateReadResponse;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateUpdateStatusRequest;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeReadOneResponse;
 import com.haot.reservation.infrastructure.dtos.payment.PaymentCreateRequest;
+import com.haot.reservation.infrastructure.dtos.point.PaymentDataResponse;
 import com.haot.reservation.infrastructure.dtos.point.PointStatusRequest;
 import com.haot.reservation.infrastructure.dtos.point.PointTransactionRequest;
 import com.haot.reservation.infrastructure.enums.ReservationStatus;
@@ -114,9 +115,12 @@ public class ReservationServiceImpl implements ReservationService {
     reservationRepository.save(reservation);
 
     // 결제 요청 URL 반환
-    String url = requestPayment(reservation, userId, role);
+    PaymentDataResponse paymentData = requestPayment(reservation, userId, role);
 
-    return ReservationGetResponse.of(reservation, url);
+    // paymentId 적용
+    reservation.getPayment(paymentData.paymentId());
+
+    return ReservationGetResponse.of(reservation, paymentData.paymentUrl());
   }
 
   // 숙소 이름 가져오기
@@ -308,7 +312,7 @@ public class ReservationServiceImpl implements ReservationService {
   }
 
   // 결제 요청
-  private String requestPayment(Reservation reservation, String userId, Role role)
+  private PaymentDataResponse requestPayment(Reservation reservation, String userId, Role role)
       throws JsonProcessingException {
     try {
       ApiResponse<Map<String, Object>> response = paymentClient.createPayment(
@@ -321,7 +325,11 @@ public class ReservationServiceImpl implements ReservationService {
           role
       );
       Map<String, Object> data = response.data();
-      return (String) data.get("paymentPageUrl");
+
+      String paymentId = (String) data.get("paymentId");
+      String paymentUrl = (String) data.get("paymentPageUrl");
+
+      return PaymentDataResponse.of(paymentId, paymentUrl);
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     }
