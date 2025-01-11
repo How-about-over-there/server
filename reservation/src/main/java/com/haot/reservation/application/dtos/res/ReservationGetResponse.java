@@ -40,20 +40,4 @@ public record ReservationGetResponse(
         .url(url)
         .build();
   }
-
-  public static ReservationGetResponse of(Reservation reservation) {
-    return ReservationGetResponse.builder()
-        .reservationId(reservation.getReservationId())
-        .userId(reservation.getUserId())
-        .lodgeName(reservation.getLodgeName())
-        .checkInDate(reservation.getCheckInDate())
-        .checkOutDate(reservation.getCheckOutDate())
-        .numGuests(reservation.getNumGuests())
-        .request(reservation.getRequest())
-        .totalPrice(reservation.getTotalPrice())
-        .status(reservation.getStatus())
-        .paymentId(reservation.getPaymentId())
-        .pointHistoryId(reservation.getPointHistoryId())
-        .build();
-  }
 }

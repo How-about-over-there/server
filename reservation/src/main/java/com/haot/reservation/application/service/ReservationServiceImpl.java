@@ -138,7 +138,7 @@ public class ReservationServiceImpl implements ReservationService {
       throw new CustomReservationException(ErrorCode.UNAUTHORIZED_ACCESS);
     }
 
-    return ReservationGetResponse.of(reservation);
+    return ReservationGetResponse.of(reservation, null);
   }
 
   @Transactional

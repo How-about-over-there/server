@@ -25,7 +25,7 @@ public interface ReservationService {
   ) throws JsonProcessingException;
 
   /**
-   * 예약 단건 조히
+   * 예약 단건 조회
    * @param reservationId 예약 아이디
    * @param userId 유저 아이디
    * @param role USER
