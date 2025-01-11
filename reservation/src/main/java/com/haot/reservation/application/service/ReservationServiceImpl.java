@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
 import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
+import com.haot.reservation.common.exceptions.CustomReservationException;
 import com.haot.reservation.common.exceptions.DateUnavailableException;
 import com.haot.reservation.common.exceptions.FeignExceptionUtils;
 import com.haot.reservation.common.response.ApiResponse;
@@ -128,6 +129,18 @@ public class ReservationServiceImpl implements ReservationService {
     return ReservationGetResponse.of(reservation, paymentData.paymentUrl());
   }
 
+  @Transactional(readOnly = true)
+  public ReservationGetResponse getReservation(String reservationId, String userId, Role role) {
+
+    Reservation reservation = findReservationById(reservationId);
+
+    if (!reservation.getUserId().equals(userId)) {
+      throw new CustomReservationException(ErrorCode.UNAUTHORIZED_ACCESS);
+    }
+
+    return ReservationGetResponse.of(reservation, null);
+  }
+
   @Transactional
   public void updateReservation(
       ReservationUpdateRequest reservationUpdateRequest,
@@ -136,8 +149,7 @@ public class ReservationServiceImpl implements ReservationService {
       Role role
   ) throws JsonProcessingException {
 
-    Reservation reservation = reservationRepository.findById(reservationId)
-        .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
+    Reservation reservation = findReservationById(reservationId);
 
     switch (reservationUpdateRequest.status()) {
       case "COMPLETED" -> completeReservation(reservation, userId, role);
@@ -359,5 +371,9 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     }
+  }
+  private Reservation findReservationById(String reservationId) {
+    return reservationRepository.findById(reservationId)
+        .orElseThrow(() -> new CustomReservationException(ErrorCode.RESERVATION_NOT_FOUND));
   }
 }

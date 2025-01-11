@@ -43,12 +43,15 @@ public class ReservationController {
         reservationService.createReservation(reservationCreateRequest, userId, role));
   }
 
+  @RoleCheck(Role.USER)
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/{reservationId}")
   public ApiResponse<ReservationGetResponse> getReservation(
-      @PathVariable String reservationId
+      @PathVariable String reservationId,
+      @RequestHeader(value = "X-User-Id", required = true) String userId,
+      @RequestHeader(value = "X-User-Role", required = true) Role role
   ) {
-    return ApiResponse.success(createDummyReservation());
+    return ApiResponse.success(reservationService.getReservation(reservationId, userId, role));
   }
 
   @ResponseStatus(HttpStatus.OK)

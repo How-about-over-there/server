@@ -1,8 +1,10 @@
 package com.haot.reservation.common.exceptions.handler;
 
+import com.haot.reservation.common.exceptions.CustomReservationException;
 import com.haot.reservation.common.exceptions.DateUnavailableException;
 import com.haot.reservation.common.exceptions.LodgeServiceException;
 import com.haot.reservation.common.response.ApiResponse;
+import com.haot.reservation.common.response.ResCodeIfs;
 import com.haot.reservation.common.response.enums.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -35,5 +37,17 @@ public class GlobalExceptionHandler {
     return ResponseEntity
         .status(HttpStatus.BAD_REQUEST)
         .body(ApiResponse.ERROR(ErrorCode.DATE_UNAVAILABLE_EXCEPTION));
+  }
+
+  @ExceptionHandler(value = CustomReservationException.class)
+  public ResponseEntity<ApiResponse<Object>> handleCustomCouponException(
+      CustomReservationException customReservationException) {
+
+    log.error("{}", customReservationException.resCode.getMessage());
+    ResCodeIfs errorCode = customReservationException.resCode;
+
+    return ResponseEntity.status(errorCode.getHttpStatus())
+        .body(ApiResponse.ERROR(errorCode));
+
   }
 }
