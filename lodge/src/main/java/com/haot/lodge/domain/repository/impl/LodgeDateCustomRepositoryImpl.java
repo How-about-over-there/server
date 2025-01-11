@@ -32,6 +32,20 @@ public class LodgeDateCustomRepositoryImpl implements LodgeDateCustomRepository 
     );
 
     @Override
+    public boolean existsOverlappingDates(
+            String lodgeId, LocalDate startDate, LocalDate endDate
+    ) {
+        return queryFactory
+                .selectOne()
+                .from(lodgeDate)
+                .where(
+                        lodgeDate.lodge.id.eq(lodgeId),
+                        lodgeDate.date.between(startDate, endDate)
+                )
+                .fetchFirst() != null;
+    }
+
+    @Override
     public Slice<LodgeDate> findAllLodgeDateByRange(
             Pageable pageable, Lodge lodge, LocalDate start, LocalDate end
     ) {
