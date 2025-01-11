@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface CouponEventRepository extends JpaRepository<CouponEvent, String> {
+public interface CouponEventRepository extends JpaRepository<CouponEvent, String>, CouponEventCustomRepository {
 
     boolean existsByCouponIdAndIsDeleteFalse(String CouponId);
 
