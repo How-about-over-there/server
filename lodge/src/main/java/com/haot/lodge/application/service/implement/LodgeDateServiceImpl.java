@@ -46,6 +46,7 @@ public class LodgeDateServiceImpl implements LodgeDateService {
     public void create(
             Lodge lodge, LocalDate startDate, LocalDate endDate, List<LocalDate> excludeDates
     ) {
+        checkForExistingLodgeDates(lodge.getId(), startDate, endDate);
         dateValidation(startDate, endDate);
         Set<LocalDate> excludeDateSet = excludeDates != null
                 ? new HashSet<>(excludeDates)
@@ -100,6 +101,14 @@ public class LodgeDateServiceImpl implements LodgeDateService {
      * @param startDate 숙소 시작 날짜
      * @param endDate 숙소 끝 날짜
      */
+    private void checkForExistingLodgeDates(
+            String lodgeId, LocalDate startDate, LocalDate endDate
+    ) {
+        if (lodgeDateRepository.existsOverlappingDates(lodgeId, startDate, endDate)) {
+            throw new LodgeException(ErrorCode.OVERLAPPING_DATES);
+        }
+    }
+
     private void dateValidation(LocalDate startDate, LocalDate endDate) {
         if (startDate.isBefore(LocalDate.now())) {
             throw new LodgeException(ErrorCode.START_DATE_IN_PAST);
