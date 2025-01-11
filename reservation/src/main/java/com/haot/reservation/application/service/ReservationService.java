@@ -25,6 +25,19 @@ public interface ReservationService {
   ) throws JsonProcessingException;
 
   /**
+   * 예약 단건 조히
+   * @param reservationId 예약 아이디
+   * @param userId 유저 아이디
+   * @param role USER
+   * @return 예약 내역
+   */
+  ReservationGetResponse getReservation(
+      String reservationId,
+      String userId,
+      Role role
+  );
+
+  /**
    * 예약 수정 (결제 완료 or 취소)
    * 결제 완료시 숙소, 쿠폰, 포인트의 상태를 변경합니다.
    * @param reservationUpdateRequest paymentId, 예약 상태 COMPLETED or CANCELED
