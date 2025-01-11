@@ -22,4 +22,6 @@ public interface CouponService {
     void confirmReservation(String reservationCouponId, FeignConfirmReservationRequest request);
 
     Page<CouponReadMeResponse> getMyCoupons(String userId, Pageable pageable);
+
+    void rollbackReservationCoupon(String reservationCouponId);
 }

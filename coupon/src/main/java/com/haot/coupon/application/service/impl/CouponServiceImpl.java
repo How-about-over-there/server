@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -132,10 +133,25 @@ public class CouponServiceImpl implements CouponService {
         handleReservation(reservationCoupon, reservationCouponStatus);
     }
 
+    // 내 쿠폰함 보기 API
     @Transactional(readOnly = true)
     @Override
     public Page<CouponReadMeResponse> getMyCoupons(String userId, Pageable pageable) {
         return userCouponRepository.checkMyCouponBox(userId, pageable);
+    }
+
+    // 쿠폰 Rollback API
+    @Transactional
+    @Override
+    public void rollbackReservationCoupon(String reservationCouponId) {
+
+        ReservationCoupon reservationCoupon = reservationCouponRepository.findById(reservationCouponId)
+                .orElseThrow(() -> new CustomCouponException(ErrorCode.RESERVATION_COUPON_NOT_FOUND));
+
+        // 선점 상태가 아닌 경우 에러 반환
+        validateReservationPreemption(reservationCoupon);
+
+        reservationCoupon.confirmReservationStatus(ReservationCouponStatus.ROLLBACK);
     }
 
     // 선점 상태 검증
@@ -177,12 +193,11 @@ public class CouponServiceImpl implements CouponService {
         reservationCoupon.confirmReservationStatus(status);
     }
 
-    // user 쿠폰이 reservationCoupon 테이블에 CANCEL 상태가 아닌 다른 상태값이 DB에 있으면 사용불가
+    // user 쿠폰이 reservationCoupon 테이블에 CANCEL, ROLLBACK 상태가 아닌 다른 상태값이 DB에 있으면 사용불가
     private void checkReservedCouponAvailable(UserCoupon userCoupon) {
 
-        if(reservationCouponRepository.existsByUserCouponAndReservationCouponStatusNotAndIsDeleteFalse(
-                userCoupon, ReservationCouponStatus.CANCEL)
-        ){
+        if (reservationCouponRepository.existsByUserCouponAndReservationCouponStatusNotInAndIsDeleteFalse(
+                userCoupon, List.of(ReservationCouponStatus.ROLLBACK, ReservationCouponStatus.CANCEL))) {
             throw new CustomCouponException(ErrorCode.COUPON_UNAVAILABLE);
         }
     }
@@ -286,6 +301,7 @@ public class CouponServiceImpl implements CouponService {
 
     }
 
+    // 발급된 쿠폰수가 최대 발급 수량보다 클때 이벤트 종료
     private void checkPriorityCouponStock(CouponEvent event, Coupon coupon) {
 
         if(coupon.getTotalQuantity() <= coupon.getIssuedQuantity()){

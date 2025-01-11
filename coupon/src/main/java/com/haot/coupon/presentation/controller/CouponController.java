@@ -60,6 +60,17 @@ public class CouponController {
         return ApiResponse.SUCCESS(SuccessCode.VERIFY_COUPON_SUCCESS, couponService.verify(request));
     }
 
+    // 쿠폰 Rollback API
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/rollback/{reservationCouponId}")
+    public ApiResponse<Void> rollbackReservationCoupon(@RequestHeader("X-User-Id") String userId,
+                                                       @RequestHeader("X-User-Role") Role role,
+                                                       @PathVariable(value = "reservationCouponId") String reservationCouponId){
+
+        couponService.rollbackReservationCoupon(reservationCouponId);
+        return ApiResponse.success();
+    }
+
     // [Feign] 예약 취소 or 확정 API
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{reservationCouponId}")
