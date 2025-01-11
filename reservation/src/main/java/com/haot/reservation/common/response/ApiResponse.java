@@ -14,15 +14,15 @@ public record ApiResponse<T>(
 ) {
 
   public static <T> ApiResponse<T> success(T data) {
-    return new ApiResponse<>("7001", "Success", "API 요청에 성공했습니다", data);
+    return new ApiResponse<>("7001", "SUCCESS", "API 요청에 성공했습니다", data);
   }
 
   public static ApiResponse<Void> success() {
-    return new ApiResponse<>("7001", "Success", "API 요청에 성공했습니다", null);
+    return new ApiResponse<>("7001", "SUCCESS", "API 요청에 성공했습니다", null);
   }
 
   public static ApiResponse<Object> ERROR(ResCodeIfs resCodeIfs) {
-    return new ApiResponse<>(resCodeIfs.getCode(), "error", resCodeIfs.getMessage(), null);
+    return new ApiResponse<>(resCodeIfs.getCode(), "ERROR", resCodeIfs.getMessage(), null);
   }
 
   // FeignClientException 실패 응답
