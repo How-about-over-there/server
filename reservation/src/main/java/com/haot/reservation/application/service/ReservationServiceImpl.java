@@ -1,7 +1,9 @@
 package com.haot.reservation.application.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
+import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
 import com.haot.reservation.common.exceptions.DateUnavailableException;
 import com.haot.reservation.common.exceptions.FeignExceptionUtils;
@@ -24,6 +26,7 @@ import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateReadResponse;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateUpdateStatusRequest;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeReadOneResponse;
 import com.haot.reservation.infrastructure.dtos.payment.PaymentCreateRequest;
+import com.haot.reservation.infrastructure.dtos.payment.PaymentResponse;
 import com.haot.reservation.infrastructure.dtos.point.PaymentDataResponse;
 import com.haot.reservation.infrastructure.dtos.point.PointStatusRequest;
 import com.haot.reservation.infrastructure.dtos.point.PointTransactionRequest;
@@ -34,6 +37,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -119,8 +123,27 @@ public class ReservationServiceImpl implements ReservationService {
 
     // paymentId 적용
     reservation.getPayment(paymentData.paymentId());
+    System.out.println(reservation);
 
     return ReservationGetResponse.of(reservation, paymentData.paymentUrl());
+  }
+
+  @Transactional
+  public void updateReservation(
+      ReservationUpdateRequest reservationUpdateRequest,
+      String reservationId,
+      String userId,
+      Role role
+  ) throws JsonProcessingException {
+
+    Reservation reservation = reservationRepository.findById(reservationId)
+        .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
+
+    switch (reservationUpdateRequest.status()) {
+      case "COMPLETED" -> completeReservation(reservation, userId, role);
+      case "CANCELED" -> cancelReservation(reservation, userId, role);
+      default -> throw new IllegalArgumentException("Invalid status");
+    }
   }
 
   // 숙소 이름 가져오기
@@ -235,15 +258,15 @@ public class ReservationServiceImpl implements ReservationService {
     PointStatusRequest request = new PointStatusRequest(
         reservation.getReservationId(),
         "PROCESSED",
-        "예약 완료"
+        null
     );
 
     try {
       updateLodgeStatus(dateIds, "COMPLETE");
-      if (reservation.getReservationCouponId() != null) {
+      if (!Objects.equals(reservation.getReservationCouponId(), "")) {
         updateCouponStatus(reservation.getReservationCouponId(), "COMPLETED");
       }
-      if (reservation.getPointHistoryId() != null) {
+      if (!Objects.equals(reservation.getPointHistoryId(), "")) {
         updatePointStatus(request, reservation.getPointHistoryId(), userId, role);
       }
     } catch (FeignException e) {
@@ -251,7 +274,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
   }
 
-  // 예약 완료 시 실행되는 메서드
+  // 예약 취소 시 실행되는 메서드
   private void cancelReservation(Reservation reservation, String userId, Role role)
       throws JsonProcessingException {
 
@@ -263,15 +286,15 @@ public class ReservationServiceImpl implements ReservationService {
     PointStatusRequest request = new PointStatusRequest(
         reservation.getReservationId(),
         "ROLLBACK",
-        "예약 취소"
+        null
     );
 
     try {
       updateLodgeStatus(dateIds, "EMPTY");
-      if (reservation.getReservationCouponId() != null) {
+      if (!Objects.equals(reservation.getReservationCouponId(), "")) {
         updateCouponStatus(reservation.getReservationCouponId(), "CANCEL");
       }
-      if (reservation.getPointHistoryId() != null) {
+      if (!Objects.equals(reservation.getPointHistoryId(), "")) {
         updatePointStatus(request, reservation.getPointHistoryId(), userId, role);
       }
     } catch (FeignException e) {
@@ -325,27 +348,16 @@ public class ReservationServiceImpl implements ReservationService {
           role
       );
       Map<String, Object> data = response.data();
+      ObjectMapper objectMapper = new ObjectMapper();
 
-      String paymentId = (String) data.get("paymentId");
+      PaymentResponse payment = objectMapper.convertValue(data.get("payment"), PaymentResponse.class);
+
+      String paymentId = payment.paymentId();
       String paymentUrl = (String) data.get("paymentPageUrl");
 
       return PaymentDataResponse.of(paymentId, paymentUrl);
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
-    }
-  }
-
-  // 업데이트 로직에 사용될 메서드
-  public void updateReservation(String status, String reservationId, String userId, Role role)
-      throws JsonProcessingException {
-
-    Reservation reservation = reservationRepository.findById(reservationId)
-        .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
-
-    switch (status) {
-      case "COMPLETED" -> completeReservation(reservation, userId, role);
-      case "CANCELED" -> cancelReservation(reservation, userId, role);
-      default -> throw new IllegalArgumentException("Invalid status");
     }
   }
 }

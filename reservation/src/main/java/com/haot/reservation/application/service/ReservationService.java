@@ -2,6 +2,7 @@ package com.haot.reservation.application.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
+import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
 import com.haot.submodule.role.Role;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,22 @@ public interface ReservationService {
    */
   ReservationGetResponse createReservation(
       ReservationCreateRequest request,
+      String userId,
+      Role role
+  ) throws JsonProcessingException;
+
+  /**
+   * 예약 수정 (결제 완료 or 취소)
+   * 결제 완료시 숙소, 쿠폰, 포인트의 상태를 변경합니다.
+   * @param reservationUpdateRequest paymentId, 예약 상태 COMPLETED or CANCELED
+   * @param reservationId 예약 아이디
+   * @param userId 유저 아이디
+   * @param role 권한
+   * @throws JsonProcessingException feignClient(상대방 서버의) 실패 응답
+   */
+  void updateReservation(
+      ReservationUpdateRequest reservationUpdateRequest,
+      String reservationId,
       String userId,
       Role role
   ) throws JsonProcessingException;
