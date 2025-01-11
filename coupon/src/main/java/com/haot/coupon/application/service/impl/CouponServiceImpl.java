@@ -19,6 +19,7 @@ import com.haot.coupon.domain.model.ReservationCoupon;
 import com.haot.coupon.domain.model.UserCoupon;
 import com.haot.coupon.domain.model.enums.*;
 import com.haot.coupon.infrastructure.repository.*;
+import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -143,10 +144,15 @@ public class CouponServiceImpl implements CouponService {
     // 쿠폰 Rollback API
     @Transactional
     @Override
-    public void rollbackReservationCoupon(String reservationCouponId) {
+    public void rollbackReservationCoupon(String userId, Role role, String reservationCouponId) {
 
         ReservationCoupon reservationCoupon = reservationCouponRepository.findById(reservationCouponId)
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.RESERVATION_COUPON_NOT_FOUND));
+
+        UserCoupon userCoupon = reservationCoupon.getUserCoupon();
+
+        // Role이 User일때 userId 같은지 체크
+        validateUserAndRole(userId, role, userCoupon.getUserId());
 
         // 선점 상태가 아닌 경우 에러 반환
         validateReservationPreemption(reservationCoupon);
@@ -158,6 +164,15 @@ public class CouponServiceImpl implements CouponService {
     private void validateReservationPreemption(ReservationCoupon reservationCoupon) {
         if (reservationCoupon.getReservationCouponStatus() != ReservationCouponStatus.PREEMPTION) {
             throw new CustomCouponException(ErrorCode.RESERVATION_COUPON_NOT_PREEMPTED);
+        }
+    }
+
+    // User & Role 체크
+    private void validateUserAndRole(String userId, Role role, String dbUserId) {
+        if(role == Role.USER){
+            if(!dbUserId.equals(userId)){
+                throw new CustomCouponException(ErrorCode.USER_NOT_MATCHED);
+            }
         }
     }
 

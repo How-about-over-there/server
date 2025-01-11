@@ -13,6 +13,9 @@ public enum ErrorCode implements ResCodeIfs {
     INTERNAL_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "0000", "Unknown Server Error"),
     VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "0009", "Validation failed"),
 
+    // user exception
+    USER_NOT_MATCHED(HttpStatus.BAD_REQUEST,"4001" , "유저 ID 가 일치하지 않습니다."),
+
     // 쿠폰 exception
     DISCOUNT_RATE_EXCEPTION(HttpStatus.BAD_REQUEST, "4002", "할인율은 1 ~ 100 사이의 숫자여야 됩니다."),
     RESERVATION_STATUS_NOT_MATCH(HttpStatus.BAD_REQUEST, "4003", "reservationStatus NotMatch"),
@@ -44,6 +47,8 @@ public enum ErrorCode implements ResCodeIfs {
 
     // event 조회 API Error
     INVALID_PARAMETERS_FOR_NON_ADMIN(HttpStatus.BAD_REQUEST, "4100", "User 권한을 가진 사용자가 요청 할 수 없는 파라미터 입니다."),
+
+
 
     // service common Error
     UNSUPPORTED_SORT_TYPE(HttpStatus.BAD_REQUEST, "4500", "지원하지 않는 정렬 방식입니다."),

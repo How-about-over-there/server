@@ -67,7 +67,7 @@ public class CouponController {
                                                        @RequestHeader("X-User-Role") Role role,
                                                        @PathVariable(value = "reservationCouponId") String reservationCouponId){
 
-        couponService.rollbackReservationCoupon(reservationCouponId);
+        couponService.rollbackReservationCoupon(userId, role, reservationCouponId);
         return ApiResponse.SUCCESS(SuccessCode.COUPON_RESERVATION_ROLLBACK_SUCCESS);
     }
 
