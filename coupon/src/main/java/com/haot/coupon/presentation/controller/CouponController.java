@@ -35,6 +35,7 @@ public class CouponController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{couponId}")
+    @RoleCheck({Role.ADMIN, Role.USER})
     public ApiResponse<CouponSearchResponse> getCouponDetails(@PathVariable(value = "couponId") String couponId) {
         return ApiResponse.SUCCESS(SuccessCode.GET_DETAIL_COUPON_SUCCESS, couponService.getCouponDetails(couponId));
     }
@@ -42,6 +43,7 @@ public class CouponController {
     // TODO userId 받아야 된다.
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/issued")
+    @RoleCheck({Role.ADMIN, Role.USER})
     public ApiResponse<Void> customerIssueCoupon(@RequestBody CouponCustomerCreateRequest request) {
 
         String testUserId = UUID.randomUUID().toString();

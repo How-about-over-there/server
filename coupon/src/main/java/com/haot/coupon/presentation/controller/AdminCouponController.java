@@ -12,6 +12,8 @@ import com.haot.coupon.domain.model.enums.CouponType;
 import com.haot.coupon.domain.model.enums.DiscountPolicy;
 import com.haot.coupon.domain.model.enums.ReservationCouponStatus;
 import com.haot.coupon.domain.model.vo.CouponDiscountRate;
+import com.haot.submodule.role.Role;
+import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -71,6 +73,7 @@ public class AdminCouponController {
     // 쿠폰 생성 API
     @ResponseStatus(HttpStatus.OK)
     @PostMapping
+    @RoleCheck(Role.ADMIN)
     public ApiResponse<CouponCreateResponse> create(@Valid @RequestBody CouponCreateRequest request) {
         return ApiResponse.SUCCESS(SuccessCode.CREATE_COUPON_SUCCESS, adminCouponService.create(request));
     }
