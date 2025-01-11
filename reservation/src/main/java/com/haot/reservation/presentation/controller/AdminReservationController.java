@@ -41,7 +41,7 @@ public class AdminReservationController {
         .checkOutDate(LocalDate.of(2025, 1, 5))
         .numGuests(4)
         .request("~~ 준비해주세요!")
-        .totalPrice(350000)
+        .totalPrice(350000.0)
         .status(ReservationStatus.PENDING)
         .paymentId("결제 대기중 입니다.")
         .build();
