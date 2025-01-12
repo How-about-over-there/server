@@ -19,6 +19,7 @@ import com.haot.coupon.domain.model.ReservationCoupon;
 import com.haot.coupon.domain.model.UserCoupon;
 import com.haot.coupon.domain.model.enums.*;
 import com.haot.coupon.infrastructure.repository.*;
+import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -132,16 +134,45 @@ public class CouponServiceImpl implements CouponService {
         handleReservation(reservationCoupon, reservationCouponStatus);
     }
 
+    // 내 쿠폰함 보기 API
     @Transactional(readOnly = true)
     @Override
     public Page<CouponReadMeResponse> getMyCoupons(String userId, Pageable pageable) {
         return userCouponRepository.checkMyCouponBox(userId, pageable);
     }
 
+    // 쿠폰 Rollback API
+    @Transactional
+    @Override
+    public void rollbackReservationCoupon(String userId, Role role, String reservationCouponId) {
+
+        ReservationCoupon reservationCoupon = reservationCouponRepository.findById(reservationCouponId)
+                .orElseThrow(() -> new CustomCouponException(ErrorCode.RESERVATION_COUPON_NOT_FOUND));
+
+        UserCoupon userCoupon = reservationCoupon.getUserCoupon();
+
+        // Role이 User일때 userId 같은지 체크
+        validateUserAndRole(userId, role, userCoupon.getUserId());
+
+        // 선점 상태가 아닌 경우 에러 반환
+        validateReservationPreemption(reservationCoupon);
+
+        reservationCoupon.confirmReservationStatus(ReservationCouponStatus.ROLLBACK);
+    }
+
     // 선점 상태 검증
     private void validateReservationPreemption(ReservationCoupon reservationCoupon) {
         if (reservationCoupon.getReservationCouponStatus() != ReservationCouponStatus.PREEMPTION) {
             throw new CustomCouponException(ErrorCode.RESERVATION_COUPON_NOT_PREEMPTED);
+        }
+    }
+
+    // User & Role 체크
+    private void validateUserAndRole(String userId, Role role, String dbUserId) {
+        if(role == Role.USER){
+            if(!dbUserId.equals(userId)){
+                throw new CustomCouponException(ErrorCode.USER_NOT_MATCHED);
+            }
         }
     }
 
@@ -177,12 +208,11 @@ public class CouponServiceImpl implements CouponService {
         reservationCoupon.confirmReservationStatus(status);
     }
 
-    // user 쿠폰이 reservationCoupon 테이블에 CANCEL 상태가 아닌 다른 상태값이 DB에 있으면 사용불가
+    // user 쿠폰이 reservationCoupon 테이블에 CANCEL, ROLLBACK 상태가 아닌 다른 상태값이 DB에 있으면 사용불가
     private void checkReservedCouponAvailable(UserCoupon userCoupon) {
 
-        if(reservationCouponRepository.existsByUserCouponAndReservationCouponStatusNotAndIsDeleteFalse(
-                userCoupon, ReservationCouponStatus.CANCEL)
-        ){
+        if (reservationCouponRepository.existsByUserCouponAndReservationCouponStatusNotInAndIsDeleteFalse(
+                userCoupon, List.of(ReservationCouponStatus.ROLLBACK, ReservationCouponStatus.CANCEL))) {
             throw new CustomCouponException(ErrorCode.COUPON_UNAVAILABLE);
         }
     }
@@ -286,6 +316,7 @@ public class CouponServiceImpl implements CouponService {
 
     }
 
+    // 발급된 쿠폰수가 최대 발급 수량보다 클때 이벤트 종료
     private void checkPriorityCouponStock(CouponEvent event, Coupon coupon) {
 
         if(coupon.getTotalQuantity() <= coupon.getIssuedQuantity()){
