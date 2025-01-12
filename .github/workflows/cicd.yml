@@ -79,33 +79,42 @@ jobs:
           cd ./server
           chmod +x ./gradlew
           ./gradlew bootJar
-
-          chmod +x ./gateway/gradlew
-          ./gateway/gradlew clean assemble
-
-          chmod +x ./user/gradlew
-          ./user/gradlew clean assemble
-
-          chmod +x ./auth/gradlew
-          ./auth/gradlew clean assemble
           
-          chmod +x ./coupon/gradlew
-          ./coupon/gradlew clean assemble
+          cd ../gateway
+          chmod +x ./gradlew
+          ./gradlew bootJar
           
-          chmod +x ./lodge/gradlew
-          ./lodge/gradlew clean assemble
+          cd ../auth
+          chmod +x ./gradlew
+          ./gradlew bootJar
           
-          chmod +x ./payment/gradlew
-          ./payment/gradlew clean assemble
+          cd ../coupon
+          chmod +x ./gradlew
+          ./gradlew bootJar
           
-          chmod +x ./point/gradlew
-          ./point/gradlew clean assemble
+          cd ../lodge
+          chmod +x ./gradlew
+          ./gradlew bootJar
           
-          chmod +x ./reservation/gradlew
-          ./reservation/gradlew clean assemble
+          cd ../payment
+          chmod +x ./gradlew
+          ./gradlew bootJar
           
-          chmod +x ./review/gradlew
-          ./review/gradlew clean assemble
+          cd ../point
+          chmod +x ./gradlew
+          ./gradlew bootJar
+          
+          cd ../reservation
+          chmod +x ./gradlew
+          ./gradlew bootJar
+          
+          cd ../review
+          chmod +x ./gradlew
+          ./gradlew bootJar
+          
+          cd ../user
+          chmod +x ./gradlew
+          ./gradlew bootJar
 
       # (4) Docker 이미지 빌드
       - name: Build Docker images
