@@ -17,7 +17,8 @@ public interface CouponEventRepository extends JpaRepository<CouponEvent, String
     List<CouponEvent> findByCouponIdAndEventEndDateIsAfterAndIsDeleteFalse(String id, LocalDateTime now);
 
     @Query("SELECT ce FROM CouponEvent ce JOIN FETCH ce.coupon c " +
-            "WHERE ce.id = :eventId AND ce.eventStatus = :eventStatus AND ce.isDelete = false")
+            "WHERE ce.id = :eventId AND ce.eventStatus = :eventStatus " +
+            "AND ce.isDelete = false AND c.isDelete = false")
     Optional<CouponEvent> findByIdAndEventStatusAndIsDeleteFalse(@Param("eventId") String eventId,
                                                                  @Param("eventStatus") EventStatus eventStatus);
 
