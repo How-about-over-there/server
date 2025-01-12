@@ -88,10 +88,6 @@ jobs:
           chmod +x ./gradlew
           ./gradlew bootJar
           
-          cd ../coupon
-          chmod +x ./gradlew
-          ./gradlew bootJar
-          
           cd ../lodge
           chmod +x ./gradlew
           ./gradlew bootJar
@@ -115,6 +111,8 @@ jobs:
           cd ../user
           chmod +x ./gradlew
           ./gradlew bootJar
+          
+          
 
       # (4) Docker 이미지 빌드
       - name: Build Docker images
