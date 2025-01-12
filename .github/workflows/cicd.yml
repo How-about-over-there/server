@@ -69,34 +69,34 @@ jobs:
       # (3) Gradle 빌드
       - name: Build with Gradle
         run: |
-          chmod +x server/gradlew
+          chmod +x ./server/gradlew
           ./server/gradlew clean assemble
 
-          chmod +x gateway/gradlew
+          chmod +x ./gateway/gradlew
           ./gateway/gradlew clean assemble
 
-          chmod +x user/gradlew
+          chmod +x ./user/gradlew
           ./user/gradlew clean assemble
 
-          chmod +x auth/gradlew
+          chmod +x ./auth/gradlew
           ./auth/gradlew clean assemble
           
-          chmod +x coupon/gradlew
+          chmod +x ./coupon/gradlew
           ./coupon/gradlew clean assemble
           
-          chmod +x lodge/gradlew
+          chmod +x ./lodge/gradlew
           ./lodge/gradlew clean assemble
           
-          chmod +x payment/gradlew
+          chmod +x ./payment/gradlew
           ./payment/gradlew clean assemble
           
-          chmod +x point/gradlew
+          chmod +x ./point/gradlew
           ./point/gradlew clean assemble
           
-          chmod +x reservation/gradlew
+          chmod +x ./reservation/gradlew
           ./reservation/gradlew clean assemble
           
-          chmod +x review/gradlew
+          chmod +x ./review/gradlew
           ./review/gradlew clean assemble
 
       # (4) Docker 이미지 빌드
