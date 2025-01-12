@@ -77,7 +77,7 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x ./server/gradlew
-          ./server/gradlew clean assemble
+          ./server/gradlew bootJar
 
           chmod +x ./gateway/gradlew
           ./gateway/gradlew clean assemble
