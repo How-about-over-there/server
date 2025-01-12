@@ -22,6 +22,12 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
 
+  data:
+    redis:
+      host: localhost
+      port: 6389
+      username: default
+
 eureka:
   client:
     service-url:
