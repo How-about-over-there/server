@@ -38,36 +38,54 @@ jobs:
           DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
           DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          cat user/src/main/resources/application.yml 
-          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' user/src/main/resources/application.yml
-          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' user/src/main/resources/application.yml
-          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' user/src/main/resources/application.yml
-          cat user/src/main/resources/application.yml
+          echo "DATABASE_URL=$DATABASE_URL"
+          echo "DATABASE_USERNAME=$DATABASE_USERNAME"
+          echo "DATABASE_PASSWORD=$DATABASE_PASSWORD"
+    
+          # User 서비스 수정
+          sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" user/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" user/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" user/src/main/resources/application.yml
+          cat user/src/main/resources/application.yml  # 파일 내용 출력
+      
+          # Coupon 서비스 수정
+          sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" coupon/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" coupon/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" coupon/src/main/resources/application.yml
+          cat coupon/src/main/resources/application.yml  # 파일 내용 출력
+      
+          # Lodge 서비스 수정
+          sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" lodge/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" lodge/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" lodge/src/main/resources/application.yml
+          cat lodge/src/main/resources/application.yml  # 파일 내용 출력
+      
+          # Payment 서비스 수정
+          sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" payment/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" payment/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" payment/src/main/resources/application.yml
+          cat payment/src/main/resources/application.yml  # 파일 내용 출력
+      
+          # Point 서비스 수정
+          sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" point/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" point/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" point/src/main/resources/application.yml
+          cat point/src/main/resources/application.yml  # 파일 내용 출력
+      
+          # Reservation 서비스 수정
+          sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" reservation/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" reservation/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" reservation/src/main/resources/application.yml
+          cat reservation/src/main/resources/application.yml  # 파일 내용 출력
+      
+          # Review 서비스 수정
+          sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" review/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" review/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" review/src/main/resources/application.yml
+          cat review/src/main/resources/application.yml  # 파일 내용 출력
           
-          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' coupon/src/main/resources/application.yml
-          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' coupon/src/main/resources/application.yml
-          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' coupon/src/main/resources/application.yml
-
-          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' lodge/src/main/resources/application.yml
-          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' lodge/src/main/resources/application.yml
-          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' lodge/src/main/resources/application.yml
-
-          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' payment/src/main/resources/application.yml
-          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' payment/src/main/resources/application.yml
-          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' payment/src/main/resources/application.yml
-
-          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' point/src/main/resources/application.yml
-          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' point/src/main/resources/application.yml
-          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' point/src/main/resources/application.yml
-
-          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' reservation/src/main/resources/application.yml
-          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' reservation/src/main/resources/application.yml
-          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' reservation/src/main/resources/application.yml
-
-          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' review/src/main/resources/application.yml
-          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' review/src/main/resources/application.yml
-          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' review/src/main/resources/application.yml
-
+          echo "Finished updating application.yml files."
+            
 
 
       # (3) Gradle 빌드
