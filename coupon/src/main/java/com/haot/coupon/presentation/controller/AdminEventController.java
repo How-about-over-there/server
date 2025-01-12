@@ -6,6 +6,8 @@ import com.haot.coupon.application.dto.response.events.EventCreateResponse;
 import com.haot.coupon.application.service.AdminEventService;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.common.response.enums.SuccessCode;
+import com.haot.submodule.role.Role;
+import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,13 +24,15 @@ public class AdminEventController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @RoleCheck(Role.ADMIN)
     public ApiResponse<EventCreateResponse> create(@Valid @RequestBody EventCreateRequest eventCreateRequest) {
         return ApiResponse.SUCCESS(SuccessCode.CREATE_EVENT_SUCCESS, adminEventService.create(eventCreateRequest));
     }
 
-    // TODO header로 userId 받아야 한다.
+    // 이벤트 수정 API
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{eventId}")
+    @RoleCheck(Role.ADMIN)
     public ApiResponse<Void> modify(@RequestHeader(value = "X-User-Id", required = true) String userId,
                                     @PathVariable(value = "eventId") String eventId,
                                     @Valid @RequestBody EventModifyRequest eventModifyRequest) {

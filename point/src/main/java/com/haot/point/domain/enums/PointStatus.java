@@ -11,7 +11,9 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum PointStatus {
     PENDING("포인트 처리 대기 상태"),
-    PROCESSED("포인트 처리 완료 상태");
+    PROCESSED("포인트 처리 완료 상태"),
+    ROLLBACK("포인트 롤백 상태"),
+    CANCELLED("포인트 적립/사용이 취소된 상태");
 
     private final String description;
 

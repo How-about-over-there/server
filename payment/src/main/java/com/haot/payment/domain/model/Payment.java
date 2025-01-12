@@ -2,6 +2,7 @@ package com.haot.payment.domain.model;
 
 import com.haot.payment.domain.enums.PaymentMethod;
 import com.haot.payment.domain.enums.PaymentStatus;
+import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -12,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_payment", schema = "payment")
-public class Payment extends BaseEntity{
+public class Payment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "payment_id")

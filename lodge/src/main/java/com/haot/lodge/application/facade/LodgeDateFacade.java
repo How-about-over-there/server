@@ -6,6 +6,7 @@ import com.haot.lodge.application.service.LodgeService;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeDate;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
+import com.haot.lodge.presentation.request.LodgeDateAddRequest;
 import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
 import com.haot.lodge.presentation.response.LodgeDateReadResponse;
 import com.haot.submodule.role.Role;
@@ -24,6 +25,17 @@ public class LodgeDateFacade {
 
     private final LodgeService lodgeService;
     private final LodgeDateService lodgeDateService;
+
+    @Transactional
+    public void addLodgeDate(
+            Role userRole, String userId, LodgeDateAddRequest request
+    ) {
+        Lodge lodge = lodgeService.getValidLodgeById(request.lodgeId());
+        lodge.verifyProperty(userRole, userId);
+        lodgeDateService.create(
+                lodge, request.startDate(), request.endDate(), request.excludeDates()
+        );
+    }
 
     @Transactional(readOnly = true)
     public Slice<LodgeDateReadResponse> readLodgeDates(

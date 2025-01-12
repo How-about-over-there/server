@@ -2,19 +2,22 @@ package com.haot.payment.presentation.controller;
 
 import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
+import com.haot.payment.application.dto.request.PaymentSearchRequest;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.application.service.PaymentService;
 import com.haot.payment.common.response.ApiResponse;
+import com.haot.submodule.role.Role;
+import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j(topic = "PaymentController")
@@ -28,9 +31,12 @@ public class PaymentController {
     // 결제 생성
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Map<String, Object>> createPayment(@Valid @RequestBody PaymentCreateRequest request) {
+    @RoleCheck({Role.USER, Role.ADMIN})
+    public ApiResponse<Map<String, Object>> createPayment(@Valid @RequestBody PaymentCreateRequest request,
+                                                          @RequestHeader("X-User-Id") String userId,
+                                                          @RequestHeader("X-User-Role") Role role) {
 
-        PaymentResponse payment = paymentService.createPayment(request);
+        PaymentResponse payment = paymentService.createPayment(request, userId, role);
         log.info("paymentId ::::: {}", payment.paymentId());
         // 프론트엔드 URL 반환
         String paymentPageUrl = String.format(
@@ -49,6 +55,7 @@ public class PaymentController {
     // 결제 확인
     @PostMapping("/{paymentId}/complete")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck({Role.USER, Role.ADMIN})
     public ApiResponse<PaymentResponse> completePayment(@PathVariable String paymentId) {
         PaymentResponse payment = paymentService.completePayment(paymentId);
         log.info("결제 완료 정보: {}", ApiResponse.success(payment)); // 결제 확인 출력
@@ -58,6 +65,7 @@ public class PaymentController {
     // 본인 결제 단건 조회
     @GetMapping("/{paymentId}")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck({Role.USER, Role.ADMIN})
     public ApiResponse<PaymentResponse> getPaymentById(@PathVariable String paymentId) {
         return ApiResponse.success(paymentService.getPaymentById(paymentId));
     }
@@ -65,39 +73,18 @@ public class PaymentController {
     // 결제 전체 조회 및 검색
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Page<PaymentResponse>> getPayments(Pageable pageable) {
-
-        List<PaymentResponse> list = List.of(
-                new PaymentResponse(
-                        "PAYMENT-UUID1",
-                        "USER-UUID",
-                        "RESERVATION-UUID",
-                        "MERCHANT-ID",
-                        100000.0,
-                        100000.0,
-                        "CARD",
-                        "READY"
-                ),
-                new PaymentResponse(
-                        "PAYMENT-UUID2",
-                        "USER-UUID",
-                        "RESERVATION-UUID",
-                        "MERCHANT-ID",
-                        100000.0,
-                        100000.0,
-                        "CARD",
-                        "READY"
-                )
-        );
-
-        return ApiResponse.success(
-            new PageImpl<>(list, pageable, list.size())
-        );
+    @RoleCheck({Role.USER, Role.ADMIN})
+    public ApiResponse<Page<PaymentResponse>> getPayments(
+            @ModelAttribute PaymentSearchRequest request,
+            @PageableDefault(size = 10, direction = Sort.Direction.ASC, sort = "createdAt") Pageable pageable
+    ) {
+        return ApiResponse.success(paymentService.getPayments(request, pageable));
     }
 
     // 결제 취소 요청
     @PostMapping("/{paymentId}/cancel")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck({Role.USER, Role.ADMIN})
     public ApiResponse<PaymentResponse> cancelPayment(@Valid @RequestBody PaymentCancelRequest request,
                                                       @PathVariable String paymentId) {
         return ApiResponse.success(paymentService.cancelPayment(request, paymentId));

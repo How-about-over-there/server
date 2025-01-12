@@ -1,5 +1,6 @@
 package com.haot.point.domain.model;
 
+import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "p_point", schema = "point")
-public class Point extends BaseEntity{
+public class Point extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "point_id")

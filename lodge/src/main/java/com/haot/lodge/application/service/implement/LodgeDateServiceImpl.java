@@ -46,6 +46,7 @@ public class LodgeDateServiceImpl implements LodgeDateService {
     public void create(
             Lodge lodge, LocalDate startDate, LocalDate endDate, List<LocalDate> excludeDates
     ) {
+        checkForExistingLodgeDates(lodge.getId(), startDate, endDate);
         dateValidation(startDate, endDate);
         Set<LocalDate> excludeDateSet = excludeDates != null
                 ? new HashSet<>(excludeDates)
@@ -79,13 +80,36 @@ public class LodgeDateServiceImpl implements LodgeDateService {
         lodgeDate.updateStatus(status);
     }
 
-    /**
-     * 입력된 날짜 유효성 검사
-     * @param startDate 숙소 시작 날짜
-     * @param endDate 숙소 끝 날짜
-     */
+    @Override
+    public void deleteAllByLodge(Lodge lodge, String userId) {
+        lodge.getDates().forEach(lodgeDate -> {
+            dateDeleteValidation(lodgeDate);
+            lodgeDate.deleteEntity(userId);
+        });
+    }
+
+    private void dateDeleteValidation(LodgeDate lodgeDate) {
+        if(lodgeDate.getDate().isAfter(LocalDate.now())
+                && lodgeDate.getStatus()==ReservationStatus.COMPLETE
+        ) {
+            throw new LodgeException(ErrorCode.CANNOT_DELETE_SCHEDULED_DATE);
+        }
+    }
+
+    private void checkForExistingLodgeDates(
+            String lodgeId, LocalDate startDate, LocalDate endDate
+    ) {
+        if (lodgeDateRepository.existsOverlappingDates(lodgeId, startDate, endDate)) {
+            throw new LodgeException(ErrorCode.OVERLAPPING_DATES);
+        }
+    }
+
     private void dateValidation(LocalDate startDate, LocalDate endDate) {
-        if (startDate.isBefore(LocalDate.now())) {
+        LocalDate today = LocalDate.now();
+        if (ChronoUnit.DAYS.between(today, startDate) > 365) {
+            throw new LodgeException(ErrorCode.START_DATE_TOO_FAR);
+        }
+        if (startDate.isBefore(today)) {
             throw new LodgeException(ErrorCode.START_DATE_IN_PAST);
         }
         if (startDate.isAfter(endDate)) {

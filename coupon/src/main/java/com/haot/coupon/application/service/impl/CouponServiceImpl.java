@@ -1,9 +1,11 @@
 package com.haot.coupon.application.service.impl;
 
+import com.haot.coupon.application.dto.feign.request.FeignConfirmReservationRequest;
 import com.haot.coupon.application.dto.feign.request.FeignVerifyRequest;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
+import com.haot.coupon.application.dto.response.coupons.CouponReadMeResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
-import com.haot.coupon.application.dto.response.coupons.ReservationVerifyResponse;
+import com.haot.coupon.application.dto.feign.response.ReservationVerifyResponse;
 import com.haot.coupon.application.kafka.CouponErrorProducer;
 import com.haot.coupon.application.mapper.CouponMapper;
 import com.haot.coupon.application.mapper.ReservationCouponMapper;
@@ -16,15 +18,16 @@ import com.haot.coupon.domain.model.CouponEvent;
 import com.haot.coupon.domain.model.ReservationCoupon;
 import com.haot.coupon.domain.model.UserCoupon;
 import com.haot.coupon.domain.model.enums.*;
-import com.haot.coupon.infrastructure.repository.CouponEventRepository;
-import com.haot.coupon.infrastructure.repository.CouponRepository;
-import com.haot.coupon.infrastructure.repository.ReservationCouponRepository;
-import com.haot.coupon.infrastructure.repository.UserCouponRepository;
+import com.haot.coupon.infrastructure.repository.*;
+import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +44,7 @@ public class CouponServiceImpl implements CouponService {
 
     private final CouponErrorProducer couponErrorProducer;
 
+    // 쿠폰 발급 API
     @Transactional
     @Override
     public void customerIssueCoupon(CouponCustomerCreateRequest request, String userId) {
@@ -94,8 +98,8 @@ public class CouponServiceImpl implements CouponService {
 
         UserCoupon userCoupon = findUserCoupon(request.userId(), coupon);
 
-        // 선점 체크
-        checkAlreadyReserved(userCoupon);
+        // reservationCoupon 테이블 체크
+        checkReservedCouponAvailable(userCoupon);
 
         // 쿠폰 상태가 USED인지 확인하고 에러 반환
         checkIfCouponUsed(userCoupon);
@@ -114,13 +118,102 @@ public class CouponServiceImpl implements CouponService {
         return reservationCouponMapper.toVerifyFeignResponse(reservationCoupon.getId(), totalPrice - discountPrice);
     }
 
-    // 쿠폰 선점 상태인지 확인
-    private void checkAlreadyReserved(UserCoupon userCoupon) {
+    // [Feign] 쿠폰 상태 변경 API
+    @Transactional
+    @Override
+    public void confirmReservation(String reservationCouponId, FeignConfirmReservationRequest request) {
+        ReservationCoupon reservationCoupon = reservationCouponRepository.findById(reservationCouponId)
+                .orElseThrow(() -> new CustomCouponException(ErrorCode.RESERVATION_COUPON_NOT_FOUND));
 
-        if(reservationCouponRepository.existsByUserCouponAndReservationCouponStatusAndIsDeleteFalse(
-                userCoupon, ReservationCouponStatus.PREEMPTION)
-        ){
-            throw new CustomCouponException(ErrorCode.COUPON_ALREADY_RESERVED);
+        // 선점 상태가 아닌 경우 에러 반환
+        validateReservationPreemption(reservationCoupon);
+
+        ReservationCouponStatus reservationCouponStatus = ReservationCouponStatus.checkReservationCouponStatus(request.reservationStatus());
+
+        // 예약 상태 처리
+        handleReservation(reservationCoupon, reservationCouponStatus);
+    }
+
+    // 내 쿠폰함 보기 API
+    @Transactional(readOnly = true)
+    @Override
+    public Page<CouponReadMeResponse> getMyCoupons(String userId, Pageable pageable) {
+        return userCouponRepository.checkMyCouponBox(userId, pageable);
+    }
+
+    // 쿠폰 Rollback API
+    @Transactional
+    @Override
+    public void rollbackReservationCoupon(String userId, Role role, String reservationCouponId) {
+
+        ReservationCoupon reservationCoupon = reservationCouponRepository.findById(reservationCouponId)
+                .orElseThrow(() -> new CustomCouponException(ErrorCode.RESERVATION_COUPON_NOT_FOUND));
+
+        UserCoupon userCoupon = reservationCoupon.getUserCoupon();
+
+        // Role이 User일때 userId 같은지 체크
+        validateUserAndRole(userId, role, userCoupon.getUserId());
+
+        // 선점 상태가 아닌 경우 에러 반환
+        validateReservationPreemption(reservationCoupon);
+
+        reservationCoupon.confirmReservationStatus(ReservationCouponStatus.ROLLBACK);
+    }
+
+    // 선점 상태 검증
+    private void validateReservationPreemption(ReservationCoupon reservationCoupon) {
+        if (reservationCoupon.getReservationCouponStatus() != ReservationCouponStatus.PREEMPTION) {
+            throw new CustomCouponException(ErrorCode.RESERVATION_COUPON_NOT_PREEMPTED);
+        }
+    }
+
+    // User & Role 체크
+    private void validateUserAndRole(String userId, Role role, String dbUserId) {
+        if(role == Role.USER){
+            if(!dbUserId.equals(userId)){
+                throw new CustomCouponException(ErrorCode.USER_NOT_MATCHED);
+            }
+        }
+    }
+
+    // 예약 상태 처리
+    private void handleReservation(ReservationCoupon reservationCoupon, ReservationCouponStatus reservationCouponStatus) {
+        switch (reservationCouponStatus) {
+            case COMPLETED -> handleReservationCompleted(reservationCoupon);
+            case CANCEL -> handleReservationCanceled(reservationCoupon);
+            default -> throw new CustomCouponException(ErrorCode.RESERVATION_STATUS_NOT_MATCH);
+        }
+    }
+
+    // 예약 완료 처리
+    private void handleReservationCompleted(ReservationCoupon reservationCoupon) {
+        UserCoupon userCoupon = reservationCoupon.getUserCoupon();
+
+        // 쿠폰 상태 및 완료 처리
+        userCoupon.reservationComplete();
+        reservationCoupon.confirmReservationStatus(ReservationCouponStatus.COMPLETED);
+    }
+
+    // 예약 취소 처리
+    private void handleReservationCanceled(ReservationCoupon reservationCoupon) {
+        UserCoupon userCoupon = reservationCoupon.getUserCoupon();
+        Coupon coupon = userCoupon.getCoupon();
+
+        // 만료 시간 기준 상태 결정
+        ReservationCouponStatus status = LocalDateTime.now().isAfter(coupon.getExpiredDate()) ?
+                ReservationCouponStatus.EXPIRED : ReservationCouponStatus.CANCEL;
+
+        // 쿠폰 상태 및 취소 처리
+        userCoupon.reservationCancel();
+        reservationCoupon.confirmReservationStatus(status);
+    }
+
+    // user 쿠폰이 reservationCoupon 테이블에 CANCEL, ROLLBACK 상태가 아닌 다른 상태값이 DB에 있으면 사용불가
+    private void checkReservedCouponAvailable(UserCoupon userCoupon) {
+
+        if (reservationCouponRepository.existsByUserCouponAndReservationCouponStatusNotInAndIsDeleteFalse(
+                userCoupon, List.of(ReservationCouponStatus.ROLLBACK, ReservationCouponStatus.CANCEL))) {
+            throw new CustomCouponException(ErrorCode.COUPON_UNAVAILABLE);
         }
     }
 
@@ -223,6 +316,7 @@ public class CouponServiceImpl implements CouponService {
 
     }
 
+    // 발급된 쿠폰수가 최대 발급 수량보다 클때 이벤트 종료
     private void checkPriorityCouponStock(CouponEvent event, Coupon coupon) {
 
         if(coupon.getTotalQuantity() <= coupon.getIssuedQuantity()){

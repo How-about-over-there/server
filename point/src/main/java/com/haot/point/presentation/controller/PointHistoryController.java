@@ -3,8 +3,12 @@ package com.haot.point.presentation.controller;
 import com.haot.point.application.dto.request.PointStatusRequest;
 import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointHistoryResponse;
+import com.haot.point.application.service.PointHistoryService;
 import com.haot.point.common.response.ApiResponse;
+import com.haot.submodule.role.Role;
+import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +20,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/points/histories")
+@RequiredArgsConstructor
 public class PointHistoryController {
+
+    private final PointHistoryService pointHistoryService;
 
     // 본인 포인트 내역 조회
     @GetMapping("/{historyId}")
@@ -72,21 +79,12 @@ public class PointHistoryController {
     // 포인트 상태 변경
     @PostMapping("/{historyId}/status")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<PointAllResponse> changeStatusPoint(@Valid @RequestBody PointStatusRequest request,
-                                                           @PathVariable String historyId) {
-        return ApiResponse.success(
-                new PointAllResponse(
-                        "POINT-UUID",
-                        historyId,
-                        "USER-UUID",
-                        1000.0,
-                        1000.0,
-                        "USE",
-                        "RESERVATION-UUID USE POINT",
-                        LocalDateTime.now().plusMonths(3),
-                        request.status()
-                )
-        );
+    @RoleCheck({Role.ADMIN, Role.USER})
+    public ApiResponse<PointAllResponse> updateStatusPoint(@Valid @RequestBody PointStatusRequest request,
+                                                           @PathVariable String historyId,
+                                                           @RequestHeader("X-User-Id") String userId,
+                                                           @RequestHeader("X-User-Role") Role role) {
+        return ApiResponse.success(pointHistoryService.updateStatusPoint(request, historyId, userId, role));
     }
 
 }

@@ -1,18 +1,21 @@
 package com.haot.reservation.application.dtos.req;
 
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
-public record ReservationCreateRequest (
+public record ReservationCreateRequest(
+    @NotBlank
     LocalDate checkInDate,
+    @NotBlank
     LocalDate checkOutDate,
+    @NotBlank
     Integer numGuests,
     String request,
-    // 숙소 아이디
+    @NotBlank
     String lodgeId,
-    // 적용할 포인트
+    String pointId,
     Double point,
-    // 적용할 쿠폰 아이디
-    String userCouponId
-)
-{
+    String couponId
+) {
+
 }

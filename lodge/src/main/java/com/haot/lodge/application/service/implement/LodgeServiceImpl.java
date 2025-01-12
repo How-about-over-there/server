@@ -19,10 +19,14 @@ public class LodgeServiceImpl implements LodgeService {
     private final LodgeRepository lodgeRepository;
 
     @Override
+    public boolean isValidLodgeId(String lodgeId) {
+        return lodgeRepository.existsByIdAndIsDeletedFalse(lodgeId);
+    }
+
+    @Override
     public Lodge getValidLodgeById(String lodgeId) {
-        return lodgeRepository.findById(lodgeId)
+        return lodgeRepository.findByIdAndIsDeletedFalse(lodgeId)
                 .orElseThrow(()->new LodgeException(ErrorCode.LODGE_NOT_FOUND));
-        // TODO: isDeleted = true 인 경우 제외되도록 해야 함
     }
 
     @Override
@@ -38,7 +42,7 @@ public class LodgeServiceImpl implements LodgeService {
     @Override
     public Slice<Lodge> readAllBy(
             Pageable pageable,
-            String name, String address,
+            String hostId, String name, String address,
             Integer maxReservationDay, Integer maxPersonnel,
             LocalDate checkInDate, LocalDate checkOutDate
     ) {
@@ -47,7 +51,7 @@ public class LodgeServiceImpl implements LodgeService {
         }
         return lodgeRepository
                 .findAllByConditionOf(
-                        pageable, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate
+                        pageable, hostId, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate
                 );
     }
 
@@ -57,6 +61,11 @@ public class LodgeServiceImpl implements LodgeService {
     ) {
         nameValidation(lodge.getHostId(), name);
         lodge.update(name, description, address, term, basicPrice);
+    }
+
+    @Override
+    public void delete(String userId, Lodge lodge) {
+        lodge.deleteEntity(userId);
     }
 
     private void nameValidation(String hostId, String name) {

@@ -8,6 +8,8 @@ import org.springframework.data.domain.Slice;
 
 public interface LodgeService {
 
+    boolean isValidLodgeId(String lodgeId);
+
     Lodge getValidLodgeById(String lodgeId);
 
     Lodge create(
@@ -21,6 +23,7 @@ public interface LodgeService {
 
     Slice<Lodge> readAllBy(
             Pageable pageable,
+            String hostId,
             String name,
             String address,
             Integer maxReservationDay,
@@ -37,5 +40,7 @@ public interface LodgeService {
             Integer term,
             Double basicPrice
     );
+
+    void delete(String userId, Lodge lodge);
 
 }

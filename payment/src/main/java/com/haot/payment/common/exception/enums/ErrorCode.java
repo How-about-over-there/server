@@ -28,7 +28,8 @@ public enum ErrorCode implements ResCodeIfs {
     PORTONE_API_CALL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "8004", "외부 결제 시스템 호출이 실패했습니다."),
     PAYMENT_PRICE_MISMATCH(HttpStatus.BAD_REQUEST, "8005", "결제 요청 금액과 실제 결제 금액이 일치하지 않습니다."),
     INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "8006", "결제가 완료되지 않았습니다."),
-    PAYMENT_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "8007", "이미 처리된 결제입니다.");
+    PAYMENT_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "8007", "이미 처리된 결제입니다."),
+    USER_NOT_MATCHED(HttpStatus.BAD_REQUEST,"8008" , "유저 ID 가 일치하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

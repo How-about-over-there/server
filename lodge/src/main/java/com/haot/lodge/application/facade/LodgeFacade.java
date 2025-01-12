@@ -9,8 +9,12 @@ import com.haot.lodge.application.service.LodgeImageService;
 import com.haot.lodge.application.service.LodgeRuleService;
 import com.haot.lodge.application.service.LodgeService;
 import com.haot.lodge.application.service.implement.LodgeServiceImpl;
+import com.haot.lodge.common.exception.ErrorCode;
+import com.haot.lodge.common.exception.LodgeException;
 import com.haot.lodge.domain.model.Lodge;
+import com.haot.lodge.domain.model.LodgeDate;
 import com.haot.lodge.domain.model.LodgeRule;
+import com.haot.lodge.domain.model.enums.ReservationStatus;
 import com.haot.lodge.presentation.request.LodgeCreateRequest;
 import com.haot.lodge.presentation.request.LodgeUpdateRequest;
 import com.haot.lodge.presentation.response.LodgeReadAllResponse;
@@ -34,9 +38,13 @@ public class LodgeFacade {
     private final LodgeRuleService lodgeRuleService;
     private final LodgeDateService lodgeDateService;
 
+    @Transactional(readOnly = true)
+    public boolean lodgeValidation(String lodgeId) {
+        return lodgeService.isValidLodgeId(lodgeId);
+    }
+
     @Transactional
     public LodgeResponse createLodge(String userId, LodgeCreateRequest request) {
-        // TODO: UserId 유효성 검증
         Lodge lodge = lodgeService.create(
                 userId, request.name(), request.description(),
                 request.address(), request.term(), request.basicPrice());
@@ -62,12 +70,13 @@ public class LodgeFacade {
 
     @Transactional(readOnly = true)
     public Slice<LodgeReadAllResponse> readAllLodgeBy(
-            Pageable pageable, String name, String address,
+            Pageable pageable,
+            String hostId, String name, String address,
             Integer maxReservationDay, Integer maxPersonnel,
             LocalDate checkInDate, LocalDate checkOutDate
     ) {
         return lodgeService
-                .readAllBy(pageable, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
+                .readAllBy(pageable, hostId, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
                 .map(lodge -> new LodgeReadAllResponse(
                         LodgeResponse.from(lodge),
                         lodge.getImages()
@@ -91,6 +100,18 @@ public class LodgeFacade {
                 request.term(),
                 request.basicPrice()
         );
+    }
+
+    @Transactional
+    public void deleteLodge(
+            Role userRole, String userId, String lodgeId
+    ) {
+        Lodge lodge = lodgeService.getValidLodgeById(lodgeId);
+        lodge.verifyProperty(userRole, userId);
+        lodgeDateService.deleteAllByLodge(lodge, userId);
+        lodgeImageService.deleteAllByLodge(lodge, userId);
+        lodgeRuleService.deleteByLodge(lodge, userId);
+        lodgeService.delete(userId, lodge);
     }
 
 }

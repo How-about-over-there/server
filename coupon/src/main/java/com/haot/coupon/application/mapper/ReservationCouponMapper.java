@@ -1,6 +1,6 @@
 package com.haot.coupon.application.mapper;
 
-import com.haot.coupon.application.dto.response.coupons.ReservationVerifyResponse;
+import com.haot.coupon.application.dto.feign.response.ReservationVerifyResponse;
 import com.haot.coupon.domain.model.ReservationCoupon;
 import com.haot.coupon.domain.model.UserCoupon;
 import org.mapstruct.Mapper;
@@ -13,6 +13,7 @@ public interface ReservationCouponMapper {
     @Mapping(target = "reservationPrice", source = "totalPrice")
     @Mapping(target = "reservationDiscountPrice", source = "discountPrice")
     @Mapping(target = "reservationCouponStatus", constant = "PREEMPTION")
+    @Mapping(target = "isDelete", ignore = true)
     ReservationCoupon toEntity(UserCoupon userCoupon, double totalPrice, double discountPrice);
 
     ReservationVerifyResponse toVerifyFeignResponse(String reservationCouponId, double discountedPrice);

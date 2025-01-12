@@ -27,4 +27,7 @@ public interface LodgeDateService {
     );
 
     void updateStatus(LodgeDate lodgeDate, ReservationStatus requestStatus);
+
+    void deleteAllByLodge(Lodge lodge, String userId);
+
 }

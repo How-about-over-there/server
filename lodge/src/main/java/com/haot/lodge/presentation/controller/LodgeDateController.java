@@ -2,9 +2,9 @@ package com.haot.lodge.presentation.controller;
 
 
 import com.haot.lodge.application.facade.LodgeDateFacade;
-import com.haot.lodge.application.service.implement.LodgeDateServiceImpl;
-import com.haot.lodge.application.facade.LodgeFacade;
 import com.haot.lodge.common.response.ApiResponse;
+import com.haot.lodge.common.response.SliceResponse;
+import com.haot.lodge.presentation.request.LodgeDateAddRequest;
 import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
 import com.haot.lodge.presentation.request.LodgeDateUpdateStatusRequest;
 import com.haot.lodge.presentation.response.LodgeDateReadResponse;
@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
@@ -37,9 +36,21 @@ public class LodgeDateController {
 
     private final LodgeDateFacade lodgeDateFacade;
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    @RoleCheck({Role.ADMIN, Role.HOST})
+    public ApiResponse<Void> add(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("X-User-Role") Role userRole,
+            @Valid @RequestBody LodgeDateAddRequest dateAddRequest
+    ) {
+        lodgeDateFacade.addLodgeDate(userRole, userId, dateAddRequest);
+        return ApiResponse.success();
+    }
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public ApiResponse<Slice<LodgeDateReadResponse>> read(
+    public ApiResponse<SliceResponse<LodgeDateReadResponse>> read(
             @PageableDefault(size = 30)
             @SortDefault(sort = "date", direction = Direction.ASC)
             Pageable pageable,
@@ -47,9 +58,9 @@ public class LodgeDateController {
             @RequestParam(name = "start", required = false) LocalDate start,
             @RequestParam(name = "end", required = false) LocalDate end
     ) {
-        return ApiResponse.success(
+        return ApiResponse.success(SliceResponse.of(
                 lodgeDateFacade.readLodgeDates(pageable, lodgeId, start, end)
-        );
+        ));
     }
 
     @ResponseStatus(HttpStatus.OK)

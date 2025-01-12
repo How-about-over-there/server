@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public enum ReservationCouponStatus {
 
+    ROLLBACK("쿠폰 사용 ROLLBACK"),
     CANCEL("쿠폰 적용 취소"),
     COMPLETED("쿠폰 적용 완료"),
     PREEMPTION("쿠폰 선점"),
@@ -19,8 +20,8 @@ public enum ReservationCouponStatus {
     private final String description;
 
     // String 값으로 해당하는 Enum 값을 반환하는 메서드
-    public static CouponStatus checkReservationCouponStatus(String status) {
-        return Stream.of(CouponStatus.values())
+    public static ReservationCouponStatus checkReservationCouponStatus(String status) {
+        return Stream.of(ReservationCouponStatus.values())
                 .filter(couponStatus -> couponStatus.name().equalsIgnoreCase(status))
                 .findFirst()
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.RESERVATION_STATUS_NOT_MATCH));
