@@ -6,6 +6,7 @@ import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateReque
 import com.haot.coupon.application.dto.response.coupons.CouponReadMeResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.application.dto.feign.response.ReservationVerifyResponse;
+import com.haot.coupon.domain.model.Coupon;
 import com.haot.coupon.domain.model.enums.EventStatus;
 import com.haot.submodule.role.Role;
 import org.springframework.data.domain.Page;
@@ -25,4 +26,6 @@ public interface CouponService {
     Page<CouponReadMeResponse> getMyCoupons(String userId, Pageable pageable);
 
     void rollbackReservationCoupon(String userId, Role role, String reservationCouponId);
+
+    void issuePriorityCoupon(String userId, CouponCustomerCreateRequest request);
 }
