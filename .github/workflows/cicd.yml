@@ -1,0 +1,168 @@
+name: HAOT CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "feat/cicd" ]  # feat/cicd 브랜치에 push 시 트리거
+  pull_request:
+    branches: [ "feat/cicd" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # (1) 코드 체크아웃
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      # (2) AWS 자격 증명 설정
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Set environment variables for all services
+        env:
+          DATABASE_URL: ${{ secrets.DB_URL}}
+          DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
+          DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          # User 서비스(application.yml 수정)
+          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' user/src/main/resources/application.yml
+          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' user/src/main/resources/application.yml
+          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' user/src/main/resources/application.yml
+
+          # Coupon 서비스(application.yml 수정)
+          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' coupon/src/main/resources/application.yml
+          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' coupon/src/main/resources/application.yml
+          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' coupon/src/main/resources/application.yml
+
+          # Lodge 서비스(application.yml 수정)
+          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' lodge/src/main/resources/application.yml
+          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' lodge/src/main/resources/application.yml
+          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' lodge/src/main/resources/application.yml
+
+          # Payment 서비스(application.yml 수정)
+          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' payment/src/main/resources/application.yml
+          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' payment/src/main/resources/application.yml
+          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' payment/src/main/resources/application.yml
+
+          # Point 서비스(application.yml 수정)
+          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' point/src/main/resources/application.yml
+          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' point/src/main/resources/application.yml
+          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' point/src/main/resources/application.yml
+
+          # Reservation 서비스(application.yml 수정)
+          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' reservation/src/main/resources/application.yml
+          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' reservation/src/main/resources/application.yml
+          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' reservation/src/main/resources/application.yml
+
+          # Review 서비스(application.yml 수정)
+          sed -i 's|${DATABASE_URL}|${DATABASE_URL}|g' review/src/main/resources/application.yml
+          sed -i 's|${DATABASE_USERNAME}|${DATABASE_USERNAME}|g' review/src/main/resources/application.yml
+          sed -i 's|${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g' review/src/main/resources/application.yml
+
+
+
+      # (3) Gradle 빌드
+      - name: Build with Gradle
+        run: |
+          chmod +x server/gradlew
+          ./server/gradlew clean assemble
+
+          chmod +x gateway/gradlew
+          ./gateway/gradlew clean assemble
+
+          chmod +x user/gradlew
+          ./user/gradlew clean assemble
+
+          chmod +x auth/gradlew
+          ./auth/gradlew clean assemble
+          
+          chmod +x coupon/gradlew
+          ./coupon/gradlew clean assemble
+          
+          chmod +x lodge/gradlew
+          ./lodge/gradlew clean assemble
+          
+          chmod +x payment/gradlew
+          ./payment/gradlew clean assemble
+          
+          chmod +x point/gradlew
+          ./point/gradlew clean assemble
+          
+          chmod +x reservation/gradlew
+          ./reservation/gradlew clean assemble
+          
+          chmod +x review/gradlew
+          ./review/gradlew clean assemble
+
+      # (4) Docker 이미지 빌드
+      - name: Build Docker images
+        run: |
+          docker build -t haot-ecr/server ./server
+          docker build -t haot-ecr/gateway ./gateway
+          docker build -t haot-ecr/user ./user
+          docker build -t haot-ecr/auth ./auth
+          docker build -t haot-ecr/coupon ./coupon
+          docker build -t haot-ecr/lodge ./lodge
+          docker build -t haot-ecr/payment ./payment
+          docker build -t haot-ecr/point ./point
+          docker build -t haot-ecr/reservation ./reservation
+          docker build -t haot-ecr/review ./review      
+
+      # (5) ECR에 Docker 이미지 푸시
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Push Docker images to ECR
+        run: |
+          docker tag haot-ecr/server:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:server-latest
+          docker tag haot-ecr/gateway:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:gateway-latest
+          docker tag haot-ecr/user:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:user-latest
+          docker tag haot-ecr/auth:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:auth-latest
+          docker tag haot-ecr/coupon:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:coupon-latest
+          docker tag haot-ecr/lodge:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:lodge-latest
+          docker tag haot-ecr/payment:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:payment-latest
+          docker tag haot-ecr/point:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:point-latest
+          docker tag haot-ecr/reservation:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:reservation-latest
+          docker tag haot-ecr/review:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:review-latest
+
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:server-latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:gateway-latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:user-latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:auth-latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:coupon-latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:lodge-latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:payment-latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:point-latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:reservation-latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:review-latest
+
+      # (6) EC2 SSH로 연결하여 Docker Compose 실행
+      - name: SSH to EC2 and deploy with Docker Compose
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+            cd /docker-images
+            # EC2에서 Docker 이미지 pull 및 Docker Compose 실행
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:server-latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:gateway-latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:user-latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:auth-latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:coupon-latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:lodge-latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:payment-latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:point-latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:reservation-latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:review-latest
+            
+            # Docker Compose로 서비스 실행
+            cd /docker-images
+            docker-compose up -d

@@ -4,9 +4,9 @@ spring:
   application:
     name: coupon-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/how_about_over_there
-    username: sunghun
-    password: 12345
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

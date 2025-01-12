@@ -2,18 +2,14 @@ version: '3.7'
 
 services:
   eureka-service:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: haot-ecr/server:latest
     container_name: eureka-service
     ports:
       - "19090:19090"
     networks:
       - msa-network
   gateway-service:
-    build:
-      context: ./gateway
-      dockerfile: Dockerfile
+    image: haot-ecr/gateway:latest
     container_name: gateway-service
     ports:
       - "19091:19091"
@@ -22,9 +18,7 @@ services:
     networks:
       - msa-network
   auth-service:
-    build:
-      context: ./auth
-      dockerfile: Dockerfile
+    image: haot-ecr/auth:latest
     container_name: auth-service
     ports:
       - "19092:19092"
@@ -33,13 +27,92 @@ services:
       - gateway-service
     networks:
       - msa-network
+  #user
   user-service:
-    build:
-      context: ./user
-      dockerfile: Dockerfile
+    image: haot-ecr/user:latest
     container_name: user-service
     ports:
       - "19094:19094"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #coupons
+  coupon-service:
+    image: haot-ecr/coupon:latest
+    container_name: coupon-service
+    ports:
+      - "19096:19096"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #lodge
+  lodge-service:
+    image: haot-ecr/lodge:latest
+    container_name: lodge-service
+    ports:
+      - "19098:19098"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #payment
+  payment-service:
+    image: haot-ecr/payment:latest
+    container_name: payment-service
+    ports:
+      - "19102:19102"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #point
+  point-service:
+    image: haot-ecr/point:latest
+    container_name: point-service
+    ports:
+      - "19104:19104"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #reservation
+  reservation-service:
+    image: haot-ecr/reservation:latest
+    container_name: reservation-service
+    ports:
+      - "19100:19100"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #review
+  review-service:
+    image: haot-ecr/review:latest
+    container_name: review-service
+    ports:
+      - "19106:19106"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
     depends_on:
       - eureka-service
       - gateway-service
@@ -55,7 +128,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
     networks:
-      - kafka_network
+      - msa-network
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -73,7 +146,7 @@ services:
     depends_on:
       - zookeeper
     networks:
-      - kafka_network
+      - msa-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -87,7 +160,7 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
     networks:
-      - kafka_network
+      - msa-network
 
   zipkin:
     image: openzipkin/zipkin:latest
@@ -95,10 +168,8 @@ services:
     ports:
       - "9411:9411"
     networks:
-      - kafka_network
+      - msa-network
 
 networks:
-  kafka_network:
-    driver: bridge
   msa-network:
     driver: bridge
