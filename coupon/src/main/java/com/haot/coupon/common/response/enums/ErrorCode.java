@@ -14,7 +14,7 @@ public enum ErrorCode implements ResCodeIfs {
     VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "0009", "Validation failed"),
 
     // user exception
-    USER_NOT_MATCHED(HttpStatus.BAD_REQUEST,"4001" , "유저 ID 가 일치하지 않습니다."),
+    USER_NOT_MATCHED(HttpStatus.FORBIDDEN,"4001" , "유저 ID 가 일치하지 않습니다."),
 
     // 쿠폰 exception
     DISCOUNT_RATE_EXCEPTION(HttpStatus.BAD_REQUEST, "4002", "할인율은 1 ~ 100 사이의 숫자여야 됩니다."),

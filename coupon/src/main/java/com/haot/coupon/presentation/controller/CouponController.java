@@ -62,7 +62,7 @@ public class CouponController {
 
     // 쿠폰 Rollback API
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/rollback/{reservationCouponId}")
+    @PutMapping("/{reservationCouponId}/rollback")
     public ApiResponse<Void> rollbackReservationCoupon(@RequestHeader("X-User-Id") String userId,
                                                        @RequestHeader("X-User-Role") Role role,
                                                        @PathVariable(value = "reservationCouponId") String reservationCouponId){
