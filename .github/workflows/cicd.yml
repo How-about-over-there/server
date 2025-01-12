@@ -14,6 +14,8 @@ jobs:
       # (1) 코드 체크아웃
       - name: Check out the repository
         uses: actions/checkout@v3
+        with:
+          submodules: true  # 이 옵션이 submodule을 자동으로 가져옵니다.
 
       # Build를 위한 JDK 설치
       - name: Set up JDK 17
@@ -88,6 +90,10 @@ jobs:
           chmod +x ./gradlew
           ./gradlew bootJar
           
+          cd ../coupon
+          chmod +x ./gradlew
+          ./gradlew bootJar
+          
           cd ../lodge
           chmod +x ./gradlew
           ./gradlew bootJar
@@ -111,8 +117,6 @@ jobs:
           cd ../user
           chmod +x ./gradlew
           ./gradlew bootJar
-          
-          
 
       # (4) Docker 이미지 빌드
       - name: Build Docker images
