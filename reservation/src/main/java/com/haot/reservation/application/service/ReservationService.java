@@ -5,7 +5,6 @@ import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
 import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
 import com.haot.submodule.role.Role;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface ReservationService {
 
