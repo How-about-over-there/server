@@ -162,7 +162,7 @@ jobs:
 
       # (6) EC2 SSH로 연결하여 Docker Compose 실행
       - name: SSH to EC2 and deploy with Docker Compose
-        uses: appleboy/ssh-action@v0.1.0
+        uses : appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
