@@ -1,6 +1,51 @@
 version: '3.7'
 
 services:
+  eureka-service:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: eureka-service
+    ports:
+      - "19090:19090"
+    networks:
+      - msa-network
+  gateway-service:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: gateway-service
+    ports:
+      - "19091:19091"
+    depends_on:
+      - eureka-service
+    networks:
+      - msa-network
+  auth-service:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "19092:19092"
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  user-service:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "19094:19094"
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: haot-zookeeper
@@ -54,4 +99,6 @@ services:
 
 networks:
   kafka_network:
+    driver: bridge
+  msa-network:
     driver: bridge

@@ -15,10 +15,11 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        default_schema: users #기본 스키마 지정
         format_sql: true
         highlight_sql: true
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://eureka-service:19090/eureka/
