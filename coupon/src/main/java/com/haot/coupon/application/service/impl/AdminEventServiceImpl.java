@@ -1,5 +1,6 @@
 package com.haot.coupon.application.service.impl;
 
+import com.haot.coupon.application.cache.RedisRepository;
 import com.haot.coupon.application.dto.request.events.EventCreateRequest;
 import com.haot.coupon.application.dto.request.events.EventModifyRequest;
 import com.haot.coupon.application.dto.response.events.EventCreateResponse;
@@ -30,6 +31,8 @@ public class AdminEventServiceImpl implements AdminEventService {
     private final CouponRepository couponRepository;
 
     private final EventMapper mapper;
+
+    private final RedisRepository redisRepository;
 
     private final CouponErrorProducer couponErrorProducer;
 
@@ -62,7 +65,7 @@ public class AdminEventServiceImpl implements AdminEventService {
                     .findByCouponIdAndEventEndDateIsAfterAndIsDeleteFalse(coupon.getId(), LocalDateTime.now())
                     .stream()
                     .peek(couponEvent -> {
-                        if (!(couponEvent.getEventStatus() == EventStatus.EXPIRED || couponEvent.getEventStatus() == EventStatus.MANUALLY_CLOSED)) {
+                        if (couponEvent.getEventStatus() == EventStatus.DEFAULT) {
                             throw new CustomCouponException(ErrorCode.EXIST_UNLIMITED_COUPON_EVENTS);
                         }
                     })
@@ -76,7 +79,13 @@ public class AdminEventServiceImpl implements AdminEventService {
         // 현재 시간으로 eventStatus update
         event.updateExpiredEventStatus();
 
-        return mapper.toCreateResponse(couponEventRepository.save(event));
+        CouponEvent savedEvent = couponEventRepository.save(event);
+
+        if(coupon.checkPriorityCoupon()){
+            redisRepository.save(savedEvent, coupon);
+        }
+
+        return mapper.toCreateResponse(savedEvent);
     }
 
     // 이벤트 수정 API, 문제가 생겼을때 확산 방지용 API or 이름, 설명 변경 API
