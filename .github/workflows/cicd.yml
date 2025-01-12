@@ -15,6 +15,13 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v3
 
+      # Build를 위한 JDK 설치
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
       # (2) AWS 자격 증명 설정
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
