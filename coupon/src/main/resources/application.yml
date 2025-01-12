@@ -20,9 +20,9 @@ spring:
           batch_size: 1000
     show-sql: true
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: haot-kafka:9092
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://eureka-service:19090/eureka/
