@@ -47,6 +47,9 @@ dependencies {
 	// aop
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+	// aws
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 	implementation 'org.jetbrains:annotations:24.1.0'
 
 	compileOnly 'org.projectlombok:lombok'
