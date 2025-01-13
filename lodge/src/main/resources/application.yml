@@ -1,6 +1,8 @@
 server:
   port: 19098
 spring:
+  profiles:
+    include: s3
   application:
    name: lodge-service
   datasource:
