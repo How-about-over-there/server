@@ -38,7 +38,7 @@ public class ReservationController {
       @RequestBody ReservationCreateRequest reservationCreateRequest,
       @RequestHeader(value = "X-User-Id", required = true) String userId,
       @RequestHeader(value = "X-User-Role", required = true) Role role
-  ) throws JsonProcessingException {
+  ) {
     return ApiResponse.success(
         reservationService.createReservation(reservationCreateRequest, userId, role));
   }
@@ -67,7 +67,7 @@ public class ReservationController {
       @PathVariable String reservationId,
       @RequestHeader(value = "X-User-Id", required = true) String userId,
       @RequestHeader(value = "X-User-Role", required = true) Role role
-  ) throws JsonProcessingException {
+  ) {
     reservationService.updateReservation(reservationUpdateRequest, reservationId, userId, role);
     return ApiResponse.success();
   }
