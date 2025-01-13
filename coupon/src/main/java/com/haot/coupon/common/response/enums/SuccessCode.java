@@ -18,6 +18,7 @@ public enum SuccessCode implements ResCodeIfs {
     // 쿠폰 Feign,
     VERIFY_COUPON_SUCCESS(HttpStatus.OK, "4000", "쿠폰 유효성 검사 성공하였습니다."),
     COUPON_RESERVATION_SUCCESS(HttpStatus.OK, "4000", "쿠폰 상태 변경 성공하였습니다."),
+    COUPON_RESERVATION_ROLLBACK_SUCCESS(HttpStatus.OK, "4000", "쿠폰 Rollback 성공하였습니다."),
 
     // 이벤트
     CREATE_EVENT_SUCCESS(HttpStatus.CREATED, "4000", "이벤트가 성공적으로 생성되었습니다."),

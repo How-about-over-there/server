@@ -5,7 +5,6 @@ import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
 import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
 import com.haot.submodule.role.Role;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface ReservationService {
 
@@ -23,6 +22,19 @@ public interface ReservationService {
       String userId,
       Role role
   ) throws JsonProcessingException;
+
+  /**
+   * 예약 단건 조회
+   * @param reservationId 예약 아이디
+   * @param userId 유저 아이디
+   * @param role USER
+   * @return 예약 내역
+   */
+  ReservationGetResponse getReservation(
+      String reservationId,
+      String userId,
+      Role role
+  );
 
   /**
    * 예약 수정 (결제 완료 or 취소)

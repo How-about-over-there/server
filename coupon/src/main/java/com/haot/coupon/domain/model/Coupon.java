@@ -63,6 +63,8 @@ public class Coupon extends BaseEntity {
         this.issuedQuantity++;
     }
 
-
+    public boolean checkPriorityCoupon(){
+        return this.totalQuantity != -1;
+    }
 
 }
