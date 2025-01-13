@@ -23,14 +23,11 @@ public class CouponIssuedConsumer implements CouponIssueConsumer {
     private final CouponService couponService;
     private final RedisRepository redisRepository;
 
-    //  .. @Payload String message,
     @Override
     @KafkaListener(topics = "coupon-issue-priority", groupId = "coupon-user")
     public void issuePriorityCouponListener(@Header("X-User-Id") String userId, String message) throws JsonProcessingException {
 
         CouponCustomerCreateRequest request = objectMapper.readValue(message, CouponCustomerCreateRequest.class);
-
-        log.info("userId : {}, request eventId : {}, request couponId : {}", userId, request.eventId(), request.couponId());
 
         try{
             couponService.issuePriorityCoupon(userId, request);

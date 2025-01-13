@@ -17,4 +17,6 @@ public interface RedisRepository {
     void issueCoupon(String userId, String couponId, LocalDateTime eventEndDate);
 
     Integer getCouponQuantityByIds(String eventId, String couponId);
+
+    void deleteEventClosed(String eventId, String couponId);
 }

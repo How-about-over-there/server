@@ -299,11 +299,13 @@ public class CouponServiceImpl implements CouponService {
     }
 
 
-    // 이벤트 상태 변경 API
+    // 이벤트 상태 변경 consumer, redis 삭제
     @Transactional
     public void updateEndEventStatus(String eventId, EventStatus newStatus) {
-        CouponEvent event = couponEventRepository.findById(eventId)
+        CouponEvent event = couponEventRepository.findByIdAndEventStatusAndIsDeleteFalse(eventId, EventStatus.DEFAULT)
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.EVENT_NOT_FOUND));
+
+        redisRepository.deleteEventClosed(event.getId(), event.getCoupon().getId());
         event.updateEventStatus(newStatus);
         couponEventRepository.save(event);
     }

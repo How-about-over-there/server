@@ -4,12 +4,14 @@ import com.haot.coupon.application.cache.RedisRepository;
 import com.haot.coupon.domain.model.Coupon;
 import com.haot.coupon.domain.model.CouponEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+@Slf4j(topic = "RedisRepositoryImpl")
 @Repository
 @RequiredArgsConstructor
 public class RedisRepositoryImpl implements RedisRepository {
@@ -70,6 +72,28 @@ public class RedisRepositoryImpl implements RedisRepository {
     @Override
     public Integer getCouponQuantityByIds(String eventId, String couponId) {
         return countRedisTemplate.opsForValue().get(EVENT_PREFIX + eventId + COUPON_PREFIX + couponId);
+    }
+
+    @Override
+    public void deleteEventClosed(String eventId, String couponId) {
+        String eventCouponKey = EVENT_PREFIX + eventId + COUPON_PREFIX + couponId;
+        String couponKey = COUPON_PREFIX + couponId;
+
+        Boolean isEventCouponDeleted = redisTemplate.delete(eventCouponKey);
+        Boolean isCouponDeleted = redisTemplate.delete(couponKey);
+
+        // 모니터링을 위한 로그
+        if (Boolean.TRUE.equals(isEventCouponDeleted)) {
+            log.info("Successfully deleted event-coupon key: {}", eventCouponKey);
+        } else {
+            log.warn("Failed to delete event-coupon key (not found): {}", eventCouponKey);
+        }
+
+        if (Boolean.TRUE.equals(isCouponDeleted)) {
+            log.info("Successfully deleted coupon key: {}", couponKey);
+        } else {
+            log.warn("Failed to delete coupon key (not found): {}", couponKey);
+        }
     }
 
     // expired 시간 계산
