@@ -56,8 +56,10 @@ public class PaymentController {
     @PostMapping("/{paymentId}/complete")
     @ResponseStatus(HttpStatus.OK)
     @RoleCheck({Role.USER, Role.ADMIN})
-    public ApiResponse<PaymentResponse> completePayment(@PathVariable String paymentId) {
-        PaymentResponse payment = paymentService.completePayment(paymentId);
+    public ApiResponse<PaymentResponse> completePayment(@PathVariable String paymentId,
+                                                        @RequestHeader("X-User-Id") String userId,
+                                                        @RequestHeader("X-User-Role") Role role) {
+        PaymentResponse payment = paymentService.completePayment(paymentId, userId, role);
         log.info("결제 완료 정보: {}", ApiResponse.success(payment)); // 결제 확인 출력
         return ApiResponse.success(payment);
     }
