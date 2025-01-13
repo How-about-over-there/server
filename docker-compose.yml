@@ -175,6 +175,14 @@ services:
       - "9411:9411"
     networks:
       - msa-network
+      -
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6389:6379"
+    networks:
+      - msa-network
 
 networks:
   msa-network:
