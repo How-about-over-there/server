@@ -44,11 +44,12 @@ public class CouponController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/issued")
     @RoleCheck({Role.ADMIN, Role.USER})
-    public ApiResponse<Void> customerIssueCoupon(@RequestBody CouponCustomerCreateRequest request) {
+    public ApiResponse<Void> customerIssueCoupon(@RequestHeader("X-User-Id") String userId,
+                                                 @RequestBody CouponCustomerCreateRequest request) {
 
-        String testUserId = UUID.randomUUID().toString();
+        //String testUserId = UUID.randomUUID().toString();
 
-        couponService.customerIssueCoupon(request, testUserId);
+        couponService.customerIssueCoupon(request, userId);
 
         return ApiResponse.SUCCESS(SuccessCode.CUSTOMER_ISSUED_COUPON_SUCCESS);
     }
@@ -58,6 +59,17 @@ public class CouponController {
     @PostMapping("/verify")
     public ApiResponse<ReservationVerifyResponse> verify(@RequestBody FeignVerifyRequest request) {
         return ApiResponse.SUCCESS(SuccessCode.VERIFY_COUPON_SUCCESS, couponService.verify(request));
+    }
+
+    // 쿠폰 Rollback API
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{reservationCouponId}/rollback")
+    public ApiResponse<Void> rollbackReservationCoupon(@RequestHeader("X-User-Id") String userId,
+                                                       @RequestHeader("X-User-Role") Role role,
+                                                       @PathVariable(value = "reservationCouponId") String reservationCouponId){
+
+        couponService.rollbackReservationCoupon(userId, role, reservationCouponId);
+        return ApiResponse.SUCCESS(SuccessCode.COUPON_RESERVATION_ROLLBACK_SUCCESS);
     }
 
     // [Feign] 예약 취소 or 확정 API

@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public enum ReservationCouponStatus {
 
+    ROLLBACK("쿠폰 사용 ROLLBACK"),
     CANCEL("쿠폰 적용 취소"),
     COMPLETED("쿠폰 적용 완료"),
     PREEMPTION("쿠폰 선점"),

@@ -15,11 +15,11 @@
 	url = https://github.com/How-about-over-there/submodule.git
 [submodule "point/src/main/java/com/haot/submodule"]
 	path = point/src/main/java/com/haot/submodule
+	url = https://github.com/How-about-over-there/submodule.git
 [submodule "payment/src/main/java/com/haot/submodule"]
 	path = payment/src/main/java/com/haot/submodule
+	url = https://github.com/How-about-over-there/submodule.git
 [submodule "auth/src/main/java/com/haot/submodule"]
 	path = auth/src/main/java/com/haot/submodule
 	url = https://github.com/How-about-over-there/submodule.git
-[submodule "src/main/java/com/haot/submodule"]
-	path = src/main/java/com/haot/submodule
-	url = https://github.com/How-about-over-there/submodule.git
+
