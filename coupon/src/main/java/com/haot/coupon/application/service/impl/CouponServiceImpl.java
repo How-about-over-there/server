@@ -1,5 +1,6 @@
 package com.haot.coupon.application.service.impl;
 
+import com.haot.coupon.application.cache.RedisRepository;
 import com.haot.coupon.application.dto.feign.request.FeignConfirmReservationRequest;
 import com.haot.coupon.application.dto.feign.request.FeignVerifyRequest;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
@@ -7,6 +8,7 @@ import com.haot.coupon.application.dto.response.coupons.CouponReadMeResponse;
 import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.application.dto.feign.response.ReservationVerifyResponse;
 import com.haot.coupon.application.kafka.CouponErrorProducer;
+import com.haot.coupon.application.kafka.CouponIssueProducer;
 import com.haot.coupon.application.mapper.CouponMapper;
 import com.haot.coupon.application.mapper.ReservationCouponMapper;
 import com.haot.coupon.application.mapper.UserCouponMapper;
@@ -38,11 +40,14 @@ public class CouponServiceImpl implements CouponService {
     private final UserCouponRepository userCouponRepository;
     private final ReservationCouponRepository reservationCouponRepository;
 
+    private final RedisRepository redisRepository;
+
     private final CouponMapper couponMapper;
     private final UserCouponMapper userCouponMapper;
     private final ReservationCouponMapper reservationCouponMapper;
 
     private final CouponErrorProducer couponErrorProducer;
+    private final CouponIssueProducer couponIssueProducer;
 
     // 쿠폰 발급 API
     @Transactional
@@ -51,30 +56,34 @@ public class CouponServiceImpl implements CouponService {
 
         // 공통일때
 
-        // 이벤트 상태값이 DEFAULT 이벤트 id로 있는지 db에 체크
+        // 이벤트 상태값이 DEFAULT 이벤트 id로 있는지 db에 체크, coupon도 같이 불러온다.
         CouponEvent event = couponEventRepository.findByIdAndEventStatusAndIsDeleteFalse(request.eventId(), EventStatus.DEFAULT)
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.EVENT_NOT_FOUND));
+
+        Coupon coupon = event.getCoupon();
+
+        if(!coupon.getId().equals(request.couponId())){
+            throw new CustomCouponException(ErrorCode.COUPON_NOT_MATCHED_WITH_EVENT);
+        }
 
         // userCoupon테이블에 userId와 couponId가 같은 데이터 있는지 체크 -> 있으면 exception
         checkAlreadyIssued(userId, request.couponId());
 
-        // Couponid로 쿠폰 있는지 db 체크
-        Coupon coupon = checkExistsCoupon(request.couponId());
-
+        // 이벤트 시작 날짜 전인지 체크, 후면 expired로 kafka send
         checkEventDate(event, LocalDateTime.now());
 
-
-        // TODO 무제한일때 kafka로 부하분산하고 redis로 비동기 처리? 트러블 슈팅
-
-        // TODO 선착순일때 순서보장되야 된다. kafka나 Queue, redis등 무었을 쓸지 고민하여 넣어야 한다.
-        // TODO redis에 쿠폰 수량 저장해놔 동시성 문제 해결하기
         if(coupon.getType() == CouponType.PRIORITY){
-            checkPriorityCouponStock(event, coupon);
+            checkPriorityCouponStock(event.getId(), coupon.getId(), userId, event.getEventEndDate());
+            couponIssueProducer.sendIssuePriorityCoupon(userId, request); // TODO auditoraware 사용해 updateby에 잘들어가게 해야된다.
+
+            // TODO 일단 무제한은 개발 하지 않았고 선착순 2번 insert 안되게 막아놨다.
+        }else{
+            userCouponRepository.save(userCouponMapper.toEntity(userId, coupon));
+
+            couponRepository.increaseIssuedQuantity(coupon.getId());
         }
 
-        userCouponRepository.save(userCouponMapper.toEntity(userId, coupon));
-
-        couponRepository.increaseIssuedQuantity(coupon.getId());
+        // TODO 무제한일때 따로 kafka로 부하분산하고 redis로 비동기 처리? 트러블 슈팅
 
     }
 
@@ -158,6 +167,21 @@ public class CouponServiceImpl implements CouponService {
         validateReservationPreemption(reservationCoupon);
 
         reservationCoupon.confirmReservationStatus(ReservationCouponStatus.ROLLBACK);
+    }
+
+    @Transactional
+    @Override
+    public void issuePriorityCoupon(String userId, CouponCustomerCreateRequest request) {
+        Coupon coupon = checkExistsCoupon(request.couponId());
+
+        if(userCouponRepository.existsByUserIdAndCouponIdAndIsDeleteFalse(userId, coupon.getId())){
+            throw new CustomCouponException(ErrorCode.DUPLICATED_ISSUED_COUPON);
+        }
+
+        userCouponRepository.save(userCouponMapper.toEntity(userId, coupon));
+
+        couponRepository.increaseIssuedQuantity(coupon.getId());
+
     }
 
     // 선점 상태 검증
@@ -284,11 +308,10 @@ public class CouponServiceImpl implements CouponService {
         couponEventRepository.save(event);
     }
 
-
     // 이미 발급된 쿠폰인지 check
-    private void checkAlreadyIssued(String userId, String couponId) {
+    private void checkAlreadyIssued(String userId, String couponId){
 
-        if(userCouponRepository.existsByUserIdAndCouponIdAndIsDeleteFalse(userId, couponId)){
+        if(redisRepository.existsIssuedCouponByUserId(userId, couponId)){
             throw new CustomCouponException(ErrorCode.DUPLICATED_ISSUED_COUPON);
         }
 
@@ -317,12 +340,17 @@ public class CouponServiceImpl implements CouponService {
     }
 
     // 발급된 쿠폰수가 최대 발급 수량보다 클때 이벤트 종료
-    private void checkPriorityCouponStock(CouponEvent event, Coupon coupon) {
+    private void checkPriorityCouponStock(String eventId, String couponId, String userId, LocalDateTime eventEndDate) {
 
-        if(coupon.getTotalQuantity() <= coupon.getIssuedQuantity()){
-            couponErrorProducer.sendEventClosed(EventStatus.OUT_OF_STOCK + " " + event.getId());
+        Long couponQuantity = redisRepository.decreaseCouponQuantity(eventId, couponId);
+
+        if(couponQuantity != null && couponQuantity < 0){
+            redisRepository.increaseCouponQuantity(eventId, couponId);
+            couponErrorProducer.sendEventClosed(EventStatus.OUT_OF_STOCK + " " + eventId);
             throw new CustomCouponException(ErrorCode.CURRENT_EVENT_END_TO_OUT_OF_STOCK);
         }
+
+        redisRepository.issueCoupon(userId, couponId, eventEndDate);
 
     }
 

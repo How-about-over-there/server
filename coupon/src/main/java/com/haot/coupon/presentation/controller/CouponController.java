@@ -44,11 +44,12 @@ public class CouponController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/issued")
     @RoleCheck({Role.ADMIN, Role.USER})
-    public ApiResponse<Void> customerIssueCoupon(@RequestBody CouponCustomerCreateRequest request) {
+    public ApiResponse<Void> customerIssueCoupon(@RequestHeader("X-User-Id") String userId,
+                                                 @RequestBody CouponCustomerCreateRequest request) {
 
-        String testUserId = UUID.randomUUID().toString();
+        //String testUserId = UUID.randomUUID().toString();
 
-        couponService.customerIssueCoupon(request, testUserId);
+        couponService.customerIssueCoupon(request, userId);
 
         return ApiResponse.SUCCESS(SuccessCode.CUSTOMER_ISSUED_COUPON_SUCCESS);
     }

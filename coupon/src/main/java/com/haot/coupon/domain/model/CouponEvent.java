@@ -1,5 +1,7 @@
 package com.haot.coupon.domain.model;
 
+import com.haot.coupon.common.exceptions.CustomCouponException;
+import com.haot.coupon.common.response.enums.ErrorCode;
 import com.haot.coupon.domain.model.enums.EventStatus;
 import com.haot.submodule.auditor.BaseEntity;
 import jakarta.persistence.*;
@@ -49,7 +51,7 @@ public class CouponEvent extends BaseEntity {
         LocalDateTime now = LocalDateTime.now();
 
         if (now.isAfter(this.eventEndDate)) {
-            this.eventStatus = EventStatus.EXPIRED;
+            throw new CustomCouponException(ErrorCode.EVENT_CANT_CREATED);
         } else {
             this.eventStatus = EventStatus.DEFAULT;
         }
