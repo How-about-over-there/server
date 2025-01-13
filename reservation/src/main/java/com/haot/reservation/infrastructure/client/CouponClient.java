@@ -26,7 +26,7 @@ public interface CouponClient {
   );
 
   //
-  @PutMapping("/{reservationCouponId}/rollback")
+  @PutMapping("/api/v1/coupons/{reservationCouponId}/rollback")
   ApiResponse<Void> rollbackReservationCoupon(
       @RequestHeader("X-User-Id") String userId,
       @RequestHeader("X-User-Role") Role role,
