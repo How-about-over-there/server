@@ -15,13 +15,12 @@ public interface ReservationService {
    * @param userId 예약 생성 요청한 유저 아이디
    * @param role USER
    * @return 예약 정보 및 결제 url
-   * @throws JsonProcessingException feignClient(상대방 서버의) 실패 응답
    */
   ReservationGetResponse createReservation(
       ReservationCreateRequest request,
       String userId,
       Role role
-  ) throws JsonProcessingException;
+  );
 
   /**
    * 예약 단건 조회
@@ -43,12 +42,11 @@ public interface ReservationService {
    * @param reservationId 예약 아이디
    * @param userId 유저 아이디
    * @param role 권한
-   * @throws JsonProcessingException feignClient(상대방 서버의) 실패 응답
    */
   void updateReservation(
       ReservationUpdateRequest reservationUpdateRequest,
       String reservationId,
       String userId,
       Role role
-  ) throws JsonProcessingException;
+  );
 }
