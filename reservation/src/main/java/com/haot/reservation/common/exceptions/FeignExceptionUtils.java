@@ -16,7 +16,7 @@ public class FeignExceptionUtils {
       String message = jsonNode.get("message").asText();
       return new FeignClientException(statusCode, status, message);
     } catch (JsonProcessingException ex) {
-      throw new FeignClientException("SERVICE_UNAVAILABLE", "LOAD_BALANCER_ERROR", "Reason: " + responseBody);
+      throw new FeignClientException("0001", "ERROR", "Reason: " + responseBody);
     }
   }
 }
