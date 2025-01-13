@@ -24,4 +24,10 @@ public interface EventMapper {
     @Mapping(target = "eventDescription", source = "description")
     EventSearchResponse toSearchResponse(CouponEvent event);
 
+    @Mapping(source = "id", target = "eventId")
+    @Mapping(source = "coupon.id", target = "couponId")
+    @Mapping(source = "eventName", target = "eventName")
+    @Mapping(source = "description", target = "eventDescription")
+    EventSearchResponse toEventResponseDTO(CouponEvent event);
+
 }

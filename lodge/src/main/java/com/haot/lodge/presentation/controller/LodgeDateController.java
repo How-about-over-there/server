@@ -4,6 +4,7 @@ package com.haot.lodge.presentation.controller;
 import com.haot.lodge.application.facade.LodgeDateFacade;
 import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.common.response.SliceResponse;
+import com.haot.lodge.presentation.request.LodgeDateAddRequest;
 import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
 import com.haot.lodge.presentation.request.LodgeDateUpdateStatusRequest;
 import com.haot.lodge.presentation.response.LodgeDateReadResponse;
@@ -34,6 +35,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class LodgeDateController {
 
     private final LodgeDateFacade lodgeDateFacade;
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    @RoleCheck({Role.ADMIN, Role.HOST})
+    public ApiResponse<Void> add(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("X-User-Role") Role userRole,
+            @Valid @RequestBody LodgeDateAddRequest dateAddRequest
+    ) {
+        lodgeDateFacade.addLodgeDate(userRole, userId, dateAddRequest);
+        return ApiResponse.success();
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping

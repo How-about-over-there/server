@@ -50,6 +50,9 @@ dependencies {
 	// PostgreSql
 	runtimeOnly 'org.postgresql:postgresql'
 
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 	//Spring AOP
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
@@ -74,8 +77,9 @@ dependencyManagement {
 }
 
 tasks.withType(JavaCompile) {
-	options.compilerArgs = [
-			'-Amapstruct.suppressGeneratorTimestamp=true'
+	options.compilerArgs = options.compilerArgs + [
+			'-Amapstruct.suppressGeneratorTimestamp=true',
+			'-parameters'
 	]
 }
 
