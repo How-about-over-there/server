@@ -1,6 +1,7 @@
 package com.haot.reservation.application.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.haot.reservation.application.dtos.req.ReservationCancelRequest;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
 import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
@@ -46,6 +47,20 @@ public interface ReservationService {
   void updateReservation(
       ReservationUpdateRequest reservationUpdateRequest,
       String reservationId,
+      String userId,
+      Role role
+  );
+
+  /**
+   * 예약 취소
+   * @param reservationId 예약 아이디
+   * @param request 취소 사유
+   * @param userId 유저 아이디
+   * @param role USER
+   */
+  void cancelReservation(
+      String reservationId,
+      ReservationCancelRequest request,
       String userId,
       Role role
   );
