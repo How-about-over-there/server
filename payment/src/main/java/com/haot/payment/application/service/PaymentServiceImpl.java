@@ -63,6 +63,12 @@ public class PaymentServiceImpl implements PaymentService{
     public PaymentResponse completePayment(String paymentId, String userId, Role role) {
         // 1. 결제 데이터 확인
         Payment payment = validPayment(paymentId);
+        // userId 검증
+        if (role == Role.USER) {
+            if (!payment.getUserId().equals(userId)) {
+                throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
+            }
+        }
 
         // 2. 포트원 결제 단건 조회 API 호출
         PortOneResponse paymentData = portOneService.getPaymentData(payment.getId());
@@ -110,18 +116,30 @@ public class PaymentServiceImpl implements PaymentService{
 
     @Override
     @Transactional(readOnly = true)
-    public PaymentResponse getPaymentById(String paymentId) {
-        // 결제 데이터 확인
+    public PaymentResponse getPaymentById(String paymentId, String userId, Role role) {
+        // 1. 결제 데이터 확인
         Payment payment = validPayment(paymentId);
+        // userId 검증
+        if (role == Role.USER) {
+            if (!payment.getUserId().equals(userId)) {
+                throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
+            }
+        }
 
         return PaymentResponse.of(payment);
     }
 
     @Override
     @Transactional
-    public PaymentResponse cancelPayment(PaymentCancelRequest request, String paymentId) {
+    public PaymentResponse cancelPayment(PaymentCancelRequest request, String paymentId, String userId, Role role) {
         // 1. 결제 데이터 확인
         Payment payment = validPayment(paymentId);
+        // userId 검증
+        if (role == Role.USER) {
+            if (!payment.getUserId().equals(userId)) {
+                throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
+            }
+        }
 
         // 2. 결제 상태 확인
         PaymentStatus status = payment.getStatus();
@@ -155,9 +173,11 @@ public class PaymentServiceImpl implements PaymentService{
 
     @Override
     @Transactional(readOnly = true)
-    public Page<PaymentResponse> getPayments(PaymentSearchRequest request, Pageable pageable) {
-        // TODO: USER 요청의 경우 userId 헤더 값으로 지정
-
+    public Page<PaymentResponse> getPayments(PaymentSearchRequest request, Pageable pageable, String userId, Role role) {
+        // USER 요청의 경우 userId 헤더 값으로 지정
+        if (role == Role.USER) {
+            request.setUserId(userId);
+        }
         // 페이지 크기 고정
         int pageSize = pageable.getPageSize();
         if (pageSize != 10 && pageSize != 30 && pageSize != 50) {
