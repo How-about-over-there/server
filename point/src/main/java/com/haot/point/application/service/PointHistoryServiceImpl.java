@@ -2,6 +2,7 @@ package com.haot.point.application.service;
 
 import com.haot.point.application.dto.request.PointStatusRequest;
 import com.haot.point.application.dto.response.PointAllResponse;
+import com.haot.point.application.dto.response.PointHistoryResponse;
 import com.haot.point.common.exception.CustomPointException;
 import com.haot.point.common.exception.enums.ErrorCode;
 import com.haot.point.domain.enums.PointStatus;
@@ -27,8 +28,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
     public PointAllResponse updateStatusPoint(PointStatusRequest request, String historyId, String userId, Role role) {
 
         // 1. 기존 point 내역 조회
-        PointHistory pointHistory = pointHistoryRepository.findByIdAndIsDeletedFalse(historyId)
-                .orElseThrow(() -> new CustomPointException(ErrorCode.POINT_NOT_FOUND));
+        PointHistory pointHistory = validPointHistory(historyId);
         Point point = pointHistory.getPoint();
 
         // userId 검증
@@ -87,6 +87,25 @@ public class PointHistoryServiceImpl implements PointHistoryService {
         pointHistory.updateStatus(description, status);
 
         return PointAllResponse.of(point, pointHistory);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PointHistoryResponse getPointHistoryById(String historyId, String userId, Role role) {
+        // 1. 기존 point 내역 조회
+        PointHistory pointHistory = validPointHistory(historyId);
+        // userId 검증
+        if (role == Role.USER) {
+            if (!pointHistory.getUserId().equals(userId)) {
+                throw new CustomPointException(ErrorCode.USER_NOT_MATCHED);
+            }
+        }
+        return PointHistoryResponse.of(pointHistory);
+    }
+
+    private PointHistory validPointHistory(String historyId) {
+        return pointHistoryRepository.findByIdAndIsDeletedFalse(historyId)
+                .orElseThrow(() -> new CustomPointException(ErrorCode.POINT_NOT_FOUND));
     }
 
     // 타입에 따른 롤백 처리 로직

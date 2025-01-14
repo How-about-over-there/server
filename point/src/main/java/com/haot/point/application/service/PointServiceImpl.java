@@ -37,6 +37,10 @@ public class PointServiceImpl implements PointService{
     @Transactional
     public PointResponse createPoint(PointCreateRequest request, String userId, Role role) {
 
+        // 1. point 존재유무 확인
+        if (pointRepository.findByUserIdAndIsDeletedFalse(request.userId()).isPresent()) {
+            throw new CustomPointException(ErrorCode.POINT_ALREADY_PRESENT);
+        }
         // userId 검증
         if (role == Role.USER) {
             if (request.userId() != null && !request.userId().equals(userId)) {
@@ -58,7 +62,7 @@ public class PointServiceImpl implements PointService{
     public PointResponse getPoint(String userId, String headerUserId, Role role) {
         // 1. 권한 체크 후 userId 설정
         if (role == Role.USER) {
-            if (userId.equals(headerUserId)) {
+            if (!userId.equals(headerUserId)) {
                 throw new CustomPointException(ErrorCode.USER_NOT_MATCHED);
             }
         }
