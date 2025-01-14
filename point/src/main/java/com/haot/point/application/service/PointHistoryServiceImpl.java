@@ -1,5 +1,6 @@
 package com.haot.point.application.service;
 
+import com.haot.point.application.dto.request.history.PointHistorySearchRequest;
 import com.haot.point.application.dto.request.point.PointStatusRequest;
 import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointHistoryResponse;
@@ -13,6 +14,8 @@ import com.haot.point.infrastructure.repository.PointHistoryRepository;
 import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,6 +104,23 @@ public class PointHistoryServiceImpl implements PointHistoryService {
             }
         }
         return PointHistoryResponse.of(pointHistory);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PointHistoryResponse> getPointHistories(
+            PointHistorySearchRequest request, Pageable pageable, String userId, Role role) {
+        // USER 요청의 경우
+        if (role == Role.USER) {
+            request.setUserId(userId);
+            request.setStatus("PROCESSED");
+        }
+        // 페이지 크기 고정
+        int pageSize = pageable.getPageSize();
+        if (pageSize != 10 && pageSize != 30 && pageSize != 50) {
+            pageSize = 10; // 기본값으로 설정
+        }
+        return pointHistoryRepository.searchPointHistories(request, pageable);
     }
 
     private PointHistory validPointHistory(String historyId) {
