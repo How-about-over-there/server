@@ -14,7 +14,7 @@ public interface PaymentService {
     PaymentResponse createPayment(PaymentCreateRequest request, String userId, Role role);
 
     // 결제 확인
-    PaymentResponse completePayment(String paymentId);
+    PaymentResponse completePayment(String paymentId, String userId, Role role);
 
     // 본인 결제 단건 조회
     PaymentResponse getPaymentById(String paymentId);

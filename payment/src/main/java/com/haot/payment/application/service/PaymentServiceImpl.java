@@ -1,5 +1,6 @@
 package com.haot.payment.application.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
 import com.haot.payment.application.dto.request.PaymentSearchRequest;
@@ -10,11 +11,14 @@ import com.haot.payment.domain.enums.PaymentMethod;
 import com.haot.payment.domain.enums.PaymentStatus;
 import com.haot.payment.domain.model.Payment;
 import com.haot.payment.infrastructure.client.PortOneService;
+import com.haot.payment.infrastructure.client.ReservationClient;
 import com.haot.payment.infrastructure.client.dto.request.PortOneCancelRequest;
+import com.haot.payment.infrastructure.client.dto.request.ReservationUpdateRequest;
 import com.haot.payment.infrastructure.client.dto.response.PortOneCancelResponse;
 import com.haot.payment.infrastructure.client.dto.response.PortOneResponse;
 import com.haot.payment.infrastructure.repository.PaymentRepository;
 import com.haot.submodule.role.Role;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,6 +33,7 @@ public class PaymentServiceImpl implements PaymentService{
 
     private final PaymentRepository paymentRepository;
     private final PortOneService portOneService;
+    private final ReservationClient reservationClient;
 
     @Override
     @Transactional
@@ -55,7 +60,7 @@ public class PaymentServiceImpl implements PaymentService{
 
     @Override
     @Transactional
-    public PaymentResponse completePayment(String paymentId) {
+    public PaymentResponse completePayment(String paymentId, String userId, Role role) {
         // 1. 결제 데이터 확인
         Payment payment = validPayment(paymentId);
 
@@ -66,27 +71,40 @@ public class PaymentServiceImpl implements PaymentService{
         PaymentStatus status = PaymentStatus.fromString(paymentData.status());   // 결제 상태
         Double finalPrice = paymentData.amount().total().doubleValue(); // 결제 금액
 
-        // 3. 결제 상태 확인 및 데이터의 가격과 실제 지불된 금액을 비교
-        switch (status) {
-            case PAID:
-                if (!payment.getPrice().equals(finalPrice)) {   // 결제 금액 불일치 시 에러 발생
-                    log.error("결제 금액 불일치 ::::: 요청 금액 ::::: {} 최종 결제 금액 ::::: {}", payment.getPrice(), finalPrice);
-                    throw new CustomPaymentException(ErrorCode.PAYMENT_PRICE_MISMATCH);
-                }
-                log.info("결제 완료 ::::: {}", status);
-                break;
-            case CANCELLED:
-            case PARTIAL_CANCELLED:
-                throw new CustomPaymentException(ErrorCode.PAYMENT_ALREADY_PROCESSED);
-            default:
-                throw new CustomPaymentException(ErrorCode.INVALID_PAYMENT_STATUS);
+        // 3. 결제 상태 확인 및 데이터의 가격과 실제 지불된 금액을 비교 & 예약 상태 설정
+        String reservationStatus = "";
+        if (status == PaymentStatus.PAID) {
+            if (!payment.getPrice().equals(finalPrice)) {   // 결제 금액 불일치 시 에러 발생
+                log.error("결제 금액 불일치 ::::: 요청 금액 ::::: {} 최종 결제 금액 ::::: {}", payment.getPrice(), finalPrice);
+                throw new CustomPaymentException(ErrorCode.PAYMENT_PRICE_MISMATCH);
+            }
+            log.info("결제 완료 ::::: {}", status);
+            reservationStatus = "COMPLETED";// 결제 성공 시 예약 상태 COMPLETED 설정
+        } else {
+            log.info("결제가 취소된 상태 ::::: {}", status);
+            reservationStatus = "CANCELED"; // 결제 취소 시 예약 상태 CANCELED 설정
         }
 
         // 4. 결제 상태 변경
         payment.complete(paymentData.merchantId(), finalPrice, status);
 
-        // TODO: 5. 예약 상태 변경 API 호출
-
+        // 5. 예약 상태 변경 API 호출
+        ReservationUpdateRequest reservationUpdateRequest = new ReservationUpdateRequest(payment.getId(), reservationStatus);
+        log.info("결제 ID ::::: {}", reservationUpdateRequest.paymentId());
+        log.info("상태 ::::: {}", reservationUpdateRequest.status());
+        try {
+            reservationClient.updateReservation(
+                    reservationUpdateRequest,
+                    payment.getReservationId(),
+                    userId,
+                    role);
+            log.info("예약 상태 업데이트 완료 ::::: 예약 ID ::::: {} 상태 ::::: {}", payment.getReservationId(), reservationStatus);
+        }  catch (FeignException e) {
+            log.error("예약 서비스 호출 실패 ::::: 상태 코드: {} 메시지: {}", e.status(), e.contentUTF8());
+            throw e; // 핸들러로 예외 전달
+        } catch (JsonProcessingException e) {
+            throw new CustomPaymentException(ErrorCode.RESERVATION_UNAVAILABLE);
+        }
         return PaymentResponse.of(payment);
     }
 
