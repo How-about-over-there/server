@@ -28,19 +28,10 @@ public class PointHistoryController {
     // 본인 포인트 내역 조회
     @GetMapping("/{historyId}")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<PointHistoryResponse> getPointHistoryById(@PathVariable String historyId) {
-        return ApiResponse.success(
-                new PointHistoryResponse(
-                        historyId,
-                        "POINT-UUID",
-                        "USER-UUID",
-                        1000.0,
-                        "ERAN",
-                        "RESERVATION-UUID EARN POINT",
-                        LocalDateTime.now().plusMonths(3),
-                        "ACTIVE"
-                )
-        );
+    public ApiResponse<PointHistoryResponse> getPointHistoryById(@PathVariable String historyId,
+                                                                 @RequestHeader("X-User-Id") String userId,
+                                                                 @RequestHeader("X-User-Role") Role role) {
+        return ApiResponse.success(pointHistoryService.getPointHistoryById(historyId, userId, role));
     }
 
     // 본인 포인트 내역 전체 조회 및 검색
