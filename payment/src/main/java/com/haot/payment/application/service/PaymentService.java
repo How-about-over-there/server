@@ -17,11 +17,11 @@ public interface PaymentService {
     PaymentResponse completePayment(String paymentId, String userId, Role role);
 
     // 본인 결제 단건 조회
-    PaymentResponse getPaymentById(String paymentId);
+    PaymentResponse getPaymentById(String paymentId, String userId, Role role);
 
     // 결제 취소 요청
-    PaymentResponse cancelPayment(PaymentCancelRequest request, String paymentId);
+    PaymentResponse cancelPayment(PaymentCancelRequest request, String paymentId, String userId, Role role);
 
     // 본인 결제 전체 조회 및 검색
-    Page<PaymentResponse> getPayments(PaymentSearchRequest request, Pageable pageable);
+    Page<PaymentResponse> getPayments(PaymentSearchRequest request, Pageable pageable, String userId, Role role);
 }
