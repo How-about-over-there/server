@@ -176,7 +176,7 @@ public class ReservationServiceImpl implements ReservationService {
     switch (reservationUpdateRequest.status()) {
       case "COMPLETED" -> {
         completeReservation(reservation, userId, role);
-        reservation.updateReservation();
+        reservation.completedReservation();
       }
       case "CANCELED" -> {
         cancelReservation(reservation, userId, role);
