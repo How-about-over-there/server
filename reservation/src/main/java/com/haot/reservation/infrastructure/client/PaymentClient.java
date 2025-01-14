@@ -26,6 +26,8 @@ public interface PaymentClient {
   @PostMapping("/api/v1/payments/{paymentId}/cancel")
   ApiResponse<PaymentResponse> cancelPayment(
       @Valid @RequestBody PaymentCancelRequest request,
-      @PathVariable String paymentId
+      @PathVariable String paymentId,
+      @RequestHeader("X-User-Id") String userId,
+      @RequestHeader("X-User-Role") Role role
   );
 }

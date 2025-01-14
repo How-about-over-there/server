@@ -180,20 +180,20 @@ public class ReservationServiceImpl implements ReservationService {
     }
   }
 
- @Transactional
+  @Transactional
   public void cancelReservation(
       String reservationId,
-     ReservationCancelRequest request,
+      ReservationCancelRequest request,
       String userId,
-     Role role
- ) {
+      Role role
+  ) {
 
     Reservation reservation = findReservationById(reservationId);
 
     validateReservationOwnership(reservation, userId);
     validateCancellationReason(request.reason());
 
-    requestCancelPayment(request.reason(), reservation.getReservationId());
+    requestCancelPayment(request.reason(), reservation.getPaymentId(), userId, role);
 
     cancelReservation(reservation, userId, role);
     reservation.cancelReservation();
@@ -457,9 +457,9 @@ public class ReservationServiceImpl implements ReservationService {
     }
   }
 
-  private void requestCancelPayment(String reason, String reservationId) {
+  private void requestCancelPayment(String reason, String paymentId, String userId, Role role) {
     try {
-      paymentClient.cancelPayment(new PaymentCancelRequest(reason), reservationId);
+      paymentClient.cancelPayment(new PaymentCancelRequest(reason), paymentId, userId, role);
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
