@@ -1,7 +1,7 @@
 package com.haot.reservation.application.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.haot.reservation.application.dtos.req.ReservationCancelRequest;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
 import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
@@ -26,6 +26,7 @@ import com.haot.reservation.infrastructure.dtos.coupon.ReservationVerifyResponse
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateReadResponse;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateUpdateStatusRequest;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeReadOneResponse;
+import com.haot.reservation.infrastructure.dtos.payment.PaymentCancelRequest;
 import com.haot.reservation.infrastructure.dtos.payment.PaymentCreateRequest;
 import com.haot.reservation.infrastructure.dtos.payment.PaymentResponse;
 import com.haot.reservation.infrastructure.dtos.point.PaymentDataResponse;
@@ -157,9 +158,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     Reservation reservation = findReservationById(reservationId);
 
-    if (!reservation.getUserId().equals(userId)) {
-      throw new CustomReservationException(ErrorCode.UNAUTHORIZED_ACCESS);
-    }
+    validateReservationOwnership(reservation, userId);
 
     return ReservationGetResponse.of(reservation, null);
   }
@@ -180,6 +179,26 @@ public class ReservationServiceImpl implements ReservationService {
       default -> throw new IllegalArgumentException("Invalid status");
     }
   }
+
+ @Transactional
+  public void cancelReservation(
+      String reservationId,
+     ReservationCancelRequest request,
+      String userId,
+     Role role
+ ) {
+
+    Reservation reservation = findReservationById(reservationId);
+
+    validateReservationOwnership(reservation, userId);
+    validateCancellationReason(request.reason());
+
+    requestCancelPayment(request.reason(), reservation.getReservationId());
+
+    cancelReservation(reservation, userId, role);
+    reservation.cancelReservation();
+  }
+
 
   // 숙소 이름 가져오기
   private String getLodgeName(String lodgeId) {
@@ -262,7 +281,7 @@ public class ReservationServiceImpl implements ReservationService {
     try {
       ApiResponse<ReservationVerifyResponse> response =
           couponClient.verify(new FeignVerifyRequest(userCouponId, userId, lodgePrice)
-      );
+          );
 
       return CouponDataResponse.of(
           response.data().reservationCouponId(),
@@ -438,8 +457,30 @@ public class ReservationServiceImpl implements ReservationService {
     }
   }
 
+  private void requestCancelPayment(String reason, String reservationId) {
+    try {
+      paymentClient.cancelPayment(new PaymentCancelRequest(reason), reservationId);
+    } catch (FeignException e) {
+      throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+    }
+  }
+
   private Reservation findReservationById(String reservationId) {
     return reservationRepository.findById(reservationId)
         .orElseThrow(() -> new CustomReservationException(ErrorCode.RESERVATION_NOT_FOUND));
+  }
+
+  private void validateReservationOwnership(Reservation reservation, String userId) {
+    if (!reservation.getUserId().equals(userId)) {
+      throw new CustomReservationException(ErrorCode.UNAUTHORIZED_ACCESS);
+    }
+  }
+
+  private void validateCancellationReason(String reason) {
+    if (!"CANCELED".equals(reason)) {
+      throw new CustomReservationException(ErrorCode.INVALID_CANCELLATION_REASON);
+    }
   }
 }
