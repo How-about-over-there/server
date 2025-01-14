@@ -175,7 +175,10 @@ public class ReservationServiceImpl implements ReservationService {
 
     switch (reservationUpdateRequest.status()) {
       case "COMPLETED" -> completeReservation(reservation, userId, role);
-      case "CANCELED" -> cancelReservation(reservation, userId, role);
+      case "CANCELED" -> {
+        cancelReservation(reservation, userId, role);
+        reservation.cancelReservation();
+      }
       default -> throw new IllegalArgumentException("Invalid status");
     }
   }
