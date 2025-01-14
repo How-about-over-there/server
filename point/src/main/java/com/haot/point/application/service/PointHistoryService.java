@@ -1,6 +1,6 @@
 package com.haot.point.application.service;
 
-import com.haot.point.application.dto.request.PointStatusRequest;
+import com.haot.point.application.dto.request.point.PointStatusRequest;
 import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointHistoryResponse;
 import com.haot.submodule.role.Role;

@@ -1,4 +1,4 @@
-package com.haot.point.application.dto.request;
+package com.haot.point.application.dto.request.point;
 
 import jakarta.validation.constraints.Min;
 
