@@ -30,7 +30,7 @@ public enum ErrorCode implements ResCodeIfs {
     INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "8006", "결제가 완료되지 않았습니다."),
     PAYMENT_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "8007", "이미 처리된 결제입니다."),
     USER_NOT_MATCHED(HttpStatus.BAD_REQUEST,"8008" , "유저 ID 가 일치하지 않습니다."),
-    RESERVATION_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "8009", "예약 서비스 호출에 실패하였습니다.");
+    RESERVATION_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "8009", "예약 서비스 호출에 실패하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -1,5 +1,6 @@
 package com.haot.payment.application.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
 import com.haot.payment.application.dto.request.PaymentSearchRequest;
@@ -101,8 +102,8 @@ public class PaymentServiceImpl implements PaymentService{
         }  catch (FeignException e) {
             log.error("예약 서비스 호출 실패 ::::: 상태 코드: {} 메시지: {}", e.status(), e.contentUTF8());
             throw e; // 핸들러로 예외 전달
-        } catch (Exception e) {
-            throw new CustomPaymentException(ErrorCode.RESERVATION_UPDATE_FAILED);
+        } catch (JsonProcessingException e) {
+            throw new CustomPaymentException(ErrorCode.RESERVATION_UNAVAILABLE);
         }
         return PaymentResponse.of(payment);
     }
