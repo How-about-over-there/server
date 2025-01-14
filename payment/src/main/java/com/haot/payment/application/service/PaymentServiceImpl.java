@@ -17,6 +17,7 @@ import com.haot.payment.infrastructure.client.dto.response.PortOneCancelResponse
 import com.haot.payment.infrastructure.client.dto.response.PortOneResponse;
 import com.haot.payment.infrastructure.repository.PaymentRepository;
 import com.haot.submodule.role.Role;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -97,9 +98,11 @@ public class PaymentServiceImpl implements PaymentService{
                     userId,
                     role);
             log.info("예약 상태 업데이트 완료 ::::: 예약 ID ::::: {} 상태 ::::: {}", payment.getReservationId(), reservationStatus);
-        }  catch (Exception e) {
-            log.error("예약 상태 업데이트 실패 ::::: 예약 ID ::::: {}", payment.getReservationId());
-            throw new CustomPaymentException(ErrorCode.RESERVATION_UPDATE_FAILED); // 예외 원인을 포함하여 다시 던지기
+        }  catch (FeignException e) {
+            log.error("예약 서비스 호출 실패 ::::: 상태 코드: {} 메시지: {}", e.status(), e.contentUTF8());
+            throw e; // 핸들러로 예외 전달
+        } catch (Exception e) {
+            throw new CustomPaymentException(ErrorCode.RESERVATION_UPDATE_FAILED);
         }
         return PaymentResponse.of(payment);
     }
