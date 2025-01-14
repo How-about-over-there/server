@@ -14,7 +14,8 @@ public enum ErrorCode implements ResCodeIfs {
   UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, "7101", "본인의 예약 내역만 조회할 수 있습니다."),
   INVALID_LODGE_RESPONSE_EXCEPTION(HttpStatus.BAD_REQUEST, "7001", "lodge response is invalid"),
   DATE_UNAVAILABLE_EXCEPTION(HttpStatus.BAD_REQUEST, "7002", "예약이 불가능한 날짜입니다."),
-  INVALID_CANCELLATION_REASON(HttpStatus.BAD_REQUEST, "7003", "The provided cancellation reason is invalid."),;
+  INVALID_CANCELLATION_REASON(HttpStatus.BAD_REQUEST, "7003", "The provided cancellation reason is invalid."),
+  PAYMENT_ERROR(HttpStatus.BAD_REQUEST, "7004", "결제 취소 실패");
 
   private final HttpStatus httpStatus;
   private final String code;

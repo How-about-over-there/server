@@ -199,10 +199,14 @@ public class ReservationServiceImpl implements ReservationService {
     validateReservationOwnership(reservation, userId);
     validateCancellationReason(request.reason());
 
-    requestCancelPayment(request.reason(), reservation.getPaymentId(), userId, role);
+    String paymentStatus = requestCancelPayment(request.reason(), reservation.getPaymentId(), userId, role);
 
-    cancelReservation(reservation, userId, role);
-    reservation.cancelReservation();
+    if ("CANCELLED".equals(paymentStatus)) {
+      cancelReservation(reservation, userId, role);
+      reservation.cancelReservation();
+    } else {
+      throw new CustomReservationException(ErrorCode.PAYMENT_ERROR);
+    }
   }
 
 
@@ -463,9 +467,10 @@ public class ReservationServiceImpl implements ReservationService {
     }
   }
 
-  private void requestCancelPayment(String reason, String paymentId, String userId, Role role) {
+  private String requestCancelPayment(String reason, String paymentId, String userId, Role role) {
     try {
-      paymentClient.cancelPayment(new PaymentCancelRequest(reason), paymentId, userId, role);
+      ApiResponse<PaymentResponse> paymentResponse = paymentClient.cancelPayment(new PaymentCancelRequest(reason), paymentId, userId, role);
+      return  paymentResponse.data().status();
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
