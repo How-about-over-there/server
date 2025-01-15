@@ -3,9 +3,10 @@ package com.haot.reservation.application.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haot.reservation.application.dtos.req.ReservationCancelRequest;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
+import com.haot.reservation.application.dtos.req.ReservationSearchRequest;
 import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
-import com.haot.reservation.common.exceptions.CustomReservationException;
+import com.haot.reservation.common.exceptions.ReservationException;
 import com.haot.reservation.common.exceptions.DateUnavailableException;
 import com.haot.reservation.common.exceptions.FeignExceptionUtils;
 import com.haot.reservation.common.response.ApiResponse;
@@ -42,7 +43,9 @@ import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,7 +119,7 @@ public class ReservationServiceImpl implements ReservationService {
             pointHistoryId, userId, role
         );
       }
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
 
     Reservation reservation = Reservation.createReservation(
@@ -149,6 +152,7 @@ public class ReservationServiceImpl implements ReservationService {
     return ReservationGetResponse.of(reservation, paymentData.paymentUrl());
   }
 
+  @Override
   @Transactional(readOnly = true)
   public ReservationGetResponse getReservation(
       String reservationId,
@@ -163,6 +167,19 @@ public class ReservationServiceImpl implements ReservationService {
     return ReservationGetResponse.of(reservation, null);
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public Page<ReservationGetResponse> searchReservation(
+      ReservationSearchRequest request,
+      String userId,
+      Role role,
+      Pageable pageable
+  ) {
+    Page<Reservation> reservations = reservationRepository.search(request, userId, role, pageable);
+    return reservations.map(reservation -> ReservationGetResponse.of(reservation, null));
+  }
+
+  @Override
   @Transactional
   public void updateReservation(
       ReservationUpdateRequest reservationUpdateRequest,
@@ -205,7 +222,7 @@ public class ReservationServiceImpl implements ReservationService {
       cancelReservation(reservation, userId, role);
       reservation.cancelReservation();
     } else {
-      throw new CustomReservationException(ErrorCode.PAYMENT_ERROR);
+      throw new ReservationException(ErrorCode.PAYMENT_ERROR);
     }
   }
 
@@ -218,7 +235,7 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -237,7 +254,7 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -267,7 +284,7 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
     return LodgeDataGetResponse.of(lodgeDateIds, totalPrice);
   }
@@ -300,7 +317,7 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -315,7 +332,7 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -344,7 +361,7 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -373,7 +390,7 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -384,7 +401,7 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -399,7 +416,7 @@ public class ReservationServiceImpl implements ReservationService {
       } catch (FeignException e) {
         throw FeignExceptionUtils.parseFeignException(e);
       } catch (Exception e) {
-        throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+        throw new ReservationException(ErrorCode.GENERAL_ERROR);
       }
     }
   }
@@ -416,7 +433,7 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -430,7 +447,7 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -463,7 +480,7 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -474,24 +491,24 @@ public class ReservationServiceImpl implements ReservationService {
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
   private Reservation findReservationById(String reservationId) {
     return reservationRepository.findById(reservationId)
-        .orElseThrow(() -> new CustomReservationException(ErrorCode.RESERVATION_NOT_FOUND));
+        .orElseThrow(() -> new ReservationException(ErrorCode.RESERVATION_NOT_FOUND));
   }
 
   private void validateReservationOwnership(Reservation reservation, String userId) {
     if (!reservation.getUserId().equals(userId)) {
-      throw new CustomReservationException(ErrorCode.UNAUTHORIZED_ACCESS);
+      throw new ReservationException(ErrorCode.UNAUTHORIZED_ACCESS);
     }
   }
 
   private void validateCancellationReason(String reason) {
     if (!"CANCELED".equals(reason)) {
-      throw new CustomReservationException(ErrorCode.INVALID_CANCELLATION_REASON);
+      throw new ReservationException(ErrorCode.INVALID_CANCELLATION_REASON);
     }
   }
 }
