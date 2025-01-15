@@ -4,6 +4,7 @@ import com.haot.user.application.dto.req.AdminUserUpdateRequest;
 import com.haot.user.application.dto.res.AdminUserGetResponse;
 import com.haot.user.common.exception.ErrorCode;
 import com.haot.user.common.exception.UserException;
+import com.haot.user.common.util.Argon2PasswordEncoder;
 import com.haot.user.domain.model.User;
 import com.haot.user.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,9 @@ public class AdminUserCRUDServiceImpl implements AdminUserCRUDService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
     user.updateName(adminUserUpdateRequest.name());
-    user.updatePassword(adminUserUpdateRequest.password());
+    if (adminUserUpdateRequest.password() != null) {
+      user.updatePassword(Argon2PasswordEncoder.encode(adminUserUpdateRequest.password().toCharArray()));
+    }
     user.updateEmail(adminUserUpdateRequest.email());
     user.updatePhoneNumber(adminUserUpdateRequest.phoneNumber());
     user.updateBirthDate(adminUserUpdateRequest.birthDate());

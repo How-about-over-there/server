@@ -73,7 +73,9 @@ public class UserCRUDServiceImpl implements UserCRUDService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
     user.updateName(userUpdateMeRequest.name());
-    user.updatePassword(userUpdateMeRequest.password());
+    if (userUpdateMeRequest.password() != null) {
+      user.updatePassword(Argon2PasswordEncoder.encode(userUpdateMeRequest.password().toCharArray()));
+    }
     user.updateEmail(userUpdateMeRequest.email());
     user.updatePhoneNumber(userUpdateMeRequest.phoneNumber());
     user.updateBirthDate(userUpdateMeRequest.birthDate());
