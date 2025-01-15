@@ -1,5 +1,6 @@
 package com.haot.reservation.application.service;
 
+import com.haot.reservation.application.dtos.req.ReservationAdminSearchRequest;
 import com.haot.reservation.application.dtos.req.ReservationCancelRequest;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
 import com.haot.reservation.application.dtos.req.ReservationSearchRequest;
@@ -40,18 +41,35 @@ public interface ReservationService {
   );
 
   /**
-   * 예약 검색
+   * 일반 유저 예약 검색
    *
-   * @param reservationSearchRequest 검색 조건
+   * @param request 검색 조건
    * @param userId                   유저 아이디
    * @param role                     USER
+   * @param pageable                 pageable
    * @return 검색 예약 내역
    */
   Page<ReservationGetResponse> searchReservation(
-      ReservationSearchRequest reservationSearchRequest,
+      ReservationSearchRequest request,
       String userId,
       Role role,
       Pageable pageable);
+
+  /**
+   * 관리자 예약 검색
+   *
+   * @param request 검색 조건
+   * @param userId                   유저 아이디
+   * @param role                     ADMIN, HOST
+   * @param pageable                 pageable
+   * @return 검색 예약 내역
+   */
+  Page<ReservationGetResponse> search(
+      ReservationAdminSearchRequest request,
+      String userId,
+      Role role,
+      Pageable pageable
+  );
 
   /**
    * 예약 수정 (결제 완료 or 취소) 결제 완료시 숙소, 쿠폰, 포인트의 상태를 변경합니다.

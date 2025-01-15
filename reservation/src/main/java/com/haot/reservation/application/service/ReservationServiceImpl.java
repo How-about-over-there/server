@@ -1,6 +1,7 @@
 package com.haot.reservation.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.haot.reservation.application.dtos.req.ReservationAdminSearchRequest;
 import com.haot.reservation.application.dtos.req.ReservationCancelRequest;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
 import com.haot.reservation.application.dtos.req.ReservationSearchRequest;
@@ -171,6 +172,18 @@ public class ReservationServiceImpl implements ReservationService {
   @Transactional(readOnly = true)
   public Page<ReservationGetResponse> searchReservation(
       ReservationSearchRequest request,
+      String userId,
+      Role role,
+      Pageable pageable
+  ) {
+    Page<Reservation> reservations = reservationRepository.searchReservation(request, userId, role, pageable);
+    return reservations.map(reservation -> ReservationGetResponse.of(reservation, null));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Page<ReservationGetResponse> search(
+      ReservationAdminSearchRequest request,
       String userId,
       Role role,
       Pageable pageable

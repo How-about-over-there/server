@@ -3,6 +3,7 @@ package com.haot.reservation.infrastructure.repository;
 import static com.haot.reservation.domain.model.QReservation.reservation;
 import static com.haot.reservation.domain.utils.QuerydslSortUtils.getOrderSpecifiers;
 
+import com.haot.reservation.application.dtos.req.ReservationAdminSearchRequest;
 import com.haot.reservation.application.dtos.req.ReservationSearchRequest;
 import com.haot.reservation.domain.model.Reservation;
 import com.haot.reservation.domain.model.ReservationStatus;
@@ -35,8 +36,12 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
   );
 
   @Override
-  public Page<Reservation> search(ReservationSearchRequest request, String userId, Role role,
-      Pageable pageable) {
+  public Page<Reservation> searchReservation(
+      ReservationSearchRequest request,
+      String userId,
+      Role role,
+      Pageable pageable
+  ) {
 
     JPAQuery<Reservation> query = queryFactory.selectFrom(reservation)
         .where(conditions(request, userId))
@@ -55,6 +60,30 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
     return new PageImpl<>(content, pageable, total);
   }
 
+  @Override
+  public Page<Reservation> search(
+      ReservationAdminSearchRequest request,
+      String userId,
+      Role role,
+      Pageable pageable
+  ) {
+    JPAQuery<Reservation> query = queryFactory.selectFrom(reservation)
+        .where(adminConditions(request))
+        .orderBy(getOrderSpecifiers(pageable, SORT_PARAMS))
+        .offset(pageable.getOffset())
+        .limit(pageable.getPageSize());
+
+    List<Reservation> content = query.fetch();
+
+    long total = Optional.ofNullable(queryFactory.select(reservation.count())
+            .from(reservation)
+            .where(adminConditions(request))
+            .fetchOne())
+        .orElse(0L);
+
+    return new PageImpl<>(content, pageable, total);
+  }
+
   private BooleanBuilder conditions(ReservationSearchRequest request, String userId) {
     BooleanBuilder booleanBuilder = new BooleanBuilder();
 
@@ -64,6 +93,22 @@ public class ReservationCustomRepositoryImpl implements ReservationCustomReposit
     booleanBuilder.and(reservationStatusEq(request.reservationStatus()));
 
     return booleanBuilder;
+  }
+
+  private BooleanBuilder adminConditions(ReservationAdminSearchRequest request) {
+    BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+    booleanBuilder.and(userIdEq(request.userId()));
+    booleanBuilder.and(reservationIdEq(request.reservationId()));
+    booleanBuilder.and(checkInDate(request.checkInDate()));
+    booleanBuilder.and(checkOutDate(request.checkOutDate()));
+    booleanBuilder.and(reservationStatusEq(request.reservationStatus()));
+
+    return booleanBuilder;
+  }
+
+  private BooleanExpression reservationIdEq(String reservationId) {
+    return (reservationId == null) ? null : reservation.reservationId.eq(reservationId);
   }
 
   private BooleanExpression userIdEq(String userId) {
