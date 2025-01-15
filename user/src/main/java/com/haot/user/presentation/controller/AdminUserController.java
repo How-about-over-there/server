@@ -1,9 +1,14 @@
 package com.haot.user.presentation.controller;
 
+import com.haot.submodule.role.RoleCheck;
 import com.haot.user.application.dto.req.AdminUserUpdateRequest;
 import com.haot.user.application.dto.res.AdminUserGetResponse;
+import com.haot.user.application.service.AdminUserCRUDService;
 import com.haot.user.common.response.ApiResponse;
 import com.haot.submodule.role.Role;
+import com.haot.user.domain.model.enums.Gender;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,34 +30,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/admin/v1/users")
 public class AdminUserController {
+
+  private final AdminUserCRUDService adminUserCRUDService;
+
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/{userId}")
+  @RoleCheck({Role.ADMIN})
   public ApiResponse<AdminUserGetResponse> getUserById(
       @PathVariable String userId) {
 
-    AdminUserGetResponse res = new AdminUserGetResponse(
-        userId,
-        "강찬욱",
-        "SecurePassword123",
-        "저기어때@naver.com",
-        "+821012345678",
-        "1990-01-01",
-        "male",
-        "en",
-        "KRW",
-        "https://example.com/images/abc.jpg",
-        "서울특별시 강남구 테헤란로 123",
-        Role.USER,
-        false,
-        "2024-12-31T12:34:56",
-        "550e8400-e29b-41d4-a716-446655440000",
-        "2024-12-31T14:56:00",
-        "550e8400-e29b-41d4-a716-446655440000",
-        null,
-        null
-    );
-
-    return ApiResponse.success(res);
+    return ApiResponse.success(adminUserCRUDService.getUser(userId));
   }
 
   @ResponseStatus(HttpStatus.OK)
@@ -72,17 +59,17 @@ public class AdminUserController {
             "SecurePassword123",
             "example@naver.com",
             "+821012345678",
-            "1990-01-01",
-            "male",
+            LocalDate.now(),
+            Gender.MALE,
             "en",
             "KRW",
             "https://example.com/images/abc.jpg",
             "서울특별시 강남구 테헤란로 123",
             Role.USER,
             false,
-            "2024-12-31T12:34:56",
+            LocalDateTime.now(),
             "550e8400-e29b-41d4-a716-446655440000",
-            "2024-12-31T14:56:00",
+            LocalDateTime.now(),
             "550e8400-e29b-41d4-a716-446655440000",
             null,
             null
@@ -93,17 +80,17 @@ public class AdminUserController {
             "SecurePassword456",
             "minji.kim@example.com",
             "+821055678901",
-            "1995-05-15",
-            "female",
+            LocalDate.now(),
+            Gender.FEMALE,
             "ko",
             "KRW",
             "https://example.com/images/minji.jpg",
             "부산광역시 해운대구 센텀로 45",
             Role.USER,
             false,
-            "2024-12-31T12:34:56",
+            LocalDateTime.now(),
             "550e8400-e29b-41d4-a716-446655440000",
-            "2024-12-31T14:56:00",
+            LocalDateTime.now(),
             "550e8400-e29b-41d4-a716-446655440000",
             null,
             null
