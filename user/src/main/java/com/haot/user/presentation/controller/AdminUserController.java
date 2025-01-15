@@ -7,6 +7,7 @@ import com.haot.user.application.service.AdminUserCRUDService;
 import com.haot.user.common.response.ApiResponse;
 import com.haot.submodule.role.Role;
 import com.haot.user.domain.model.enums.Gender;
+import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -102,15 +103,14 @@ public class AdminUserController {
     return ApiResponse.success(res);
   }
 
-  /*
-  TODO: API 개발 후 @RequestBody(required = false) 에서 required 프로퍼티 제거 및 @Valid 추가하기
- */
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping("/{userId}")
+  @RoleCheck({Role.ADMIN})
   public ApiResponse<Void> updateUserById(
       @PathVariable String userId,
-      @RequestBody(required = false) AdminUserUpdateRequest request) {
+      @Valid @RequestBody AdminUserUpdateRequest request) {
 
+    adminUserCRUDService.updateUser(userId, request);
     return ApiResponse.success();
   }
 
