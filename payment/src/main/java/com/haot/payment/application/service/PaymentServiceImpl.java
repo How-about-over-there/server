@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
 import com.haot.payment.application.dto.request.PaymentSearchRequest;
+import com.haot.payment.application.dto.response.PageResponse;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.common.exception.CustomPaymentException;
 import com.haot.payment.common.exception.enums.ErrorCode;
@@ -161,12 +162,13 @@ public class PaymentServiceImpl implements PaymentService{
 
     @Override
     @Transactional(readOnly = true)
-    public Page<PaymentResponse> getPayments(PaymentSearchRequest request, Pageable pageable, String userId, Role role) {
+    public PageResponse<PaymentResponse> getPayments(PaymentSearchRequest request, Pageable pageable, String userId, Role role) {
         // USER 요청의 경우 userId 헤더 값으로 지정
         if (role == Role.USER) {
             request.setUserId(userId);
         }
-        return paymentRepository.searchPayments(request, pageable);
+        Page<PaymentResponse> payments = paymentRepository.searchPayments(request, pageable);
+        return PageResponse.of(payments);
     }
 
     private Payment validPayment(String paymentId) {

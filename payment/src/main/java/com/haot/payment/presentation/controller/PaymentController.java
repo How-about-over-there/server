@@ -3,6 +3,7 @@ package com.haot.payment.presentation.controller;
 import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
 import com.haot.payment.application.dto.request.PaymentSearchRequest;
+import com.haot.payment.application.dto.response.PageResponse;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.application.service.PaymentService;
 import com.haot.payment.common.response.ApiResponse;
@@ -81,7 +82,7 @@ public class PaymentController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @RoleCheck({Role.USER, Role.ADMIN})
-    public ApiResponse<Page<PaymentResponse>> getPayments(
+    public ApiResponse<PageResponse<PaymentResponse>> getPayments(
             @ModelAttribute PaymentSearchRequest request,
             @PageableDefault(size = 10, direction = Sort.Direction.ASC, sort = "createdAt") Pageable pageable,
             @RequestHeader("X-User-Id") String userId,
