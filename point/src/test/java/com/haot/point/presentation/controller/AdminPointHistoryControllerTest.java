@@ -1,8 +1,8 @@
 package com.haot.point.presentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haot.point.application.dto.request.PointHistoryCreateRequest;
-import com.haot.point.application.dto.request.PointHistoryUpdateRequest;
+import com.haot.point.application.dto.request.history.PointHistoryCreateRequest;
+import com.haot.point.application.dto.request.history.PointHistoryUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
