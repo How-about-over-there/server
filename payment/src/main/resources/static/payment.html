@@ -21,6 +21,7 @@
     const orderName = urlParams.get("orderName");
     const amount = urlParams.get("amount");
     const payMethod = urlParams.get("payMethod");
+    const token = urlParams.get("authToken");
 
     // 디버깅용 콘솔 출력
     console.log("URL에서 가져온 결제 아이디:", paymentId);
@@ -33,7 +34,6 @@
     document.getElementById("order-name").innerText = orderName;
     document.getElementById("amount").innerText = amount;
     document.getElementById("pay-method").innerText = payMethod;
-
 
     // 결제 요청
     document.getElementById("pay-button").addEventListener("click", async () => {
@@ -57,11 +57,22 @@
             if (response.code) {
                 alert("결제 실패: " + response.message);
             } else {
-                await fetch(`/api/v1/payments/${paymentId}/complete`, {
+                console.log("결제 확인 API 호출...");
+                const confirmResponse = await fetch(`/api/v1/payments/${paymentId}/complete`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" }
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
                 });
-                alert("결제 성공! Payment ID: " + response.paymentId);
+
+                if (confirmResponse.ok) {
+                    console.log("결제 확인 API 응답 성공:", confirmResponse);
+                    alert("결제 성공! Payment ID: " + response.paymentId);
+                } else {
+                    console.error("결제 확인 API 응답 실패:", confirmResponse);
+                    alert("결제 확인 중 오류가 발생하여 결제가 취소되었습니다.");
+                }
             }
         } catch (error) {
             alert("결제 요청 중 오류 발생: " + error.message);
