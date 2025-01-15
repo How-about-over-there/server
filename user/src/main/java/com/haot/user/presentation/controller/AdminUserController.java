@@ -57,7 +57,6 @@ public class AdminUserController {
         new AdminUserGetResponse(
             "550e8400-e29b-41d4-a716-446655440000",
             "강찬욱",
-            "SecurePassword123",
             "example@naver.com",
             "+821012345678",
             LocalDate.now(),
@@ -78,7 +77,6 @@ public class AdminUserController {
         new AdminUserGetResponse(
             "550e8400-e29b-41d4-a716-446655440001",
             "김민지",
-            "SecurePassword456",
             "minji.kim@example.com",
             "+821055678901",
             LocalDate.now(),
