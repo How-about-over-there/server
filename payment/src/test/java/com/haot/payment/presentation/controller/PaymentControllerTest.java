@@ -70,16 +70,23 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("결제 단건 조회 테스트")
+    @DisplayName("결제 단건 조회 성공 테스트")
     void getPaymentById() throws Exception {
         // Given: 테스트 데이터
-        String paymentId = "PAYMENT-UUID1";
+        String paymentId = "PAYMENT-UUID";
+        PaymentResponse response = new PaymentResponse("PAYMENT-UUID", "USER-UUID", "RESERVATION-UUID", null, 100000.0,null, "CARD", "READY");
+
+        // Mocking: PaymentService 동작 설정
+        when(paymentService.getPaymentById(paymentId,"USER-UUID", Role.USER)).thenReturn(response);
+
         // When: API 호출 및 결과 받기
         MvcResult result = mockMvc.perform(get("/api/v1/payments/{paymentId}", paymentId)
+                        .header("X-User-Id", "USER-UUID")
+                        .header("X-User-Role", "USER")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusCode").value("8000"))
-                .andExpect(jsonPath("$.status").value("Success"))
+                .andExpect(jsonPath("$.status").value("SUCCESS"))
                 .andExpect(jsonPath("$.data.paymentId").value(paymentId))
                 .andReturn(); // 호출 결과를 MvcResult 로 반환
 
