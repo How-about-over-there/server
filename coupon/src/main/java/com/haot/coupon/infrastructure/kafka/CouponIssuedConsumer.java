@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,13 +23,13 @@ public class CouponIssuedConsumer implements CouponIssueConsumer {
     private final RedisRepository redisRepository;
 
     @Override
-    @KafkaListener(topics = "coupon-issue-priority", groupId = "coupon-user")
+    @KafkaListener(topics = "coupon-issue-priority", groupId = "coupon-user-priority")
     public void issuePriorityCouponListener(@Header("X-User-Id") String userId, String message) throws JsonProcessingException {
 
         CouponCustomerCreateRequest request = objectMapper.readValue(message, CouponCustomerCreateRequest.class);
 
         try{
-            couponService.issuePriorityCoupon(userId, request);
+            couponService.issueCoupon(userId, request);
         }catch(CustomCouponException ex){
             if(ex.resCode.getCode().equals("4016")){
 
@@ -41,5 +40,18 @@ public class CouponIssuedConsumer implements CouponIssueConsumer {
         }
     }
 
+    @Override
+    @KafkaListener(topics = "coupon-issue-unlimited", groupId = "coupon-user-unlimited")
+    public void issueUnlimitedCouponListener(@Header("X-User-Id") String userId, String message) throws JsonProcessingException {
+        CouponCustomerCreateRequest request = objectMapper.readValue(message, CouponCustomerCreateRequest.class);
+
+        try{
+            couponService.issueCoupon(userId, request);
+        }catch(CustomCouponException ex){
+            if(ex.resCode.getCode().equals("4016")){
+                log.error("already issued user : {}, CouponId : {}",userId, request.couponId());
+            }
+        }
+    }
 
 }

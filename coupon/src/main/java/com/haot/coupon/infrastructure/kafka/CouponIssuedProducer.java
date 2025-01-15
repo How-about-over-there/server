@@ -23,7 +23,16 @@ public class CouponIssuedProducer implements CouponIssueProducer {
                         .setHeader("X-User-Id", userId)
                         .build())
         ;
+    }
 
+    @Override
+    public void sendIssueUnlimitedCoupon(String userId, CouponCustomerCreateRequest request) {
 
+        kafkaTemplate.send(
+                MessageBuilder.withPayload(request)
+                        .setHeader(KafkaHeaders.TOPIC, "coupon-issue-unlimited")
+                        .setHeader("X-User-Id", userId)
+                        .build())
+        ;
     }
 }

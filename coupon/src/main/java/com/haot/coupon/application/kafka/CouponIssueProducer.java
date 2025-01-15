@@ -4,4 +4,6 @@ import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateReque
 
 public interface CouponIssueProducer {
     void sendIssuePriorityCoupon(String userId, CouponCustomerCreateRequest request);
+
+    void sendIssueUnlimitedCoupon(String userId, CouponCustomerCreateRequest request);
 }

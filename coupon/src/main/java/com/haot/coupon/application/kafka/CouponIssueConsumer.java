@@ -6,4 +6,6 @@ import org.springframework.messaging.handler.annotation.Header;
 public interface CouponIssueConsumer {
 
     void issuePriorityCouponListener(@Header("X-User-Id") String userId, String message) throws JsonProcessingException;
+
+    public void issueUnlimitedCouponListener(@Header("X-User-Id") String userId, String message) throws JsonProcessingException;
 }

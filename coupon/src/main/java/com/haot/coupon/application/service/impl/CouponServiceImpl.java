@@ -66,24 +66,26 @@ public class CouponServiceImpl implements CouponService {
             throw new CustomCouponException(ErrorCode.COUPON_NOT_MATCHED_WITH_EVENT);
         }
 
-        // userCoupon테이블에 userId와 couponId가 같은 데이터 있는지 체크 -> 있으면 exception
-        checkAlreadyIssued(userId, request.couponId());
-
         // 이벤트 시작 날짜 전인지 체크, 후면 expired로 kafka send
         checkEventDate(event, LocalDateTime.now());
 
-        if(coupon.getType() == CouponType.PRIORITY){
+        // userCoupon테이블에 userId와 couponId가 같은 데이터 있는지 체크 -> 있으면 exception
+        checkAlreadyIssued(userId, request.couponId());
+
+        if(coupon.checkPriorityCoupon()){
             checkPriorityCouponStock(event.getId(), coupon.getId(), userId, event.getEventEndDate());
             couponIssueProducer.sendIssuePriorityCoupon(userId, request); // TODO auditoraware 사용해 updateby에 잘들어가게 해야된다.
 
             // TODO 일단 무제한은 개발 하지 않았고 선착순 2번 insert 안되게 막아놨다.
         }else{
-            userCouponRepository.save(userCouponMapper.toEntity(userId, coupon));
+            redisRepository.issueCoupon(userId, coupon.getId(), event.getEventEndDate());
+            couponIssueProducer.sendIssueUnlimitedCoupon(userId, request);
 
-            couponRepository.increaseIssuedQuantity(coupon.getId());
+//            userCouponRepository.save(userCouponMapper.toEntity(userId, coupon));
+//            userCouponRepository.save(UserCoupon.create(userId, coupon));
+//
+//            couponRepository.increaseIssuedQuantity(coupon.getId());
         }
-
-        // TODO 무제한일때 따로 kafka로 부하분산하고 redis로 비동기 처리? 트러블 슈팅
 
     }
 
@@ -171,7 +173,7 @@ public class CouponServiceImpl implements CouponService {
 
     @Transactional
     @Override
-    public void issuePriorityCoupon(String userId, CouponCustomerCreateRequest request) {
+    public void issueCoupon(String userId, CouponCustomerCreateRequest request) {
         Coupon coupon = checkExistsCoupon(request.couponId());
 
         if(userCouponRepository.existsByUserIdAndCouponIdAndIsDeleteFalse(userId, coupon.getId())){
@@ -249,14 +251,14 @@ public class CouponServiceImpl implements CouponService {
 
     // 쿠폰 상태가 USED인지 확인
     private void checkIfCouponUsed(UserCoupon userCoupon) {
-        if (userCoupon.getCouponStatus() == CouponStatus.USED) {
+        if (userCoupon.checkUserCouponUsed()) {
             throw new CustomCouponException(ErrorCode.COUPON_ALREADY_USED);
         }
     }
 
     // 할인 금액 연산
     private double getDiscountedPrice(Coupon coupon, double totalPrice) {
-        if (coupon.getDiscountPolicy() == DiscountPolicy.PERCENTAGE) {
+        if (coupon.checkDiscountPolicy()) {
             return calculatePercentageDiscount(coupon, totalPrice);
         } else {
             return calculateFixedDiscount(coupon);
