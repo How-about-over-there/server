@@ -1,6 +1,6 @@
 package com.haot.reservation.common.exceptions.handler;
 
-import com.haot.reservation.common.exceptions.CustomReservationException;
+import com.haot.reservation.common.exceptions.ReservationException;
 import com.haot.reservation.common.exceptions.DateUnavailableException;
 import com.haot.reservation.common.exceptions.LodgeServiceException;
 import com.haot.reservation.common.response.ApiResponse;
@@ -39,12 +39,12 @@ public class GlobalExceptionHandler {
         .body(ApiResponse.ERROR(ErrorCode.DATE_UNAVAILABLE_EXCEPTION));
   }
 
-  @ExceptionHandler(value = CustomReservationException.class)
+  @ExceptionHandler(value = ReservationException.class)
   public ResponseEntity<ApiResponse<Object>> handleCustomCouponException(
-      CustomReservationException customReservationException) {
+      ReservationException reservationException) {
 
-    log.error("{}", customReservationException.resCode.getMessage());
-    ResCodeIfs errorCode = customReservationException.resCode;
+    log.error("{}", reservationException.resCode.getMessage());
+    ResCodeIfs errorCode = reservationException.resCode;
 
     return ResponseEntity.status(errorCode.getHttpStatus())
         .body(ApiResponse.ERROR(errorCode));
