@@ -145,18 +145,25 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("결제 취소 테스트")
+    @DisplayName("결제 취소 성공 테스트")
     void cancelPayment() throws Exception {
         // Given: 테스트 데이터
         PaymentCancelRequest request = new PaymentCancelRequest("단순 변심");
-        String paymentId = "PAYMENT-UUID1";
+        String paymentId = "PAYMENT-UUID";
+        PaymentResponse response = new PaymentResponse("PAYMENT-UUID", "USER-UUID", "RESERVATION-UUID", "MERCHANT-UUID", 100000.0,100000.0, "CARD", "CANCELED");
+
+        // Mocking: PaymentService 동작 설정
+        when(paymentService.cancelPayment(request, paymentId, "USER-UUID", Role.USER)).thenReturn(response);
+
         // When: API 호출 및 결과 받기
-        MvcResult result = mockMvc.perform(get("/api/v1/payments/{paymentId}", paymentId)
+        MvcResult result = mockMvc.perform(post("/api/v1/payments/{paymentId}/cancel", paymentId)
+                        .header("X-User-Id", "USER-UUID")
+                        .header("X-User-Role", "USER")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusCode").value("8000"))
-                .andExpect(jsonPath("$.status").value("Success"))
+                .andExpect(jsonPath("$.status").value("SUCCESS"))
                 .andExpect(jsonPath("$.data.paymentId").value(paymentId))
                 .andReturn(); // 호출 결과를 MvcResult 로 반환
 
