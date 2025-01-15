@@ -74,10 +74,11 @@ public class LodgeDateServiceImpl implements LodgeDateService {
     }
 
     @Override
-    public void updateStatus(
-            LodgeDate lodgeDate, ReservationStatus status
-    ) {
-        lodgeDate.updateStatus(status);
+    public void updateStatusOf(List<String> lodgeDateIds, ReservationStatus newStatus) {
+        lodgeDateIds.forEach(dateId -> {
+            LodgeDate lodgeDate = getValidLodgeDateById(dateId);
+            lodgeDate.updateStatus(newStatus);
+        });
     }
 
     @Override

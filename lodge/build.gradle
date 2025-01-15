@@ -38,6 +38,10 @@ dependencies {
 
 	runtimeOnly 'org.postgresql:postgresql'
 
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.redisson:redisson-spring-boot-starter:3.27.0'
+
 	// querydsl
 	implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"

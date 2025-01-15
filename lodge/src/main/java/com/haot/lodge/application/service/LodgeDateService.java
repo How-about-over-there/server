@@ -26,7 +26,7 @@ public interface LodgeDateService {
             Pageable pageable, Lodge lodge, LocalDate start, LocalDate end
     );
 
-    void updateStatus(LodgeDate lodgeDate, ReservationStatus requestStatus);
+    void updateStatusOf(List<String> lodgeDateIds, ReservationStatus newStatus);
 
     void deleteAllByLodge(Lodge lodge, String userId);
 
