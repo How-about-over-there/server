@@ -1,5 +1,6 @@
 package com.haot.user.application.service;
 
+import com.haot.user.application.dto.req.AdminUserUpdateRequest;
 import com.haot.user.application.dto.res.AdminUserGetResponse;
 import com.haot.user.common.exception.ErrorCode;
 import com.haot.user.common.exception.UserException;
@@ -21,5 +22,23 @@ public class AdminUserCRUDServiceImpl implements AdminUserCRUDService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
     return AdminUserGetResponse.of(user);
+  }
+
+  @Override
+  @Transactional
+  public void updateUser(String userId, AdminUserUpdateRequest adminUserUpdateRequest) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
+    user.updateName(adminUserUpdateRequest.name());
+    user.updatePassword(adminUserUpdateRequest.password());
+    user.updateEmail(adminUserUpdateRequest.email());
+    user.updatePhoneNumber(adminUserUpdateRequest.phoneNumber());
+    user.updateBirthDate(adminUserUpdateRequest.birthDate());
+    user.updateGender(adminUserUpdateRequest.gender());
+    user.updatePreferredLanguage(adminUserUpdateRequest.preferredLanguage());
+    user.updateCurrency(adminUserUpdateRequest.currency());
+    user.updateProfileImageUrl(adminUserUpdateRequest.profileImageUrl());
+    user.updateAddress(adminUserUpdateRequest.address());
+    user.updateRole(adminUserUpdateRequest.role());
   }
 }
