@@ -26,6 +26,8 @@ public enum ErrorCode {
     DATE_RANGE_TOO_LONG(HttpStatus.BAD_REQUEST, "5104", "날짜 범위는 최대 365일을 초과할 수 없습니다."),
     START_DATE_TOO_FAR(HttpStatus.BAD_REQUEST, "5105", "시작 날짜는 현재 날짜로부터 1년 이내여야 합니다."),
     OVERLAPPING_DATES(HttpStatus.BAD_REQUEST, "5106", "해당 기간에 생성된 날짜가 이미 존재합니다."),
+    UNSELECTABLE_DATE(HttpStatus.CONFLICT, "5107", "예약 불가능한 날짜가 존재합니다."),
+    ALREADY_CHANGED_DATE_STATUS(HttpStatus.CONFLICT, "5107", "이미 해당 상태로 변경된 날짜입니다."),
 
     INVALID_DATE_STATUS(HttpStatus.BAD_REQUEST, "5105", "상태 타입이 유효하지 않습니다."),
     CANNOT_DELETE_SCHEDULED_DATE(HttpStatus.CONFLICT, "5106", "예약된 날짜는 삭제할 수 없습니다."),
