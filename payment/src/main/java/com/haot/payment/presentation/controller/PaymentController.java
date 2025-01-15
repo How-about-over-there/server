@@ -39,7 +39,7 @@ public class PaymentController {
 
         PaymentResponse payment = paymentService.createPayment(request, userId, role);
         log.info("paymentId ::::: {}", payment.paymentId());
-        log.info("token ::::: {}", token.substring(7));
+        log.info("Bearer token ::::: {}", token);
         // 프론트엔드 URL 반환
         String paymentPageUrl = String.format(
                 "/payment.html?paymentId=%s&orderName=%s&amount=%f&payMethod=%s&authToken=%s",
@@ -47,7 +47,7 @@ public class PaymentController {
                 payment.reservationId(),
                 payment.price(),
                 payment.method(),
-                token.substring(7)
+                token
         );
         return ApiResponse.success(Map.of(
                 "payment", payment,            // PaymentResponse 객체 포함
