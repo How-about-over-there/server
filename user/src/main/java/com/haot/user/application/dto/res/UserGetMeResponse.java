@@ -9,7 +9,6 @@ import lombok.Builder;
 @Builder
 public record UserGetMeResponse(
     String name,
-    String password,
     String email,
     String phoneNumber,
     LocalDate birthDate,
@@ -25,7 +24,6 @@ public record UserGetMeResponse(
   public static UserGetMeResponse of(User user) {
     return UserGetMeResponse.builder()
         .name(user.getName())
-        .password(user.getPassword())
         .email(user.getEmail())
         .phoneNumber(user.getPhoneNumber())
         .birthDate(user.getBirthDate())

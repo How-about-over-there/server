@@ -11,7 +11,6 @@ import lombok.Builder;
 public record AdminUserGetResponse(
     String userId,
     String name,
-    String password,
     String email,
     String phoneNumber,
     LocalDate birthDate,
@@ -34,7 +33,6 @@ public record AdminUserGetResponse(
     return AdminUserGetResponse.builder()
         .userId(user.getId())
         .name(user.getName())
-        .password(user.getPassword())
         .email(user.getEmail())
         .phoneNumber(user.getPhoneNumber())
         .birthDate(user.getBirthDate())
