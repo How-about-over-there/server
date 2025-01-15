@@ -1,6 +1,130 @@
 version: '3.7'
 
 services:
+  eureka-service:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: eureka-service
+    ports:
+      - "19090:19090"
+    networks:
+      - msa-network
+  gateway-service:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: gateway-service
+    ports:
+      - "19091:19091"
+    depends_on:
+      - eureka-service
+    networks:
+      - msa-network
+  auth-service:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "19092:19092"
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #user
+  user-service:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "19094:19094"
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #coupons
+  coupon-service:
+    build:
+      context: ./coupon
+      dockerfile: Dockerfile
+    container_name: coupon-service
+    ports:
+      - "19096:19096"
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #lodge
+  lodge-service:
+    build:
+      context: ./lodge
+      dockerfile: Dockerfile
+    container_name: lodge-service
+    ports:
+      - "19098:19098"
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #payment
+  payment-service:
+    build:
+      context: ./payment
+      dockerfile: Dockerfile
+    container_name: payment-service
+    ports:
+      - "19102:19102"
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #point
+  point-service:
+    build:
+      context: ./point
+      dockerfile: Dockerfile
+    container_name: point-service
+    ports:
+      - "19104:19104"
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #reservation
+  reservation-service:
+    build:
+      context: ./reservation
+      dockerfile: Dockerfile
+    container_name: reservation-service
+    ports:
+      - "19100:19100"
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+  #review
+  review-service:
+    build:
+      context: ./review
+      dockerfile: Dockerfile
+    container_name: review-service
+    ports:
+      - "19106:19106"
+    depends_on:
+      - eureka-service
+      - gateway-service
+    networks:
+      - msa-network
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: haot-zookeeper
@@ -10,7 +134,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
     networks:
-      - kafka_network
+      - msa-network
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -28,7 +152,7 @@ services:
     depends_on:
       - zookeeper
     networks:
-      - kafka_network
+      - msa-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -42,7 +166,7 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
     networks:
-      - kafka_network
+      - msa-network
 
   zipkin:
     image: openzipkin/zipkin:latest
@@ -50,16 +174,16 @@ services:
     ports:
       - "9411:9411"
     networks:
-      - kafka_network
-
+      - msa-network
+      -
   redis:
     image: redis:latest
     container_name: redis
     ports:
       - "6389:6379"
     networks:
-      - kafka_network
+      - msa-network
 
 networks:
-  kafka_network:
+  msa-network:
     driver: bridge
