@@ -97,4 +97,70 @@ public class User extends BaseEntity {
         .build();
   }
 
+  public void updateName(String name) {
+    if (name != null) {
+      this.name = name;
+    }
+  }
+
+  public void updatePassword(String password) {
+    if (password != null) {
+      this.password = password;
+    }
+  }
+
+  public void updateEmail(String email) {
+    if (email != null) {
+      this.email = email;
+    }
+  }
+
+  public void updatePhoneNumber(String phoneNumber) {
+    if (phoneNumber != null) {
+      this.phoneNumber = phoneNumber;
+    }
+  }
+
+  public void updateRole(Role role) {
+    if (role != null) {
+      this.role = role;
+    }
+  }
+
+  public void updateBirthDate(LocalDate birthDate) {
+    if (birthDate != null) {
+      this.birthDate = birthDate;
+    }
+  }
+
+  public void updateGender(Gender gender) {
+    if (gender != null) {
+      this.gender = gender;
+    }
+  }
+
+  public void updatePreferredLanguage(String preferredLanguage) {
+    if (preferredLanguage != null) {
+      this.preferredLanguage = preferredLanguage;
+    }
+  }
+
+  public void updateCurrency(String currency) {
+    if (currency != null) {
+      this.currency = currency;
+    }
+  }
+
+  public void updateProfileImageUrl(String profileImageUrl) {
+    if (profileImageUrl != null) {
+      this.profileImageUrl = profileImageUrl;
+    }
+  }
+
+  public void updateAddress(String address) {
+    if (address != null) {
+      this.address = address;
+    }
+  }
+
 }
