@@ -56,8 +56,10 @@ public class PaymentController {
     @PostMapping("/{paymentId}/complete")
     @ResponseStatus(HttpStatus.OK)
     @RoleCheck({Role.USER, Role.ADMIN})
-    public ApiResponse<PaymentResponse> completePayment(@PathVariable String paymentId) {
-        PaymentResponse payment = paymentService.completePayment(paymentId);
+    public ApiResponse<PaymentResponse> completePayment(@PathVariable String paymentId,
+                                                        @RequestHeader("X-User-Id") String userId,
+                                                        @RequestHeader("X-User-Role") Role role) {
+        PaymentResponse payment = paymentService.completePayment(paymentId, userId, role);
         log.info("결제 완료 정보: {}", ApiResponse.success(payment)); // 결제 확인 출력
         return ApiResponse.success(payment);
     }
@@ -66,8 +68,10 @@ public class PaymentController {
     @GetMapping("/{paymentId}")
     @ResponseStatus(HttpStatus.OK)
     @RoleCheck({Role.USER, Role.ADMIN})
-    public ApiResponse<PaymentResponse> getPaymentById(@PathVariable String paymentId) {
-        return ApiResponse.success(paymentService.getPaymentById(paymentId));
+    public ApiResponse<PaymentResponse> getPaymentById(@PathVariable String paymentId,
+                                                       @RequestHeader("X-User-Id") String userId,
+                                                       @RequestHeader("X-User-Role") Role role)  {
+        return ApiResponse.success(paymentService.getPaymentById(paymentId, userId, role));
     }
 
     // 결제 전체 조회 및 검색
@@ -76,9 +80,11 @@ public class PaymentController {
     @RoleCheck({Role.USER, Role.ADMIN})
     public ApiResponse<Page<PaymentResponse>> getPayments(
             @ModelAttribute PaymentSearchRequest request,
-            @PageableDefault(size = 10, direction = Sort.Direction.ASC, sort = "createdAt") Pageable pageable
+            @PageableDefault(size = 10, direction = Sort.Direction.ASC, sort = "createdAt") Pageable pageable,
+            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("X-User-Role") Role role
     ) {
-        return ApiResponse.success(paymentService.getPayments(request, pageable));
+        return ApiResponse.success(paymentService.getPayments(request, pageable, userId, role));
     }
 
     // 결제 취소 요청
@@ -86,8 +92,10 @@ public class PaymentController {
     @ResponseStatus(HttpStatus.OK)
     @RoleCheck({Role.USER, Role.ADMIN})
     public ApiResponse<PaymentResponse> cancelPayment(@Valid @RequestBody PaymentCancelRequest request,
-                                                      @PathVariable String paymentId) {
-        return ApiResponse.success(paymentService.cancelPayment(request, paymentId));
+                                                      @PathVariable String paymentId,
+                                                      @RequestHeader("X-User-Id") String userId,
+                                                      @RequestHeader("X-User-Role") Role role) {
+        return ApiResponse.success(paymentService.cancelPayment(request, paymentId, userId, role));
     }
 
 }

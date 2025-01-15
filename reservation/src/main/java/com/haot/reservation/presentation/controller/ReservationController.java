@@ -1,6 +1,7 @@
 package com.haot.reservation.presentation.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.haot.reservation.application.dtos.req.ReservationCancelRequest;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
 import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
@@ -38,7 +39,7 @@ public class ReservationController {
       @RequestBody ReservationCreateRequest reservationCreateRequest,
       @RequestHeader(value = "X-User-Id", required = true) String userId,
       @RequestHeader(value = "X-User-Role", required = true) Role role
-  ) throws JsonProcessingException {
+  ) {
     return ApiResponse.success(
         reservationService.createReservation(reservationCreateRequest, userId, role));
   }
@@ -67,16 +68,21 @@ public class ReservationController {
       @PathVariable String reservationId,
       @RequestHeader(value = "X-User-Id", required = true) String userId,
       @RequestHeader(value = "X-User-Role", required = true) Role role
-  ) throws JsonProcessingException {
+  ) {
     reservationService.updateReservation(reservationUpdateRequest, reservationId, userId, role);
     return ApiResponse.success();
   }
 
+  @RoleCheck(Role.USER)
   @ResponseStatus(HttpStatus.OK)
   @DeleteMapping("/{reservationId}")
-  public ApiResponse<Void> deleteReservation(
-      @PathVariable String reservationId
+  public ApiResponse<Void> cancelReservation(
+      @PathVariable String reservationId,
+      @RequestBody ReservationCancelRequest reservationCancelRequest,
+      @RequestHeader(value = "X-User-Id", required = true) String userId,
+      @RequestHeader(value = "X-User-Role", required = true) Role role
   ) {
+    reservationService.cancelReservation(reservationId, reservationCancelRequest, userId, role);
     return ApiResponse.success();
   }
 

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface PointHistoryRepository extends JpaRepository<PointHistory, String> {
+public interface PointHistoryRepository extends JpaRepository<PointHistory, String> , PointHistoryRepositoryCustom{
     @Query("SELECT ph FROM PointHistory ph WHERE ph.point.id = :pointId AND ph.status = 'PENDING'")
     Optional<PointHistory> findPendingHistory(@Param("pointId") String pointId);
 

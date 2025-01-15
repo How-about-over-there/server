@@ -10,6 +10,8 @@ public enum ErrorCode {
     // 0000: Common Error
     VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "0009", "Validation failed"),
 
+    AMAZON_SERVICE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "0100", "Amazon Service error"),
+
     // 5000: Lodge Error
     LODGE_NOT_FOUND(HttpStatus.NOT_FOUND, "5001", "일치하는 숙소 정보를 찾을 수 없습니다."),
     LODGE_RULE_NOT_FOUND(HttpStatus.NOT_FOUND, "5002", "일치하는 숙소 규칙 정보를 찾을 수 없습니다."),
@@ -30,7 +32,8 @@ public enum ErrorCode {
 
     // 5500: Service Common
     FORBIDDEN_ACCESS_LODGE(HttpStatus.FORBIDDEN,"5501", "해당 숙소의 관리자만 접근 가능합니다."),
-    UNSUPPORTED_SORT_TYPE(HttpStatus.BAD_REQUEST, "5500", "지원하지 않는 정렬 방식입니다.");
+    UNSUPPORTED_SORT_TYPE(HttpStatus.BAD_REQUEST, "5500", "지원하지 않는 정렬 방식입니다."),
+    FIlE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "5502", "이미지 업로드에 실패했습니다.");
 
     private final HttpStatus status;
     private final String code;

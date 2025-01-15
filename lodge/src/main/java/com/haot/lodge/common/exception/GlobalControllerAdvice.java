@@ -1,6 +1,8 @@
 package com.haot.lodge.common.exception;
 
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.haot.lodge.common.response.ApiResponse;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,5 +37,19 @@ public class GlobalControllerAdvice {
                 .map(error -> error.getField() + " : " + error.getDefaultMessage())
                 .collect(Collectors.toList());
         return ApiResponse.fail(ErrorCode.VALIDATION_EXCEPTION, errors);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(AmazonClientException.class)
+    public ApiResponse<Void> amazonClientException(final AmazonClientException e){
+        log.error(e.getMessage(), e);
+        return ApiResponse.fail(ErrorCode.AMAZON_SERVICE_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(AmazonServiceException.class)
+    public ApiResponse<Void> amazonServiceException(final AmazonServiceException e){
+        log.error(e.getMessage(), e);
+        return ApiResponse.fail(ErrorCode.AMAZON_SERVICE_ERROR);
     }
 }

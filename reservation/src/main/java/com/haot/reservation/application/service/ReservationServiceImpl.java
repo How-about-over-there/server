@@ -1,7 +1,7 @@
 package com.haot.reservation.application.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.haot.reservation.application.dtos.req.ReservationCancelRequest;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
 import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
@@ -26,6 +26,7 @@ import com.haot.reservation.infrastructure.dtos.coupon.ReservationVerifyResponse
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateReadResponse;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeDateUpdateStatusRequest;
 import com.haot.reservation.infrastructure.dtos.lodge.LodgeReadOneResponse;
+import com.haot.reservation.infrastructure.dtos.payment.PaymentCancelRequest;
 import com.haot.reservation.infrastructure.dtos.payment.PaymentCreateRequest;
 import com.haot.reservation.infrastructure.dtos.payment.PaymentResponse;
 import com.haot.reservation.infrastructure.dtos.point.PaymentDataResponse;
@@ -63,7 +64,7 @@ public class ReservationServiceImpl implements ReservationService {
       ReservationCreateRequest request,
       String userId,
       Role role
-  ) throws JsonProcessingException {
+  ) {
 
     Double totalPrice = 0.0;
     String lodgeName = getLodgeName(request.lodgeId());
@@ -101,29 +102,21 @@ public class ReservationServiceImpl implements ReservationService {
         pointApplied = true;
       }
 
-    } catch (Exception e) {
       // 롤백: 숙소 상태, 쿠폰 상태, 포인트 상태 되돌림
+    } catch (Exception e) {
       updateLodgeStatus(lodgeDateIds, "EMPTY");
 
       if (couponApplied) {
         // 쿠폰 롤백
-        log.info("Rolling back coupon. UserId: {}, Role: {}, ReservationCouponId: {}", userId, role,
-            reservationCouponId);
         rollbackReservationCoupon(userId, role, reservationCouponId);
       }
       if (pointApplied) {
         updatePointStatus(
-            new PointStatusRequest(
-                "롤백으로 인한 상태 변경 요청",
-                "ROLLBACK",
-                null
-            ),
-            pointHistoryId,
-            userId,
-            role
+            new PointStatusRequest("상태 변경", "ROLLBACK", null),
+            pointHistoryId, userId, role
         );
       }
-      throw e; // Exception 재발생으로 트랜잭션 롤백
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
 
     Reservation reservation = Reservation.createReservation(
@@ -152,19 +145,20 @@ public class ReservationServiceImpl implements ReservationService {
 
     // paymentId 적용
     reservation.getPayment(paymentData.paymentId());
-    System.out.println(reservation);
 
     return ReservationGetResponse.of(reservation, paymentData.paymentUrl());
   }
 
   @Transactional(readOnly = true)
-  public ReservationGetResponse getReservation(String reservationId, String userId, Role role) {
+  public ReservationGetResponse getReservation(
+      String reservationId,
+      String userId,
+      Role role
+  ) {
 
     Reservation reservation = findReservationById(reservationId);
 
-    if (!reservation.getUserId().equals(userId)) {
-      throw new CustomReservationException(ErrorCode.UNAUTHORIZED_ACCESS);
-    }
+    validateReservationOwnership(reservation, userId);
 
     return ReservationGetResponse.of(reservation, null);
   }
@@ -175,24 +169,56 @@ public class ReservationServiceImpl implements ReservationService {
       String reservationId,
       String userId,
       Role role
-  ) throws JsonProcessingException {
+  ) {
 
     Reservation reservation = findReservationById(reservationId);
 
     switch (reservationUpdateRequest.status()) {
-      case "COMPLETED" -> completeReservation(reservation, userId, role);
-      case "CANCELED" -> cancelReservation(reservation, userId, role);
+      case "COMPLETED" -> {
+        completeReservation(reservation, userId, role);
+        reservation.completedReservation();
+      }
+      case "CANCELED" -> {
+        cancelReservation(reservation, userId, role);
+        reservation.cancelReservation();
+      }
       default -> throw new IllegalArgumentException("Invalid status");
     }
   }
 
+  @Transactional
+  public void cancelReservation(
+      String reservationId,
+      ReservationCancelRequest request,
+      String userId,
+      Role role
+  ) {
+
+    Reservation reservation = findReservationById(reservationId);
+
+    validateReservationOwnership(reservation, userId);
+    validateCancellationReason(request.reason());
+
+    String paymentStatus = requestCancelPayment(request.reason(), reservation.getPaymentId(), userId, role);
+
+    if ("CANCELLED".equals(paymentStatus)) {
+      cancelReservation(reservation, userId, role);
+      reservation.cancelReservation();
+    } else {
+      throw new CustomReservationException(ErrorCode.PAYMENT_ERROR);
+    }
+  }
+
+
   // 숙소 이름 가져오기
-  private String getLodgeName(String lodgeId) throws JsonProcessingException {
+  private String getLodgeName(String lodgeId) {
     try {
       ApiResponse<LodgeReadOneResponse> response = lodgeClient.readOne(lodgeId);
       return response.data().lodge().name();
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -201,7 +227,7 @@ public class ReservationServiceImpl implements ReservationService {
       String lodgeId,
       LocalDate checkInDate,
       LocalDate checkOutDate
-  ) throws JsonProcessingException {
+  ) {
     try {
       Pageable pageable = PageRequest.of(0, 30);
       ApiResponse<SliceResponse<LodgeDateReadResponse>> response =
@@ -210,6 +236,8 @@ public class ReservationServiceImpl implements ReservationService {
       return response.data().content();
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
@@ -217,7 +245,7 @@ public class ReservationServiceImpl implements ReservationService {
   private LodgeDataGetResponse applyLodge(
       ReservationCreateRequest request,
       List<LodgeDateReadResponse> dates
-  ) throws JsonProcessingException {
+  ) {
 
     Double totalPrice = 0.0;
     List<String> lodgeDateIds = new ArrayList<>();
@@ -234,13 +262,13 @@ public class ReservationServiceImpl implements ReservationService {
         throw new DateUnavailableException(ErrorCode.DATE_UNAVAILABLE_EXCEPTION);
       }
     }
-
     try {
       updateLodgeStatus(lodgeDateIds, "WAITING");
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
-
     return LodgeDataGetResponse.of(lodgeDateIds, totalPrice);
   }
 
@@ -250,20 +278,20 @@ public class ReservationServiceImpl implements ReservationService {
       LocalDate checkOutDate,
       LocalDate lodgeDate,
       ReservationStatus status) {
-    return !lodgeDate.isBefore(checkInDate) && !lodgeDate.isAfter(checkOutDate)
+    return !lodgeDate.isBefore(checkInDate)
+        && !lodgeDate.isAfter(checkOutDate)
         && ReservationStatus.EMPTY == status;
   }
 
   // 쿠폰 적용 (totalPrice 적용 및 reservationCouponId 반환)
-  private CouponDataResponse applyCoupon(String userId, String userCouponId, double lodgePrice)
-      throws JsonProcessingException {
+  private CouponDataResponse applyCoupon(String userId, String userCouponId, double lodgePrice) {
     if (userCouponId == null) {
       return null;
     }
     try {
-      ApiResponse<ReservationVerifyResponse> response = couponClient.verify(
-          new FeignVerifyRequest(userCouponId, userId, lodgePrice)
-      );
+      ApiResponse<ReservationVerifyResponse> response =
+          couponClient.verify(new FeignVerifyRequest(userCouponId, userId, lodgePrice)
+          );
 
       return CouponDataResponse.of(
           response.data().reservationCouponId(),
@@ -271,32 +299,28 @@ public class ReservationServiceImpl implements ReservationService {
       );
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
   // 포인트 적용 및 차감
-  private String applyPoint(String pointId, Double usePoint, String userId, Role role)
-      throws JsonProcessingException {
+  private String applyPoint(String pointId, Double usePoint, String userId, Role role) {
     try {
       return pointClient.usePoint(
-              new PointTransactionRequest(
-                  usePoint,
-                  "USE",
-                  "포인트 사용"
-              ),
-              pointId,
-              userId,
-              role
+              new PointTransactionRequest(usePoint, "USE", "포인트 사용"),
+              pointId, userId, role
           )
           .data().historyId();
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
   // 예약 완료 시 실행되는 메서드
-  private void completeReservation(Reservation reservation, String userId, Role role)
-      throws JsonProcessingException {
+  private void completeReservation(Reservation reservation, String userId, Role role) {
 
     List<ReservationDate> reservationDateList = reservation.getDates();
     List<String> dateIds = reservationDateList.stream()
@@ -319,12 +343,13 @@ public class ReservationServiceImpl implements ReservationService {
       }
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
   // 예약 취소 시 실행되는 메서드
-  private void cancelReservation(Reservation reservation, String userId, Role role)
-      throws JsonProcessingException {
+  private void cancelReservation(Reservation reservation, String userId, Role role) {
 
     List<ReservationDate> reservationDateList = reservation.getDates();
     List<String> dateIds = reservationDateList.stream()
@@ -347,53 +372,74 @@ public class ReservationServiceImpl implements ReservationService {
       }
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
   // Lodge date 상태 변경
-  private void updateLodgeStatus(List<String> lodgeDateIds, String status)
-      throws JsonProcessingException {
+  private void updateLodgeStatus(List<String> lodgeDateIds, String status) {
     try {
       lodgeClient.updateStatus(new LodgeDateUpdateStatusRequest(lodgeDateIds, status));
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
   // 쿠폰 상태 변경
-  private void updateCouponStatus(String couponId, String status) throws JsonProcessingException {
+  private void updateCouponStatus(
+      String couponId,
+      String status
+  ) {
     if (couponId != null) {
       try {
         couponClient.confirmReservation(couponId, new FeignConfirmReservationRequest(status));
       } catch (FeignException e) {
         throw FeignExceptionUtils.parseFeignException(e);
+      } catch (Exception e) {
+        throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
       }
     }
   }
 
   // 포인트 상태 변경
-  private void updatePointStatus(PointStatusRequest request, String pointHistoryId, String userId,
-      Role role)
-      throws JsonProcessingException {
+  private void updatePointStatus(
+      PointStatusRequest request,
+      String pointHistoryId,
+      String userId,
+      Role role
+  ) {
     try {
       pointClient.updateStatusPoint(request, pointHistoryId, userId, role);
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
-  private void rollbackReservationCoupon(String userId, Role role, String reservationCouponId)
-      throws JsonProcessingException {
+  private void rollbackReservationCoupon(
+      String userId,
+      Role role,
+      String reservationCouponId
+  ) {
     try {
       couponClient.rollbackReservationCoupon(userId, role, reservationCouponId);
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
   // 결제 요청
-  private PaymentDataResponse requestPayment(Reservation reservation, String userId, Role role)
-      throws JsonProcessingException {
+  private PaymentDataResponse requestPayment(
+      Reservation reservation,
+      String userId,
+      Role role
+  ) {
     try {
       ApiResponse<Map<String, Object>> response = paymentClient.createPayment(
           new PaymentCreateRequest(
@@ -416,11 +462,36 @@ public class ReservationServiceImpl implements ReservationService {
       return PaymentDataResponse.of(paymentId, paymentUrl);
     } catch (FeignException e) {
       throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
+    }
+  }
+
+  private String requestCancelPayment(String reason, String paymentId, String userId, Role role) {
+    try {
+      ApiResponse<PaymentResponse> paymentResponse = paymentClient.cancelPayment(new PaymentCancelRequest(reason), paymentId, userId, role);
+      return  paymentResponse.data().status();
+    } catch (FeignException e) {
+      throw FeignExceptionUtils.parseFeignException(e);
+    } catch (Exception e) {
+      throw new CustomReservationException(ErrorCode.GENERAL_ERROR);
     }
   }
 
   private Reservation findReservationById(String reservationId) {
     return reservationRepository.findById(reservationId)
         .orElseThrow(() -> new CustomReservationException(ErrorCode.RESERVATION_NOT_FOUND));
+  }
+
+  private void validateReservationOwnership(Reservation reservation, String userId) {
+    if (!reservation.getUserId().equals(userId)) {
+      throw new CustomReservationException(ErrorCode.UNAUTHORIZED_ACCESS);
+    }
+  }
+
+  private void validateCancellationReason(String reason) {
+    if (!"CANCELED".equals(reason)) {
+      throw new CustomReservationException(ErrorCode.INVALID_CANCELLATION_REASON);
+    }
   }
 }
