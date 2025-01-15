@@ -5,9 +5,11 @@ import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.domain.enums.PaymentMethod;
 import com.haot.payment.domain.enums.PaymentStatus;
 import com.haot.payment.domain.model.Payment;
+import com.haot.payment.domain.utils.QueryDslSortUtils;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +21,22 @@ import org.springframework.data.domain.Sort;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.haot.payment.domain.model.QPayment.payment;
+import static com.haot.payment.domain.utils.QueryDslSortUtils.getOrderSpecifiers;
 
 @RequiredArgsConstructor
 public class PaymentRepositoryCustomImpl implements PaymentRepositoryCustom {
     private final JPAQueryFactory queryFactory;
+
+    // 동적 정렬 조건 생성
+    private static final Map<String, ComparableExpressionBase<?>> SORT_PARAMS = Map.of(
+                "method", payment.method,
+                "status", payment.status,
+                "price", payment.price,
+                "createdAt", payment.createdAt
+    );
 
     @Override
     public Page<PaymentResponse> searchPayments(PaymentSearchRequest request, Pageable pageable) {
@@ -34,7 +46,7 @@ public class PaymentRepositoryCustomImpl implements PaymentRepositoryCustom {
                 .where(booleanBuilder(request))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(buildOrderSpecifier(pageable).toArray(new OrderSpecifier[0])); // 정렬 조건
+                .orderBy(getOrderSpecifiers(pageable, SORT_PARAMS)); // 정렬 조건
 
         // 페이징 처리
         long total = query.fetchCount(); // 전체 데이터 수 계산
@@ -110,27 +122,5 @@ public class PaymentRepositoryCustomImpl implements PaymentRepositoryCustom {
             return payment.createdAt.loe(end.atTime(23, 59, 59));
         }
         return null;
-    }
-
-    // 동적 정렬 조건 생성
-    private List<OrderSpecifier<?>> buildOrderSpecifier(Pageable pageable) {
-        List<OrderSpecifier<?>> orders = new ArrayList<>();
-
-        for (Sort.Order sortOrder : pageable.getSort()) {
-            // 정렬 방향 결정 (ASC/DESC)
-            com.querydsl.core.types.Order direction = sortOrder.isAscending()
-                    ? com.querydsl.core.types.Order.ASC
-                    : com.querydsl.core.types.Order.DESC;
-
-            // 정렬 필드에 따른 OrderSpecifier 추가
-            switch (sortOrder.getProperty()) {
-                case "method" -> orders.add(new OrderSpecifier<>(direction, payment.method));
-                case "status" -> orders.add(new OrderSpecifier<>(direction, payment.status));
-                case "price" -> orders.add(new OrderSpecifier<>(direction, payment.price));
-                case "createdAt" -> orders.add(new OrderSpecifier<>(direction, payment.createdAt));
-                default -> orders.add(new OrderSpecifier<>(com.querydsl.core.types.Order.ASC, payment.createdAt)); // 기본 정렬
-            }
-        }
-        return orders;
     }
 }

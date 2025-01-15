@@ -166,11 +166,6 @@ public class PaymentServiceImpl implements PaymentService{
         if (role == Role.USER) {
             request.setUserId(userId);
         }
-        // 페이지 크기 고정
-        int pageSize = pageable.getPageSize();
-        if (pageSize != 10 && pageSize != 30 && pageSize != 50) {
-            pageSize = 10; // 기본값으로 설정
-        }
         return paymentRepository.searchPayments(request, pageable);
     }
 
