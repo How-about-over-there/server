@@ -34,17 +34,20 @@ public class PaymentController {
     @RoleCheck({Role.USER, Role.ADMIN})
     public ApiResponse<Map<String, Object>> createPayment(@Valid @RequestBody PaymentCreateRequest request,
                                                           @RequestHeader("X-User-Id") String userId,
-                                                          @RequestHeader("X-User-Role") Role role) {
+                                                          @RequestHeader("X-User-Role") Role role,
+                                                          @RequestHeader("Authorization") String token) {
 
         PaymentResponse payment = paymentService.createPayment(request, userId, role);
         log.info("paymentId ::::: {}", payment.paymentId());
+        log.info("Bearer token ::::: {}", token);
         // 프론트엔드 URL 반환
         String paymentPageUrl = String.format(
-                "/payment.html?paymentId=%s&orderName=%s&amount=%f&payMethod=%s",
+                "/payment.html?paymentId=%s&orderName=%s&amount=%f&payMethod=%s&authToken=%s",
                 payment.paymentId(),
                 payment.reservationId(),
                 payment.price(),
-                payment.method()
+                payment.method(),
+                token
         );
         return ApiResponse.success(Map.of(
                 "payment", payment,            // PaymentResponse 객체 포함
