@@ -1,6 +1,7 @@
 package com.haot.reservation.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.haot.reservation.application.dtos.ReservationData;
 import com.haot.reservation.application.dtos.req.ReservationAdminSearchRequest;
 import com.haot.reservation.application.dtos.req.ReservationCancelRequest;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
@@ -70,56 +71,48 @@ public class ReservationServiceImpl implements ReservationService {
       Role role
   ) {
 
-    Double totalPrice = 0.0;
     String lodgeName = getLodgeName(request.lodgeId());
-    String reservationCouponId = "";
-    String paymentId = "";
-    String pointHistoryId = "";
-    boolean couponApplied = false;
-    boolean pointApplied = false;
 
-    // 예약 가능한 날짜 확인
     List<LodgeDateReadResponse> availableDates = getAvailableDates(
         request.lodgeId(),
         request.checkInDate(),
         request.checkOutDate()
     );
 
-    // 숙소 상태 WAITING 및 totalPrice 계산
     LodgeDataGetResponse lodgeDataGetResponse = applyLodge(request, availableDates);
-    totalPrice = lodgeDataGetResponse.totalPrice();
+
     List<String> lodgeDateIds = lodgeDataGetResponse.lodgeDateIds();
+    ReservationData reservationData = ReservationData.createWithLodgePrice(lodgeDataGetResponse.totalPrice());
 
     try {
-      // 쿠폰 적용 가격(totalPrice) 업데이트 및 reservationCouponId 반환
-      CouponDataResponse couponResponse = applyCoupon(userId, request.couponId(), totalPrice);
+      CouponDataResponse couponResponse = applyCoupon(userId, request.couponId(), reservationData.getTotalPrice());
+
       if (couponResponse != null) {
-        reservationCouponId = couponResponse.reservationCouponId();
-        totalPrice = couponResponse.totalPrice();
-        couponApplied = true;
+        reservationData.applyCoupon(couponResponse.reservationCouponId(), couponResponse.totalPrice());
       }
 
-      // 포인트 적용 및 차감 가격(totalPrice) 업데이트
       if (request.pointId() != null) {
-        pointHistoryId = applyPoint(request.pointId(), request.point(), userId, role);
-        totalPrice -= request.point();
-        pointApplied = true;
+        String pointHistoryId = applyPoint(request.pointId(), request.point(), userId, role);
+        reservationData.applyPoint(pointHistoryId, request.point());
       }
 
-      // 롤백: 숙소 상태, 쿠폰 상태, 포인트 상태 되돌림
     } catch (Exception e) {
+
       updateLodgeStatus(lodgeDateIds, "EMPTY");
 
-      if (couponApplied) {
-        // 쿠폰 롤백
-        rollbackReservationCoupon(userId, role, reservationCouponId);
+      if (reservationData.isCouponApplied()) {
+        rollbackReservationCoupon(userId, role, reservationData.getReservationCouponId());
       }
-      if (pointApplied) {
+
+      if (reservationData.isPointApplied()) {
         updatePointStatus(
             new PointStatusRequest("상태 변경", "ROLLBACK", null),
-            pointHistoryId, userId, role
+            reservationData.getPointHistoryId(),
+            userId,
+            role
         );
       }
+
       throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
 
@@ -130,24 +123,21 @@ public class ReservationServiceImpl implements ReservationService {
         request.checkOutDate(),
         request.numGuests(),
         request.request(),
-        totalPrice,
-        paymentId,
-        reservationCouponId,
-        pointHistoryId
+        reservationData.getTotalPrice(),
+        reservationData.getPaymentId(),
+        reservationData.getReservationCouponId(),
+        reservationData.getPointHistoryId()
     );
 
     List<ReservationDate> reservationDateList = lodgeDateIds.stream()
         .map(dateId -> ReservationDate.create(reservation, dateId))
         .toList();
 
-    // 예약 날짜 생성 및 저장
     reservation.getDates().addAll(reservationDateList);
     reservationRepository.save(reservation);
 
-    // 결제 요청 URL 반환
     PaymentDataResponse paymentData = requestPayment(reservation, userId, role);
 
-    // paymentId 적용
     reservation.getPayment(paymentData.paymentId());
 
     return ReservationGetResponse.of(reservation, paymentData.paymentUrl());
@@ -365,10 +355,10 @@ public class ReservationServiceImpl implements ReservationService {
 
     try {
       updateLodgeStatus(dateIds, "COMPLETE");
-      if (!Objects.equals(reservation.getReservationCouponId(), "")) {
+      if (!Objects.equals(reservation.getReservationCouponId(), "NOT_APPLIED")) {
         updateCouponStatus(reservation.getReservationCouponId(), "COMPLETED");
       }
-      if (!Objects.equals(reservation.getPointHistoryId(), "")) {
+      if (!Objects.equals(reservation.getPointHistoryId(), "NOT_APPLIED")) {
         updatePointStatus(request, reservation.getPointHistoryId(), userId, role);
       }
     } catch (FeignException e) {
@@ -394,10 +384,10 @@ public class ReservationServiceImpl implements ReservationService {
 
     try {
       updateLodgeStatus(dateIds, "EMPTY");
-      if (!Objects.equals(reservation.getReservationCouponId(), "")) {
+      if (!Objects.equals(reservation.getReservationCouponId(), "NOT_APPLIED")) {
         updateCouponStatus(reservation.getReservationCouponId(), "CANCEL");
       }
-      if (!Objects.equals(reservation.getPointHistoryId(), "")) {
+      if (!Objects.equals(reservation.getPointHistoryId(), "NOT_APPLIED")) {
         updatePointStatus(request, reservation.getPointHistoryId(), userId, role);
       }
     } catch (FeignException e) {
