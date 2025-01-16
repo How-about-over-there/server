@@ -235,10 +235,8 @@ public class ReservationServiceImpl implements ReservationService {
     try {
       ApiResponse<LodgeReadOneResponse> response = lodgeClient.readOne(lodgeId);
       return response.data().lodge().name();
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
@@ -254,10 +252,8 @@ public class ReservationServiceImpl implements ReservationService {
           lodgeClient.read(pageable, lodgeId, checkInDate, checkOutDate);
 
       return response.data().content();
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
@@ -284,10 +280,8 @@ public class ReservationServiceImpl implements ReservationService {
     }
     try {
       updateLodgeStatus(lodgeDateIds, "WAITING");
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
     return LodgeDataGetResponse.of(lodgeDateIds, totalPrice);
   }
@@ -317,10 +311,8 @@ public class ReservationServiceImpl implements ReservationService {
           response.data().reservationCouponId(),
           response.data().discountedPrice()
       );
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
@@ -332,10 +324,8 @@ public class ReservationServiceImpl implements ReservationService {
               pointId, userId, role
           )
           .data().historyId();
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
@@ -361,10 +351,8 @@ public class ReservationServiceImpl implements ReservationService {
       if (!Objects.equals(reservation.getPointHistoryId(), "NOT_APPLIED")) {
         updatePointStatus(request, reservation.getPointHistoryId(), userId, role);
       }
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
@@ -390,10 +378,8 @@ public class ReservationServiceImpl implements ReservationService {
       if (!Objects.equals(reservation.getPointHistoryId(), "NOT_APPLIED")) {
         updatePointStatus(request, reservation.getPointHistoryId(), userId, role);
       }
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
@@ -401,10 +387,8 @@ public class ReservationServiceImpl implements ReservationService {
   private void updateLodgeStatus(List<String> lodgeDateIds, String status) {
     try {
       lodgeClient.updateStatus(new LodgeDateUpdateStatusRequest(lodgeDateIds, status));
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
@@ -416,10 +400,8 @@ public class ReservationServiceImpl implements ReservationService {
     if (couponId != null) {
       try {
         couponClient.confirmReservation(couponId, new FeignConfirmReservationRequest(status));
-      } catch (FeignException e) {
-        throw FeignExceptionUtils.parseFeignException(e);
       } catch (Exception e) {
-        throw new ReservationException(ErrorCode.GENERAL_ERROR);
+        throw FeignExceptionUtils.parseFeignException(e);
       }
     }
   }
@@ -433,10 +415,8 @@ public class ReservationServiceImpl implements ReservationService {
   ) {
     try {
       pointClient.updateStatusPoint(request, pointHistoryId, userId, role);
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
@@ -447,10 +427,8 @@ public class ReservationServiceImpl implements ReservationService {
   ) {
     try {
       couponClient.rollbackReservationCoupon(userId, role, reservationCouponId);
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
@@ -480,10 +458,8 @@ public class ReservationServiceImpl implements ReservationService {
       String paymentUrl = (String) data.get("paymentPageUrl");
 
       return PaymentDataResponse.of(paymentId, paymentUrl);
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
@@ -491,10 +467,8 @@ public class ReservationServiceImpl implements ReservationService {
     try {
       ApiResponse<PaymentResponse> paymentResponse = paymentClient.cancelPayment(new PaymentCancelRequest(reason), paymentId, userId, role);
       return  paymentResponse.data().status();
-    } catch (FeignException e) {
-      throw FeignExceptionUtils.parseFeignException(e);
     } catch (Exception e) {
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
+      throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
