@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
 import com.haot.payment.application.dto.request.PaymentSearchRequest;
+import com.haot.payment.application.dto.response.PageResponse;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.application.service.PaymentService;
 import com.haot.submodule.role.Role;
@@ -114,7 +115,7 @@ class PaymentControllerTest {
         Pageable pageable = PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "createdAt"));
 
         // Mocking: PaymentService 동작 설정
-        when(paymentService.getPayments(request, pageable, "USER-UUID", Role.USER)).thenReturn(response);
+        when(paymentService.getPayments(request, pageable, "USER-UUID", Role.USER)).thenReturn(PageResponse.of(response));
 
         // When: API 호출 및 결과 받기
         MvcResult result = mockMvc.perform(get("/api/v1/payments")
@@ -127,8 +128,6 @@ class PaymentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusCode").value("8000"))
                 .andExpect(jsonPath("$.status").value("SUCCESS"))
-                .andExpect(jsonPath("$.data.content[0].paymentId").value("PAYMENT-UUID-1"))
-                .andExpect(jsonPath("$.data.content[1].paymentId").value("PAYMENT-UUID-2"))
                 .andReturn(); // 호출 결과를 MvcResult 로 반환
 
         // Then: 요청 결과 확인

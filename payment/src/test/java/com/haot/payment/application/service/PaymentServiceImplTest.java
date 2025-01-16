@@ -14,7 +14,6 @@ import com.haot.payment.infrastructure.client.dto.request.ReservationUpdateReque
 import com.haot.payment.infrastructure.client.dto.response.PortOneResponse;
 import com.haot.payment.infrastructure.repository.PaymentRepository;
 import com.haot.submodule.role.Role;
-import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
