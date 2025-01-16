@@ -1,5 +1,6 @@
 package com.haot.lodge.domain.repository;
 
+import com.haot.lodge.application.dto.LodgeDateSearchCriteria;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeDate;
 import java.time.LocalDate;
@@ -12,7 +13,7 @@ public interface LodgeDateCustomRepository {
             String lodgeId, LocalDate startDate, LocalDate endDate
     );
 
-    Slice<LodgeDate> findAllLodgeDateByRange(
-            Pageable pageable, Lodge lodge, LocalDate start, LocalDate end
+    Slice<LodgeDate> findAllDateByConditionOf(
+            Pageable pageable, LodgeDateSearchCriteria searchCriteria
     );
 }
