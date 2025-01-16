@@ -3,6 +3,7 @@ package com.haot.coupon.infrastructure.kafka;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haot.coupon.application.cache.RedisRepository;
+import com.haot.coupon.application.dto.UnlimitedCouponDto;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
 import com.haot.coupon.application.kafka.CouponIssueConsumer;
 import com.haot.coupon.application.service.CouponService;
@@ -10,8 +11,11 @@ import com.haot.coupon.common.exceptions.CustomCouponException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @Slf4j(topic = "CouponIssuedConsumer")
@@ -24,16 +28,18 @@ public class CouponIssuedConsumer implements CouponIssueConsumer {
 
     @Override
     @KafkaListener(topics = "coupon-issue-priority", groupId = "coupon-user-priority")
-    public void issuePriorityCouponListener(@Header("X-User-Id") String userId, String message) throws JsonProcessingException {
+    public void issuePriorityCouponListener(@Header("X-User-Id") String userId, String message,
+                                            Acknowledgment acknowledgment) throws JsonProcessingException {
 
         CouponCustomerCreateRequest request = objectMapper.readValue(message, CouponCustomerCreateRequest.class);
 
-        try{
+        try {
             couponService.issueCoupon(userId, request);
-        }catch(CustomCouponException ex){
-            if(ex.resCode.getCode().equals("4016")){
+            acknowledgment.acknowledge();
+        } catch (CustomCouponException ex) {
+            if (ex.resCode.getCode().equals("4016")) {
 
-                if(redisRepository.getCouponQuantityByIds(request.eventId(), request.couponId()) != null){
+                if (redisRepository.getCouponQuantityByIds(request.eventId(), request.couponId()) != null) {
                     redisRepository.increaseCouponQuantity(request.eventId(), request.couponId());
                 }
             }
@@ -41,17 +47,33 @@ public class CouponIssuedConsumer implements CouponIssueConsumer {
     }
 
     @Override
-    @KafkaListener(topics = "coupon-issue-unlimited", groupId = "coupon-user-unlimited")
-    public void issueUnlimitedCouponListener(@Header("X-User-Id") String userId, String message) throws JsonProcessingException {
-        CouponCustomerCreateRequest request = objectMapper.readValue(message, CouponCustomerCreateRequest.class);
+    @KafkaListener(topics = "coupon-issue-unlimited",
+            groupId = "coupon-user-unlimited",
+            containerFactory = "parallelKafkaListenerContainerFactory")
+    public void batchIssueUnlimitedCouponListener(List<UnlimitedCouponDto> requests,
+                                                  Acknowledgment acknowledgment) {
+        couponService.batchIssueCoupon(requests);
+        acknowledgment.acknowledge();
+    }
 
-        try{
-            couponService.issueCoupon(userId, request);
-        }catch(CustomCouponException ex){
-            if(ex.resCode.getCode().equals("4016")){
-                log.error("already issued user : {}, CouponId : {}",userId, request.couponId());
-            }
-        }
+    @Override
+    @KafkaListener(topics = "coupon-issue-unlimited",
+            groupId = "coupon-user-unlimited",
+            containerFactory = "parallelKafkaListenerContainerFactory")
+    public void batchIssueUnlimitedCouponListener1(List<UnlimitedCouponDto> requests,
+                                                  Acknowledgment acknowledgment) {
+        couponService.batchIssueCoupon(requests);
+        acknowledgment.acknowledge();
+    }
+
+    @Override
+    @KafkaListener(topics = "coupon-issue-unlimited",
+            groupId = "coupon-user-unlimited",
+            containerFactory = "parallelKafkaListenerContainerFactory")
+    public void batchIssueUnlimitedCouponListener2(List<UnlimitedCouponDto> requests,
+                                                  Acknowledgment acknowledgment) {
+        couponService.batchIssueCoupon(requests);
+        acknowledgment.acknowledge();
     }
 
 }

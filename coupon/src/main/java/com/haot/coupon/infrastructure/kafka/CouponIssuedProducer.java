@@ -1,5 +1,6 @@
 package com.haot.coupon.infrastructure.kafka;
 
+import com.haot.coupon.application.dto.UnlimitedCouponDto;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
 import com.haot.coupon.application.kafka.CouponIssueProducer;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +27,11 @@ public class CouponIssuedProducer implements CouponIssueProducer {
     }
 
     @Override
-    public void sendIssueUnlimitedCoupon(String userId, CouponCustomerCreateRequest request) {
+    public void sendIssueUnlimitedCoupon(UnlimitedCouponDto request) {
 
         kafkaTemplate.send(
                 MessageBuilder.withPayload(request)
                         .setHeader(KafkaHeaders.TOPIC, "coupon-issue-unlimited")
-                        .setHeader("X-User-Id", userId)
                         .build())
         ;
     }
