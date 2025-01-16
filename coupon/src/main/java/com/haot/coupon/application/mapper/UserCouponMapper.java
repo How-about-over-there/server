@@ -15,6 +15,12 @@ public interface UserCouponMapper {
     @Mapping(target = "isDelete", ignore = true)
     UserCoupon toEntity(String userId, Coupon coupon);
 
+    @Mapping(target = "coupon.id", source = "couponId")
+    @Mapping(target = "couponStatus", constant = "DISTRIBUTED")
+    @Mapping(target = "usedDate", ignore = true)
+    @Mapping(target = "isDelete", ignore = true)
+    UserCoupon toEntity(String userId, String couponId);
+
     // QueryDsl mapping
     @Mapping(source = "coupon.id", target = "couponId")
     @Mapping(source = "coupon.name", target = "couponName")
