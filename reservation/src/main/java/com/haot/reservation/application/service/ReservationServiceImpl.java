@@ -106,10 +106,8 @@ public class ReservationServiceImpl implements ReservationService {
 
       if (reservationData.isPointApplied()) {
         updatePointStatus(
-            new PointStatusRequest("상태 변경", "ROLLBACK", null),
-            reservationData.getPointHistoryId(),
-            userId,
-            role
+            PointStatusRequest.of("상태 변경", "ROLLBACK"),
+            reservationData.getPointHistoryId(), userId, role
         );
       }
 
@@ -130,8 +128,7 @@ public class ReservationServiceImpl implements ReservationService {
     );
 
     List<ReservationDate> reservationDateList = lodgeDateIds.stream()
-        .map(dateId -> ReservationDate.create(reservation, dateId))
-        .toList();
+        .map(dateId -> ReservationDate.create(reservation, dateId)).toList();
 
     reservation.getDates().addAll(reservationDateList);
     reservationRepository.save(reservation);
@@ -202,7 +199,7 @@ public class ReservationServiceImpl implements ReservationService {
         cancelReservation(reservation, userId, role);
         reservation.cancelReservation();
       }
-      default -> throw new IllegalArgumentException("Invalid status");
+      default -> throw new ReservationException(ErrorCode.RESERVATION_CHANGE_FAILED);
     }
   }
 
@@ -299,18 +296,19 @@ public class ReservationServiceImpl implements ReservationService {
 
   // 쿠폰 적용 (totalPrice 적용 및 reservationCouponId 반환)
   private CouponDataResponse applyCoupon(String userId, String userCouponId, double lodgePrice) {
+
     if (userCouponId == null) {
       return null;
     }
     try {
       ApiResponse<ReservationVerifyResponse> response =
-          couponClient.verify(new FeignVerifyRequest(userCouponId, userId, lodgePrice)
-          );
+          couponClient.verify(FeignVerifyRequest.of(userCouponId, userId, lodgePrice));
 
       return CouponDataResponse.of(
           response.data().reservationCouponId(),
           response.data().discountedPrice()
       );
+
     } catch (Exception e) {
       throw FeignExceptionUtils.parseFeignException(e);
     }
@@ -320,10 +318,8 @@ public class ReservationServiceImpl implements ReservationService {
   private String applyPoint(String pointId, Double usePoint, String userId, Role role) {
     try {
       return pointClient.usePoint(
-              new PointTransactionRequest(usePoint, "USE", "포인트 사용"),
-              pointId, userId, role
-          )
-          .data().historyId();
+          PointTransactionRequest.of(usePoint), pointId, userId, role).data().historyId();
+
     } catch (Exception e) {
       throw FeignExceptionUtils.parseFeignException(e);
     }
@@ -337,19 +333,15 @@ public class ReservationServiceImpl implements ReservationService {
         .map(ReservationDate::getDateId)
         .toList();
 
-    PointStatusRequest request = new PointStatusRequest(
-        reservation.getReservationId(),
-        "PROCESSED",
-        null
-    );
-
     try {
       updateLodgeStatus(dateIds, "COMPLETE");
       if (!Objects.equals(reservation.getReservationCouponId(), "NOT_APPLIED")) {
         updateCouponStatus(reservation.getReservationCouponId(), "COMPLETED");
       }
       if (!Objects.equals(reservation.getPointHistoryId(), "NOT_APPLIED")) {
-        updatePointStatus(request, reservation.getPointHistoryId(), userId, role);
+        updatePointStatus(
+            PointStatusRequest.of(reservation.getReservationId(), "PROCESSED"),
+            reservation.getPointHistoryId(), userId, role);
       }
     } catch (Exception e) {
       throw FeignExceptionUtils.parseFeignException(e);
@@ -361,14 +353,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     List<ReservationDate> reservationDateList = reservation.getDates();
     List<String> dateIds = reservationDateList.stream()
-        .map(ReservationDate::getDateId)
-        .toList();
-
-    PointStatusRequest request = new PointStatusRequest(
-        reservation.getReservationId(),
-        "ROLLBACK",
-        null
-    );
+        .map(ReservationDate::getDateId).toList();
 
     try {
       updateLodgeStatus(dateIds, "EMPTY");
@@ -376,7 +361,9 @@ public class ReservationServiceImpl implements ReservationService {
         updateCouponStatus(reservation.getReservationCouponId(), "CANCEL");
       }
       if (!Objects.equals(reservation.getPointHistoryId(), "NOT_APPLIED")) {
-        updatePointStatus(request, reservation.getPointHistoryId(), userId, role);
+        updatePointStatus(
+            PointStatusRequest.of(reservation.getReservationId(), "ROLLBACK"),
+            reservation.getPointHistoryId(), userId, role);
       }
     } catch (Exception e) {
       throw FeignExceptionUtils.parseFeignException(e);
@@ -386,20 +373,17 @@ public class ReservationServiceImpl implements ReservationService {
   // Lodge date 상태 변경
   private void updateLodgeStatus(List<String> lodgeDateIds, String status) {
     try {
-      lodgeClient.updateStatus(new LodgeDateUpdateStatusRequest(lodgeDateIds, status));
+      lodgeClient.updateStatus(LodgeDateUpdateStatusRequest.of(lodgeDateIds, status));
     } catch (Exception e) {
       throw FeignExceptionUtils.parseFeignException(e);
     }
   }
 
   // 쿠폰 상태 변경
-  private void updateCouponStatus(
-      String couponId,
-      String status
-  ) {
+  private void updateCouponStatus(String couponId, String status) {
     if (couponId != null) {
       try {
-        couponClient.confirmReservation(couponId, new FeignConfirmReservationRequest(status));
+        couponClient.confirmReservation(couponId, FeignConfirmReservationRequest.of(status));
       } catch (Exception e) {
         throw FeignExceptionUtils.parseFeignException(e);
       }
@@ -440,13 +424,12 @@ public class ReservationServiceImpl implements ReservationService {
   ) {
     try {
       ApiResponse<Map<String, Object>> response = paymentClient.createPayment(
-          new PaymentCreateRequest(
+          PaymentCreateRequest.of(
               reservation.getUserId(),
               reservation.getReservationId(),
               reservation.getTotalPrice(),
               "CARD"),
-          userId,
-          role
+          userId, role
       );
       Map<String, Object> data = response.data();
       ObjectMapper objectMapper = new ObjectMapper();
@@ -465,7 +448,7 @@ public class ReservationServiceImpl implements ReservationService {
 
   private String requestCancelPayment(String reason, String paymentId, String userId, Role role) {
     try {
-      ApiResponse<PaymentResponse> paymentResponse = paymentClient.cancelPayment(new PaymentCancelRequest(reason), paymentId, userId, role);
+      ApiResponse<PaymentResponse> paymentResponse = paymentClient.cancelPayment(PaymentCancelRequest.of(reason), paymentId, userId, role);
       return  paymentResponse.data().status();
     } catch (Exception e) {
       throw FeignExceptionUtils.parseFeignException(e);
