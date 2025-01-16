@@ -41,10 +41,8 @@ public class PaymentServiceImpl implements PaymentService{
     public PaymentResponse createPayment(PaymentCreateRequest request, String userId, Role role) {
 
         // 1. userId 요청 데이터 유효성 검사
-        if (role == Role.USER) {
-            if (!request.userId().equals(userId)) {
-                throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
-            }
+        if (role == Role.USER && !request.userId().equals(userId)) {
+            throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
         }
 
         // 2. 결제 정보 저장
@@ -177,10 +175,8 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     private void validUser(Payment payment, String userId, Role role) {
-        if (role == Role.USER) {
-            if (!payment.getUserId().equals(userId)) {
-                throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
-            }
+        if (role == Role.USER && !payment.getUserId().equals(userId)) {
+            throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
         }
     }
 }

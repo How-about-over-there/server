@@ -6,7 +6,6 @@ import com.haot.payment.application.dto.request.PaymentSearchRequest;
 import com.haot.payment.application.dto.response.PageResponse;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.submodule.role.Role;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PaymentService {
