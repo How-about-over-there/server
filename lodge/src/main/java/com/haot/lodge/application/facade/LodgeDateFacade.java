@@ -1,6 +1,7 @@
 package com.haot.lodge.application.facade;
 
 
+import com.haot.lodge.application.dto.LodgeDateSearchCriteria;
 import com.haot.lodge.application.service.LodgeDateService;
 import com.haot.lodge.application.service.LodgeService;
 import com.haot.lodge.common.exception.ErrorCode;
@@ -10,6 +11,7 @@ import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeDate;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
 import com.haot.lodge.presentation.request.LodgeDateAddRequest;
+import com.haot.lodge.presentation.request.LodgeDateSearchParams;
 import com.haot.lodge.presentation.response.LodgeDateReadResponse;
 import com.haot.submodule.role.Role;
 import java.time.LocalDate;
@@ -44,11 +46,11 @@ public class LodgeDateFacade {
 
     @Transactional(readOnly = true)
     public Slice<LodgeDateReadResponse> readLodgeDates(
-            Pageable pageable, String lodgeId, LocalDate start, LocalDate end
+            Pageable pageable, LodgeDateSearchParams params
     ) {
-        Lodge lodge = lodgeService.getValidLodgeById(lodgeId);
+        Lodge lodge = lodgeService.getValidLodgeById(params.lodgeId());
         return lodgeDateService
-                .readAll(pageable, lodge, start, end)
+                .readAllBy(pageable, LodgeDateSearchCriteria.of(lodge, params))
                 .map(LodgeDateReadResponse::new);
     }
 
