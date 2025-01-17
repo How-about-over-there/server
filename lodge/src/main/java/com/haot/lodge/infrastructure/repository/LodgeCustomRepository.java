@@ -1,4 +1,4 @@
-package com.haot.lodge.domain.repository;
+package com.haot.lodge.infrastructure.repository;
 
 import com.haot.lodge.application.dto.LodgeSearchCriteria;
 import com.haot.lodge.domain.model.Lodge;

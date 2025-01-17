@@ -1,15 +1,15 @@
-package com.haot.lodge.domain.repository.impl;
+package com.haot.lodge.infrastructure.repository.impl;
 
 import static com.haot.lodge.domain.model.QLodge.lodge;
 import static com.haot.lodge.domain.model.QLodgeDate.lodgeDate;
 import static com.haot.lodge.domain.model.QLodgeRule.lodgeRule;
-import static com.haot.lodge.domain.utils.QuerydslSortUtils.getOrderSpecifiers;
+import static com.haot.lodge.infrastructure.utils.QuerydslSortUtils.getOrderSpecifiers;
 
 
 import com.haot.lodge.application.dto.LodgeSearchCriteria;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
-import com.haot.lodge.domain.repository.LodgeCustomRepository;
+import com.haot.lodge.infrastructure.repository.LodgeCustomRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;

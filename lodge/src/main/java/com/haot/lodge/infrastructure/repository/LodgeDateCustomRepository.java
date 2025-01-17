@@ -1,7 +1,6 @@
-package com.haot.lodge.domain.repository;
+package com.haot.lodge.infrastructure.repository;
 
 import com.haot.lodge.application.dto.LodgeDateSearchCriteria;
-import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeDate;
 import java.time.LocalDate;
 import org.springframework.data.domain.Pageable;
