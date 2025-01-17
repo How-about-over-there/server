@@ -3,16 +3,19 @@ package com.haot.lodge.application.facade;
 
 import com.haot.lodge.application.service.LodgeDateService;
 import com.haot.lodge.application.service.LodgeService;
+import com.haot.lodge.common.exception.ErrorCode;
+import com.haot.lodge.common.exception.LodgeException;
+import com.haot.lodge.common.utils.RedisLockManager;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeDate;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
 import com.haot.lodge.presentation.request.LodgeDateAddRequest;
-import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
 import com.haot.lodge.presentation.response.LodgeDateReadResponse;
 import com.haot.submodule.role.Role;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,8 @@ public class LodgeDateFacade {
 
     private final LodgeService lodgeService;
     private final LodgeDateService lodgeDateService;
+    private final RedisLockManager redisLockManager;
+    private static final String LOCK_PREFIX = "lock:lodgeDate:";
 
     @Transactional
     public void addLodgeDate(
@@ -57,11 +62,14 @@ public class LodgeDateFacade {
     }
 
     @Transactional
-    public void updateStatus(List<String> ids, String requestStatus) {
+    public void updateStatus(List<String> dateIds, String requestStatus) {
+        List<RLock> locks = redisLockManager.acquireLocks(dateIds, LOCK_PREFIX, 5, 10);
         ReservationStatus status = ReservationStatus.fromString(requestStatus);
-        ids.forEach(id -> {
-            LodgeDate lodgeDate = lodgeDateService.getValidLodgeDateById(id);
-            lodgeDateService.updateStatus(lodgeDate, status);
-        });
+        try {
+            lodgeDateService.updateStatusOf(dateIds, status);
+        } finally {
+            redisLockManager.releaseLocks(locks);
+        }
     }
+
 }

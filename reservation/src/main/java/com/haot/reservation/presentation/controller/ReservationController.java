@@ -3,6 +3,7 @@ package com.haot.reservation.presentation.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.haot.reservation.application.dtos.req.ReservationCancelRequest;
 import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
+import com.haot.reservation.application.dtos.req.ReservationSearchRequest;
 import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
 import com.haot.reservation.application.service.ReservationService;
@@ -13,6 +14,11 @@ import com.haot.submodule.role.RoleCheck;
 import java.time.LocalDate;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,10 +61,16 @@ public class ReservationController {
     return ApiResponse.success(reservationService.getReservation(reservationId, userId, role));
   }
 
+  @RoleCheck(Role.USER)
   @ResponseStatus(HttpStatus.OK)
   @GetMapping
-  public ApiResponse<ReservationGetResponse> searchReservation() {
-    return ApiResponse.success(createDummyReservation());
+  public ApiResponse<Page<ReservationGetResponse>> searchReservation(
+      ReservationSearchRequest reservationSearchRequest,
+      @RequestHeader(value = "X-User-Id", required = true) String userId,
+      @RequestHeader(value = "X-User-Role", required = true) Role role,
+      Pageable pageable
+  ) {
+    return ApiResponse.success(reservationService.searchReservation(reservationSearchRequest, userId, role, pageable));
   }
 
   @ResponseStatus(HttpStatus.OK)
@@ -84,20 +96,5 @@ public class ReservationController {
   ) {
     reservationService.cancelReservation(reservationId, reservationCancelRequest, userId, role);
     return ApiResponse.success();
-  }
-
-  private ReservationGetResponse createDummyReservation() {
-    return ReservationGetResponse.builder()
-        .reservationId(String.valueOf(UUID.randomUUID()))
-        .userId(String.valueOf(UUID.randomUUID()))
-        .lodgeName("엄청난 숙소")
-        .checkInDate(LocalDate.of(2025, 1, 1))
-        .checkOutDate(LocalDate.of(2025, 1, 5))
-        .numGuests(4)
-        .request("~~ 준비해주세요!")
-        .totalPrice(350000.0)
-        .status(ReservationStatus.PENDING)
-        .paymentId("결제 대기중 입니다.")
-        .build();
   }
 }

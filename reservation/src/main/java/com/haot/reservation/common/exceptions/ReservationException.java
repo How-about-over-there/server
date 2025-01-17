@@ -6,6 +6,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CustomReservationException extends RuntimeException{
+public class ReservationException extends RuntimeException{
   public ResCodeIfs resCode;
 }

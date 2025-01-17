@@ -53,6 +53,9 @@ public class LodgeDate extends BaseEntity {
     }
 
     public void updateStatus(ReservationStatus status) {
+        if(this.status == status) {
+            throw new LodgeException(ErrorCode.ALREADY_CHANGED_DATE_STATUS);
+        }
         this.status = status;
     }
 
