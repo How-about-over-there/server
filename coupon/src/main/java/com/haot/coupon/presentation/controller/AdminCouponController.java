@@ -71,7 +71,7 @@ public class AdminCouponController {
     }
 
     // 쿠폰 생성 API
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @RoleCheck(Role.ADMIN)
     public ApiResponse<CouponCreateResponse> create(@Valid @RequestBody CouponCreateRequest request) {
