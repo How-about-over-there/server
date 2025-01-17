@@ -1,4 +1,4 @@
-package com.haot.lodge.presentation.request;
+package com.haot.lodge.presentation.request.lodge;
 
 import java.time.LocalDate;
 

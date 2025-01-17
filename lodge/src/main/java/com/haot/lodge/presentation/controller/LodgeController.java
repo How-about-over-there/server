@@ -1,16 +1,16 @@
 package com.haot.lodge.presentation.controller;
 
 
-import com.haot.lodge.application.response.LodgeResponse;
+import com.haot.lodge.application.dto.LodgeDto;
 import com.haot.lodge.application.facade.LodgeFacade;
 import com.haot.lodge.common.response.SliceResponse;
-import com.haot.lodge.presentation.request.LodgeSearchParams;
-import com.haot.lodge.presentation.response.LodgeReadAllResponse;
-import com.haot.lodge.presentation.request.LodgeCreateRequest;
-import com.haot.lodge.presentation.request.LodgeUpdateRequest;
+import com.haot.lodge.presentation.request.lodge.LodgeSearchParams;
+import com.haot.lodge.application.response.LodgeReadAllResponse;
+import com.haot.lodge.presentation.request.lodge.LodgeCreateRequest;
+import com.haot.lodge.presentation.request.lodge.LodgeUpdateRequest;
 import com.haot.lodge.common.response.ApiResponse;
-import com.haot.lodge.presentation.response.LodgeCreateResponse;
-import com.haot.lodge.presentation.response.LodgeReadOneResponse;
+import com.haot.lodge.application.response.LodgeCreateResponse;
+import com.haot.lodge.application.response.LodgeReadOneResponse;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
@@ -47,7 +47,7 @@ public class LodgeController {
             @RequestHeader("X-User-Id") String userId,
             @Valid LodgeCreateRequest request
     ) {
-        LodgeResponse lodge = lodgeFacade.createLodge(userId, request);
+        LodgeDto lodge = lodgeFacade.createLodge(userId, request);
         return ApiResponse.success(new LodgeCreateResponse(lodge));
     }
 

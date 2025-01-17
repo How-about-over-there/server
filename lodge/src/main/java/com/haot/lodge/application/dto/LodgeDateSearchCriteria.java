@@ -1,7 +1,7 @@
 package com.haot.lodge.application.dto;
 
 import com.haot.lodge.domain.model.Lodge;
-import com.haot.lodge.presentation.request.LodgeDateSearchParams;
+import com.haot.lodge.presentation.request.lodgedate.LodgeDateSearchParams;
 import java.time.LocalDate;
 
 public record LodgeDateSearchCriteria(

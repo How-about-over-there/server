@@ -1,11 +1,11 @@
-package com.haot.lodge.application.response;
+package com.haot.lodge.application.dto;
 
 
 import com.haot.lodge.domain.model.Lodge;
 import lombok.Builder;
 
 @Builder
-public record LodgeResponse(
+public record LodgeDto(
         String id,
         String hostId,
         String name,
@@ -14,8 +14,8 @@ public record LodgeResponse(
         Integer term,
         Double basicPrice
 ) {
-    public static LodgeResponse from(Lodge lodge) {
-        return new LodgeResponse(
+    public static LodgeDto from(Lodge lodge) {
+        return new LodgeDto(
                 lodge.getId(),
                 lodge.getHostId(),
                 lodge.getName(),

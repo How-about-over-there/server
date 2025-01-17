@@ -2,20 +2,20 @@ package com.haot.lodge.application.facade;
 
 
 import com.haot.lodge.application.dto.LodgeSearchCriteria;
-import com.haot.lodge.application.response.LodgeImageResponse;
-import com.haot.lodge.application.response.LodgeResponse;
-import com.haot.lodge.application.response.LodgeRuleResponse;
+import com.haot.lodge.application.dto.LodgeImageDto;
+import com.haot.lodge.application.dto.LodgeDto;
+import com.haot.lodge.application.dto.LodgeRuleDto;
 import com.haot.lodge.application.service.LodgeDateService;
 import com.haot.lodge.application.service.LodgeImageService;
 import com.haot.lodge.application.service.LodgeRuleService;
 import com.haot.lodge.application.service.LodgeService;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeRule;
-import com.haot.lodge.presentation.request.LodgeCreateRequest;
-import com.haot.lodge.presentation.request.LodgeSearchParams;
-import com.haot.lodge.presentation.request.LodgeUpdateRequest;
-import com.haot.lodge.presentation.response.LodgeReadAllResponse;
-import com.haot.lodge.presentation.response.LodgeReadOneResponse;
+import com.haot.lodge.presentation.request.lodge.LodgeCreateRequest;
+import com.haot.lodge.presentation.request.lodge.LodgeSearchParams;
+import com.haot.lodge.presentation.request.lodge.LodgeUpdateRequest;
+import com.haot.lodge.application.response.LodgeReadAllResponse;
+import com.haot.lodge.application.response.LodgeReadOneResponse;
 import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -39,14 +39,14 @@ public class LodgeFacade {
     }
 
     @Transactional
-    public LodgeResponse createLodge(String userId, LodgeCreateRequest request) {
+    public LodgeDto createLodge(String userId, LodgeCreateRequest request) {
         Lodge lodge = lodgeService.create(
                 userId, request.name(), request.description(),
                 request.address(), request.term(), request.basicPrice());
         lodgeImageService.create(lodge, request.image(), request.imageTitle(), request.imageDescription());
         lodgeRuleService.create(lodge, request.maxReservationDay(), request.maxPersonnel(), request.customization());
         lodgeDateService.create(lodge, request.startDate(), request.endDate(), request.excludeDates());
-        return LodgeResponse.from(lodge);
+        return LodgeDto.from(lodge);
     }
 
     @Transactional(readOnly = true)
@@ -54,12 +54,12 @@ public class LodgeFacade {
         Lodge lodge = lodgeService.getValidLodgeById(lodgeId);
         LodgeRule rule = lodgeRuleService.getLodgeRuleByLodgeId(lodgeId);
         return new LodgeReadOneResponse(
-                LodgeResponse.from(lodge),
+                LodgeDto.from(lodge),
                 lodge.getImages()
                         .stream()
-                        .map(LodgeImageResponse::from)
+                        .map(LodgeImageDto::from)
                         .toList(),
-                LodgeRuleResponse.from(rule)
+                LodgeRuleDto.from(rule)
         );
     }
 
@@ -70,10 +70,10 @@ public class LodgeFacade {
         return lodgeService
                 .readAllBy(pageable, LodgeSearchCriteria.of(params, isOnlyCheckIn(params)))
                 .map(lodge -> new LodgeReadAllResponse(
-                        LodgeResponse.from(lodge),
+                        LodgeDto.from(lodge),
                         lodge.getImages()
                                 .stream()
-                                .map(LodgeImageResponse::from)
+                                .map(LodgeImageDto::from)
                                 .toList()
                 ));
     }

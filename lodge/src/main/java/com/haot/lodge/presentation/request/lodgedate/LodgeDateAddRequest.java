@@ -1,4 +1,4 @@
-package com.haot.lodge.presentation.request;
+package com.haot.lodge.presentation.request.lodgedate;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

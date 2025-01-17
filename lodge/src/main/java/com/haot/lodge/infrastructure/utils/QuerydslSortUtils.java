@@ -1,4 +1,4 @@
-package com.haot.lodge.domain.utils;
+package com.haot.lodge.infrastructure.utils;
 
 import com.haot.lodge.common.exception.ErrorCode;
 import com.haot.lodge.common.exception.LodgeException;
