@@ -1,5 +1,7 @@
 package com.haot.reservation.application.dtos;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationData {
 
+  private List<String> lodgeDateIds = new ArrayList<>();
   private Double totalPrice = 0.0;
   private String pointHistoryId = "NOT_APPLIED";
   private String reservationCouponId = "NOT_APPLIED";
@@ -16,8 +19,9 @@ public class ReservationData {
   private boolean couponApplied = false;
   private boolean pointApplied = false;
 
-  public static ReservationData createWithLodgePrice(Double lodgePrice) {
+  public static ReservationData createWithLodgeData(List<String> lodgeDateIds, Double lodgePrice) {
     ReservationData reservationData = new ReservationData();
+    reservationData.lodgeDateIds = lodgeDateIds;
     reservationData.totalPrice = lodgePrice;
     return reservationData;
   }
