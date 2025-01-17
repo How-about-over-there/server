@@ -8,6 +8,7 @@ import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
 import com.haot.reservation.application.dtos.res.ReservationGetResponse;
 import com.haot.reservation.application.service.ReservationService;
 import com.haot.reservation.common.response.ApiResponse;
+import com.haot.reservation.common.response.enums.SuccessCode;
 import com.haot.reservation.domain.model.ReservationStatus;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
@@ -46,7 +47,7 @@ public class ReservationController {
       @RequestHeader(value = "X-User-Id", required = true) String userId,
       @RequestHeader(value = "X-User-Role", required = true) Role role
   ) {
-    return ApiResponse.success(
+    return ApiResponse.SUCCESS(
         reservationService.createReservation(reservationCreateRequest, userId, role));
   }
 
@@ -58,7 +59,7 @@ public class ReservationController {
       @RequestHeader(value = "X-User-Id", required = true) String userId,
       @RequestHeader(value = "X-User-Role", required = true) Role role
   ) {
-    return ApiResponse.success(reservationService.getReservation(reservationId, userId, role));
+    return ApiResponse.SUCCESS(reservationService.getReservation(reservationId, userId, role));
   }
 
   @RoleCheck(Role.USER)
@@ -70,7 +71,7 @@ public class ReservationController {
       @RequestHeader(value = "X-User-Role", required = true) Role role,
       Pageable pageable
   ) {
-    return ApiResponse.success(reservationService.searchReservation(reservationSearchRequest, userId, role, pageable));
+    return ApiResponse.SUCCESS(reservationService.searchReservation(reservationSearchRequest, userId, role, pageable));
   }
 
   @ResponseStatus(HttpStatus.OK)
@@ -82,7 +83,7 @@ public class ReservationController {
       @RequestHeader(value = "X-User-Role", required = true) Role role
   ) {
     reservationService.updateReservation(reservationUpdateRequest, reservationId, userId, role);
-    return ApiResponse.success();
+    return ApiResponse.SUCCESS(SuccessCode.UPDATE_RESERVATION_SUCCESS);
   }
 
   @RoleCheck(Role.USER)
@@ -95,6 +96,6 @@ public class ReservationController {
       @RequestHeader(value = "X-User-Role", required = true) Role role
   ) {
     reservationService.cancelReservation(reservationId, reservationCancelRequest, userId, role);
-    return ApiResponse.success();
+    return ApiResponse.SUCCESS(SuccessCode.CANCEL_RESERVATION_SUCCESS);
   }
 }

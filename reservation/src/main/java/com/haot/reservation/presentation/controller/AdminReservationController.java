@@ -37,6 +37,6 @@ public class AdminReservationController {
       @RequestHeader(value = "X-User-Role", required = true) Role role,
       Pageable pageable
   ) {
-    return ApiResponse.success(reservationService.search(request, userId, role, pageable));
+    return ApiResponse.SUCCESS(reservationService.search(request, userId, role, pageable));
   }
 }
