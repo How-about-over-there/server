@@ -2,6 +2,7 @@ package com.haot.point.application.service;
 
 import com.haot.point.application.dto.request.history.PointHistorySearchRequest;
 import com.haot.point.application.dto.request.point.PointStatusRequest;
+import com.haot.point.application.dto.response.PageResponse;
 import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointHistoryResponse;
 import com.haot.point.common.exception.CustomPointException;
@@ -108,19 +109,15 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<PointHistoryResponse> getPointHistories(
+    public PageResponse<PointHistoryResponse> getPointHistories(
             PointHistorySearchRequest request, Pageable pageable, String userId, Role role) {
         // USER 요청의 경우
         if (role == Role.USER) {
             request.setUserId(userId);
             request.setStatus("PROCESSED");
         }
-        // 페이지 크기 고정
-        int pageSize = pageable.getPageSize();
-        if (pageSize != 10 && pageSize != 30 && pageSize != 50) {
-            pageSize = 10; // 기본값으로 설정
-        }
-        return pointHistoryRepository.searchPointHistories(request, pageable);
+        Page<PointHistoryResponse> pointHistories = pointHistoryRepository.searchPointHistories(request, pageable);
+        return PageResponse.of(pointHistories);
     }
 
     private PointHistory validPointHistory(String historyId) {
