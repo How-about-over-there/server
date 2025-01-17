@@ -1,6 +1,7 @@
 package com.haot.lodge.application.service;
 
-import com.haot.lodge.application.response.LodgeDateResponse;
+import com.haot.lodge.application.dto.LodgeDateSearchCriteria;
+import com.haot.lodge.application.dto.LodgeDateDto;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeDate;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
@@ -22,8 +23,8 @@ public interface LodgeDateService {
             List<LocalDate> excludeDates
     );
 
-    Slice<LodgeDateResponse> readAll(
-            Pageable pageable, Lodge lodge, LocalDate start, LocalDate end
+    Slice<LodgeDateDto> readAllBy(
+            Pageable pageable, LodgeDateSearchCriteria searchCriteria
     );
 
     void updateStatusOf(List<String> lodgeDateIds, ReservationStatus newStatus);

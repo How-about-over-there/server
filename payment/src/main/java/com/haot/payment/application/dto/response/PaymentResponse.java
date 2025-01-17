@@ -1,7 +1,9 @@
 package com.haot.payment.application.dto.response;
 
 import com.haot.payment.domain.model.Payment;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "결제 응답 DTO")
 public record PaymentResponse(
         String paymentId,
         String userId,

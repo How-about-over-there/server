@@ -4,14 +4,14 @@ package com.haot.lodge.presentation.controller;
 import com.haot.lodge.application.facade.LodgeDateFacade;
 import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.common.response.SliceResponse;
-import com.haot.lodge.presentation.request.LodgeDateAddRequest;
-import com.haot.lodge.presentation.request.LodgeDateUpdateRequest;
-import com.haot.lodge.presentation.request.LodgeDateUpdateStatusRequest;
-import com.haot.lodge.presentation.response.LodgeDateReadResponse;
+import com.haot.lodge.presentation.request.lodgedate.LodgeDateAddRequest;
+import com.haot.lodge.presentation.request.lodgedate.LodgeDateSearchParams;
+import com.haot.lodge.presentation.request.lodgedate.LodgeDateUpdateRequest;
+import com.haot.lodge.presentation.request.lodgedate.LodgeDateUpdateStatusRequest;
+import com.haot.lodge.application.response.LodgeDateReadResponse;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -19,13 +19,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,17 +50,14 @@ public class LodgeDateController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public ApiResponse<SliceResponse<LodgeDateReadResponse>> read(
+    public ApiResponse<SliceResponse<LodgeDateReadResponse>> readAll(
             @PageableDefault(size = 30)
             @SortDefault(sort = "date", direction = Direction.ASC)
             Pageable pageable,
-            @RequestParam(name = "lodgeId", required = true) String lodgeId,
-            @RequestParam(name = "start", required = false) LocalDate start,
-            @RequestParam(name = "end", required = false) LocalDate end
+            @Valid @ModelAttribute LodgeDateSearchParams searchParams
     ) {
         return ApiResponse.success(SliceResponse.of(
-                lodgeDateFacade.readLodgeDates(pageable, lodgeId, start, end)
-        ));
+                lodgeDateFacade.readLodgeDates(pageable, searchParams)));
     }
 
     @ResponseStatus(HttpStatus.OK)

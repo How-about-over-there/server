@@ -1,4 +1,4 @@
-package com.haot.lodge.domain.config;
+package com.haot.lodge.infrastructure.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

@@ -1,19 +1,19 @@
 package com.haot.lodge.presentation.controller;
 
 
-import com.haot.lodge.application.response.LodgeResponse;
+import com.haot.lodge.application.dto.LodgeDto;
 import com.haot.lodge.application.facade.LodgeFacade;
 import com.haot.lodge.common.response.SliceResponse;
-import com.haot.lodge.presentation.response.LodgeReadAllResponse;
-import com.haot.lodge.presentation.request.LodgeCreateRequest;
-import com.haot.lodge.presentation.request.LodgeUpdateRequest;
+import com.haot.lodge.presentation.request.lodge.LodgeSearchParams;
+import com.haot.lodge.application.response.LodgeReadAllResponse;
+import com.haot.lodge.presentation.request.lodge.LodgeCreateRequest;
+import com.haot.lodge.presentation.request.lodge.LodgeUpdateRequest;
 import com.haot.lodge.common.response.ApiResponse;
-import com.haot.lodge.presentation.response.LodgeCreateResponse;
-import com.haot.lodge.presentation.response.LodgeReadOneResponse;
+import com.haot.lodge.application.response.LodgeCreateResponse;
+import com.haot.lodge.application.response.LodgeReadOneResponse;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
-import java.time.LocalDate;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -23,13 +23,13 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,32 +47,23 @@ public class LodgeController {
             @RequestHeader("X-User-Id") String userId,
             @Valid LodgeCreateRequest request
     ) {
-        LodgeResponse lodge = lodgeFacade.createLodge(userId, request);
+        LodgeDto lodge = lodgeFacade.createLodge(userId, request);
         return ApiResponse.success(new LodgeCreateResponse(lodge));
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public ApiResponse<SliceResponse<LodgeReadAllResponse>> readAll(
-            @PageableDefault(size = 30)
+            @PageableDefault(size = 10)
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "createdAt", direction = Direction.DESC),
                     @SortDefault(sort = "updatedAt", direction = Direction.DESC)
             })
             Pageable pageable,
-            @RequestParam(name = "hostId", required = false) String hostId,
-            @RequestParam(name = "name", required = false) String name,
-            @RequestParam(name = "address", required = false) String address,
-            @RequestParam(name = "maxReservationDay", required = false) Integer maxReservationDay,
-            @RequestParam(name = "maxPersonnel", required = false) Integer maxPersonnel,
-            @RequestParam(name = "checkInDate", required = false) LocalDate checkInDate,
-            @RequestParam(name = "checkOutDate", required = false) LocalDate checkOutDate
+            @ModelAttribute LodgeSearchParams searchParams
     ) {
         return ApiResponse.success(SliceResponse.of(
-                lodgeFacade.readAllLodgeBy(
-                        pageable,
-                        hostId, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate)
-        ));
+                lodgeFacade.readAllLodgeBy(pageable, searchParams)));
     }
 
     @ResponseStatus(HttpStatus.OK)

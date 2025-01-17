@@ -2,6 +2,7 @@ package com.haot.lodge.domain.repository;
 
 
 import com.haot.lodge.domain.model.LodgeDate;
+import com.haot.lodge.infrastructure.repository.LodgeDateCustomRepository;
 import jakarta.persistence.LockModeType;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

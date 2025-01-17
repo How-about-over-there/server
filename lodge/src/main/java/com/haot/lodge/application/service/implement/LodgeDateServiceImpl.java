@@ -1,7 +1,8 @@
 package com.haot.lodge.application.service.implement;
 
 
-import com.haot.lodge.application.response.LodgeDateResponse;
+import com.haot.lodge.application.dto.LodgeDateSearchCriteria;
+import com.haot.lodge.application.dto.LodgeDateDto;
 import com.haot.lodge.application.service.LodgeDateService;
 import com.haot.lodge.common.exception.ErrorCode;
 import com.haot.lodge.common.exception.LodgeException;
@@ -65,12 +66,12 @@ public class LodgeDateServiceImpl implements LodgeDateService {
     }
 
     @Override
-    public Slice<LodgeDateResponse> readAll(
-            Pageable pageable, Lodge lodge, LocalDate start, LocalDate end
+    public Slice<LodgeDateDto> readAllBy(
+            Pageable pageable, LodgeDateSearchCriteria searchCriteria
     ) {
         return lodgeDateRepository
-                .findAllLodgeDateByRange(pageable, lodge, start, end)
-                .map(LodgeDateResponse::from);
+                .findAllDateByConditionOf(pageable, searchCriteria)
+                .map(LodgeDateDto::from);
     }
 
     @Override

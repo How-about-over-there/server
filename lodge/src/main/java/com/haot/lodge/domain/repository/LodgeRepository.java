@@ -2,6 +2,7 @@ package com.haot.lodge.domain.repository;
 
 
 import com.haot.lodge.domain.model.Lodge;
+import com.haot.lodge.infrastructure.repository.LodgeCustomRepository;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

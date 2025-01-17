@@ -1,11 +1,12 @@
-package com.haot.lodge.domain.repository.impl;
+package com.haot.lodge.infrastructure.repository.impl;
 
 import static com.haot.lodge.domain.model.QLodgeDate.lodgeDate;
-import static com.haot.lodge.domain.utils.QuerydslSortUtils.getOrderSpecifiers;
+import static com.haot.lodge.infrastructure.utils.QuerydslSortUtils.getOrderSpecifiers;
 
+import com.haot.lodge.application.dto.LodgeDateSearchCriteria;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.LodgeDate;
-import com.haot.lodge.domain.repository.LodgeDateCustomRepository;
+import com.haot.lodge.infrastructure.repository.LodgeDateCustomRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
@@ -46,10 +47,10 @@ public class LodgeDateCustomRepositoryImpl implements LodgeDateCustomRepository 
     }
 
     @Override
-    public Slice<LodgeDate> findAllLodgeDateByRange(
-            Pageable pageable, Lodge lodge, LocalDate start, LocalDate end
+    public Slice<LodgeDate> findAllDateByConditionOf(
+            Pageable pageable, LodgeDateSearchCriteria searchCriteria
     ) {
-        BooleanBuilder booleanBuilder = getBooleanBuilder(lodge, start, end);
+        BooleanBuilder booleanBuilder = getBooleanBuilder(searchCriteria);
         List<LodgeDate> result = queryFactory.selectFrom(lodgeDate)
                 .where(booleanBuilder)
                 .orderBy(getOrderSpecifiers(pageable, SORT_PARAMS))
@@ -63,12 +64,12 @@ public class LodgeDateCustomRepositoryImpl implements LodgeDateCustomRepository 
     }
 
     private BooleanBuilder getBooleanBuilder(
-            Lodge lodge, LocalDate start, LocalDate end
+            LodgeDateSearchCriteria searchCriteria
     ) {
         BooleanBuilder builder = new BooleanBuilder();
-        builder.and(eqLodge(lodge));
-        builder.and(afterStart(start));
-        builder.and(beforeEnd(end));
+        builder.and(eqLodge(searchCriteria.lodge()));
+        builder.and(afterStart(searchCriteria.start()));
+        builder.and(beforeEnd(searchCriteria.end()));
         builder.and(lodgeDate.isDeleted.eq(false));
         return builder;
     }
