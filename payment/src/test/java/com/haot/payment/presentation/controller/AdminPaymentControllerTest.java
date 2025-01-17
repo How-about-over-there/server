@@ -39,7 +39,7 @@ class AdminPaymentControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusCode").value("8000"))
-                .andExpect(jsonPath("$.status").value("Success"))
+                .andExpect(jsonPath("$.status").value("SUCCESS"))
                 .andReturn(); // 호출 결과를 MvcResult 로 반환
 
         // Then: 요청 결과 확인
@@ -63,7 +63,7 @@ class AdminPaymentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusCode").value("8000"))
-                .andExpect(jsonPath("$.status").value("Success"))
+                .andExpect(jsonPath("$.status").value("SUCCESS"))
                 .andReturn(); // 호출 결과를 MvcResult 로 반환
 
         // Then: 요청 결과 확인
@@ -86,7 +86,7 @@ class AdminPaymentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusCode").value("8000"))
-                .andExpect(jsonPath("$.status").value("Success"))
+                .andExpect(jsonPath("$.status").value("SUCCESS"))
                 .andExpect(jsonPath("$.data.paymentId").value(paymentId))
                 .andReturn(); // 호출 결과를 MvcResult 로 반환
 
@@ -108,7 +108,7 @@ class AdminPaymentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusCode").value("8000"))
-                .andExpect(jsonPath("$.status").value("Success"))
+                .andExpect(jsonPath("$.status").value("SUCCESS"))
                 .andExpect(jsonPath("$.data.content", hasSize(2)))
                 .andExpect(jsonPath("$.data.content[0].paymentId").exists())
                 .andReturn(); // 호출 결과를 MvcResult 로 반환
