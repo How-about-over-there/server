@@ -1,9 +1,11 @@
 package com.haot.payment.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
+@Schema(description = "공통 응답 DTO")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ApiResponse<T> (
         String statusCode,

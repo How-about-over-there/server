@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.haot.payment.application.dto.request.PaymentCancelRequest;
 import com.haot.payment.application.dto.request.PaymentCreateRequest;
 import com.haot.payment.application.dto.request.PaymentSearchRequest;
+import com.haot.payment.application.dto.response.PageResponse;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.common.exception.CustomPaymentException;
 import com.haot.payment.common.exception.enums.ErrorCode;
@@ -40,10 +41,8 @@ public class PaymentServiceImpl implements PaymentService{
     public PaymentResponse createPayment(PaymentCreateRequest request, String userId, Role role) {
 
         // 1. userId 요청 데이터 유효성 검사
-        if (role == Role.USER) {
-            if (request.userId() != null && !request.userId().equals(userId)) {
-                throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
-            }
+        if (role == Role.USER && !request.userId().equals(userId)) {
+            throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
         }
 
         // 2. 결제 정보 저장
@@ -64,11 +63,7 @@ public class PaymentServiceImpl implements PaymentService{
         // 1. 결제 데이터 확인
         Payment payment = validPayment(paymentId);
         // userId 검증
-        if (role == Role.USER) {
-            if (!payment.getUserId().equals(userId)) {
-                throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
-            }
-        }
+        validUser(payment, userId, role);
 
         // 2. 포트원 결제 단건 조회 API 호출
         PortOneResponse paymentData = portOneService.getPaymentData(payment.getId());
@@ -120,11 +115,7 @@ public class PaymentServiceImpl implements PaymentService{
         // 1. 결제 데이터 확인
         Payment payment = validPayment(paymentId);
         // userId 검증
-        if (role == Role.USER) {
-            if (!payment.getUserId().equals(userId)) {
-                throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
-            }
-        }
+        validUser(payment, userId, role);
 
         return PaymentResponse.of(payment);
     }
@@ -135,11 +126,7 @@ public class PaymentServiceImpl implements PaymentService{
         // 1. 결제 데이터 확인
         Payment payment = validPayment(paymentId);
         // userId 검증
-        if (role == Role.USER) {
-            if (!payment.getUserId().equals(userId)) {
-                throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
-            }
-        }
+        validUser(payment, userId, role);
 
         // 2. 결제 상태 확인
         PaymentStatus status = payment.getStatus();
@@ -173,21 +160,23 @@ public class PaymentServiceImpl implements PaymentService{
 
     @Override
     @Transactional(readOnly = true)
-    public Page<PaymentResponse> getPayments(PaymentSearchRequest request, Pageable pageable, String userId, Role role) {
+    public PageResponse<PaymentResponse> getPayments(PaymentSearchRequest request, Pageable pageable, String userId, Role role) {
         // USER 요청의 경우 userId 헤더 값으로 지정
         if (role == Role.USER) {
             request.setUserId(userId);
         }
-        // 페이지 크기 고정
-        int pageSize = pageable.getPageSize();
-        if (pageSize != 10 && pageSize != 30 && pageSize != 50) {
-            pageSize = 10; // 기본값으로 설정
-        }
-        return paymentRepository.searchPayments(request, pageable);
+        Page<PaymentResponse> payments = paymentRepository.searchPayments(request, pageable);
+        return PageResponse.of(payments);
     }
 
     private Payment validPayment(String paymentId) {
         return paymentRepository.findByIdAndIsDeletedFalse(paymentId)
                 .orElseThrow(() -> new CustomPaymentException(ErrorCode.PAYMENT_NOT_FOUND));
+    }
+
+    private void validUser(Payment payment, String userId, Role role) {
+        if (role == Role.USER && !payment.getUserId().equals(userId)) {
+            throw new CustomPaymentException(ErrorCode.USER_NOT_MATCHED);
+        }
     }
 }

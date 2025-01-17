@@ -6,6 +6,7 @@ import static com.haot.lodge.domain.model.QLodgeRule.lodgeRule;
 import static com.haot.lodge.domain.utils.QuerydslSortUtils.getOrderSpecifiers;
 
 
+import com.haot.lodge.application.dto.LodgeSearchCriteria;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.model.enums.ReservationStatus;
 import com.haot.lodge.domain.repository.LodgeCustomRepository;
@@ -38,13 +39,9 @@ public class LodgeCustomRepositoryImpl implements LodgeCustomRepository {
 
     @Override
     public Slice<Lodge> findAllByConditionOf(
-            Pageable pageable,
-            String hostId, String name, String address,
-            Integer maxReservationDay, Integer maxPersonnel,
-            LocalDate checkInDate, LocalDate checkOutDate
+            Pageable pageable, LodgeSearchCriteria searchCriteria
     ) {
-        BooleanBuilder booleanBuilder = getBooleanBuilder(
-                hostId, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate);
+        BooleanBuilder booleanBuilder = getBooleanBuilder(searchCriteria);
         List<Lodge> results = queryFactory.selectFrom(lodge)
                 .join(lodgeRule).on(lodgeRule.lodge.eq(lodge)).fetchJoin()
                 .join(lodgeDate).on(lodgeDate.lodge.eq(lodge)).fetchJoin()
@@ -60,20 +57,16 @@ public class LodgeCustomRepositoryImpl implements LodgeCustomRepository {
         return PageableExecutionUtils.getPage(results, pageable, count::fetchOne);
     }
 
-    private BooleanBuilder getBooleanBuilder(
-            String hostId, String name, String address,
-            Integer maxReservationDay, Integer maxPersonnel,
-            LocalDate checkInDate, LocalDate checkOutDate
-    ) {
+    private BooleanBuilder getBooleanBuilder(LodgeSearchCriteria searchCriteria) {
         BooleanBuilder builder = new BooleanBuilder();
-        builder.and(likeName(name));
-        builder.and(eqHostId(hostId));
-        builder.and(likeAddress(address));
+        builder.and(likeName(searchCriteria.name()));
+        builder.and(eqHostId(searchCriteria.hostId()));
+        builder.and(likeAddress(searchCriteria.address()));
         builder.and(lodge.isDeleted.eq(false));
         builder.and(lodgeDate.isDeleted.eq(false));
-        builder.and(geoMaxReservationDay(maxReservationDay));
-        builder.and(geoMaxPersonnel(maxPersonnel));
-        builder.and(isAvailableInDateRange(checkInDate, checkOutDate));
+        builder.and(geoMaxReservationDay(searchCriteria.maxReservationDay()));
+        builder.and(geoMaxPersonnel(searchCriteria.maxPersonnel()));
+        builder.and(isAvailableInDateRange(searchCriteria.checkInDate(), searchCriteria.checkOutDate()));
         return builder;
     }
 

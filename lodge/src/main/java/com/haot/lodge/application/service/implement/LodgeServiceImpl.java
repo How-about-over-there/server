@@ -1,12 +1,12 @@
 package com.haot.lodge.application.service.implement;
 
 
+import com.haot.lodge.application.dto.LodgeSearchCriteria;
 import com.haot.lodge.application.service.LodgeService;
 import com.haot.lodge.common.exception.ErrorCode;
 import com.haot.lodge.common.exception.LodgeException;
 import com.haot.lodge.domain.model.Lodge;
 import com.haot.lodge.domain.repository.LodgeRepository;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -41,18 +41,9 @@ public class LodgeServiceImpl implements LodgeService {
 
     @Override
     public Slice<Lodge> readAllBy(
-            Pageable pageable,
-            String hostId, String name, String address,
-            Integer maxReservationDay, Integer maxPersonnel,
-            LocalDate checkInDate, LocalDate checkOutDate
+            Pageable pageable, LodgeSearchCriteria searchCriteria
     ) {
-        if(checkInDate!= null && checkOutDate == null){
-            checkOutDate = checkInDate.plusDays(1);
-        }
-        return lodgeRepository
-                .findAllByConditionOf(
-                        pageable, hostId, name, address, maxReservationDay, maxPersonnel, checkInDate, checkOutDate
-                );
+        return lodgeRepository.findAllByConditionOf(pageable, searchCriteria);
     }
 
     @Override
