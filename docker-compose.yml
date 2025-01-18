@@ -114,6 +114,18 @@ services:
     networks:
       - msa-network
 
+  redis-exporter:
+    image: oliver006/redis_exporter
+    container_name: haot-redis-exporter
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis://redis:6379
+    depends_on:
+      - redis
+    networks:
+      - msa-network
+
 networks:
   msa-network:
     driver: bridge
