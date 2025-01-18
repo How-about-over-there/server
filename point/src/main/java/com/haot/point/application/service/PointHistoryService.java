@@ -1,6 +1,7 @@
 package com.haot.point.application.service;
 
 import com.haot.point.application.dto.request.history.PointHistorySearchRequest;
+import com.haot.point.application.dto.request.history.UserPointHistorySearchRequest;
 import com.haot.point.application.dto.request.point.PointStatusRequest;
 import com.haot.point.application.dto.response.PageResponse;
 import com.haot.point.application.dto.response.PointAllResponse;
@@ -21,4 +22,9 @@ public interface PointHistoryService {
             Pageable pageable,
             String userId,
             Role role);
+
+    PageResponse<PointHistoryResponse> getUserPointHistories(
+            UserPointHistorySearchRequest request,
+            Pageable pageable,
+            String userId);
 }

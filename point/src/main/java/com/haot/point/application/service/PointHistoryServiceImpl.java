@@ -1,6 +1,7 @@
 package com.haot.point.application.service;
 
 import com.haot.point.application.dto.request.history.PointHistorySearchRequest;
+import com.haot.point.application.dto.request.history.UserPointHistorySearchRequest;
 import com.haot.point.application.dto.request.point.PointStatusRequest;
 import com.haot.point.application.dto.response.PageResponse;
 import com.haot.point.application.dto.response.PointAllResponse;
@@ -15,11 +16,18 @@ import com.haot.point.infrastructure.repository.PointHistoryRepository;
 import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j(topic = "PointHistoryServiceImpl")
 @Service
@@ -27,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PointHistoryServiceImpl implements PointHistoryService {
 
     private final PointHistoryRepository pointHistoryRepository;
+    private final CacheManager cacheManager;
 
     @Override
     @Transactional
@@ -124,6 +133,80 @@ public class PointHistoryServiceImpl implements PointHistoryService {
         }
         Page<PointHistoryResponse> pointHistories = pointHistoryRepository.searchPointHistories(request, pageable);
         return PageResponse.of(pointHistories);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(
+            cacheNames = "userPointHistories",
+            key = "T(String).format('%s:%s:%s:%s:%s:%s', #userId, #pageable.pageNumber, #pageable.pageSize, #request.isEarned, #request.isUsed, #request.isExpired)"
+    )
+    public PageResponse<PointHistoryResponse> getUserPointHistories(
+            UserPointHistorySearchRequest request, Pageable pageable, String userId) {
+
+        // 전체 목록 캐싱 키 정의
+        String fullListCacheKey = String.format("%s:%d:%d:false:false:false", userId, pageable.getPageNumber(), pageable.getPageSize());
+
+        // 1. 전체 목록 캐싱 확인
+        PageResponse<PointHistoryResponse> fullListCachedData = getCachedDataFromCacheManager("userPointHistories", fullListCacheKey);
+        if (fullListCachedData == null || fullListCachedData.content().isEmpty()) {
+            System.out.println("Full list cache miss - retrieving data from DB and caching it.");
+            fullListCachedData = cacheUserPointHistories(userId, pageable); // DB 조회 후 전체 목록 캐싱
+            saveToCache("userPointHistories", fullListCacheKey, fullListCachedData); // 전체 목록 저장
+        }
+
+        // 2. 조건에 따라 필터링 처리
+        return PageResponse.of(filterAndPaginate(fullListCachedData, request, pageable));
+    }
+
+    /* DB 에서 데이터를 조회하고 캐싱 */
+    @Transactional(readOnly = true)
+    public PageResponse<PointHistoryResponse> cacheUserPointHistories(String userId, Pageable pageable) {
+        PointStatus status = PointStatus.PROCESSED;
+        Page<PointHistory> pointHistories = pointHistoryRepository.findByUserIdAndStatusAndIsDeletedFalse(userId, status, pageable);
+        return PageResponse.of(pointHistories.map(PointHistoryResponse::of));
+    }
+
+    /* 캐싱 데이터를 명시적으로 저장 */
+    private void saveToCache(String cacheName, String key, PageResponse<PointHistoryResponse> data) {
+        Cache cache = cacheManager.getCache(cacheName);
+        if (cache != null) {
+            cache.put(key, data); // 명시적으로 캐시 저장
+        }
+    }
+
+    /* 캐싱된 데이터를 CacheManager 를 통해 확인 */
+    private PageResponse<PointHistoryResponse> getCachedDataFromCacheManager(String cacheName, String key) {
+        Cache cache = cacheManager.getCache(cacheName);
+        if (cache != null) {
+            return cache.get(key, PageResponse.class); // 캐싱된 데이터 반환
+        }
+        return null; // 캐시에 데이터가 없으면 null 반환
+    }
+
+    /* 조건에 따라 데이터를 필터링하고 페이징 처리 */
+    private Page<PointHistoryResponse> filterAndPaginate(PageResponse<PointHistoryResponse> cachedData,
+                                                         UserPointHistorySearchRequest request,
+                                                         Pageable pageable) {
+        Stream<PointHistoryResponse> filteredData = cachedData.content().stream();
+
+        // 조건별 필터링
+        if (request.isEarned()) {
+            filteredData = filteredData.filter(item -> item.type().equals("EARN") || item.type().equals("CANCEL_USE"));
+        }
+        if (request.isUsed()) {
+            filteredData = filteredData.filter(item -> item.type().equals("USE") || item.type().equals("CANCEL_EARN"));
+        }
+        if (request.isExpired()) {
+            filteredData = filteredData.filter(item -> item.type().equals("EXPIRED"));
+        }
+
+        // 필터링된 데이터를 리스트로 변환
+        List<PointHistoryResponse> filteredList = filteredData.collect(Collectors.toList());
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filteredList.size());
+
+        return new PageImpl<>(filteredList.subList(start, end), pageable, filteredList.size());
     }
 
     private PointHistory validPointHistory(String historyId) {
