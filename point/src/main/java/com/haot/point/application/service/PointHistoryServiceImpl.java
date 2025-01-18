@@ -15,6 +15,7 @@ import com.haot.point.infrastructure.repository.PointHistoryRepository;
 import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -95,6 +96,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "pointHistory", key = "#historyId")
     public PointHistoryResponse getPointHistoryById(String historyId, String userId, Role role) {
         // 1. 기존 point 내역 조회
         PointHistory pointHistory = validPointHistory(historyId);
@@ -109,6 +111,10 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(
+            value = "pointHistories",
+            key = "T(String).format('%s:%s:%s:%s:%s:%s', #request.userId, #request.status, #pageable.pageNumber, #pageable.pageSize, #userId, #role.name())"
+    )
     public PageResponse<PointHistoryResponse> getPointHistories(
             PointHistorySearchRequest request, Pageable pageable, String userId, Role role) {
         // USER 요청의 경우

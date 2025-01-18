@@ -15,6 +15,7 @@ import com.haot.point.infrastructure.repository.PointRepository;
 import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,7 @@ public class PointServiceImpl implements PointService{
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "point", key = "#userId")
     public PointResponse getPoint(String userId, String headerUserId, Role role) {
         // 1. 권한 체크 후 userId 설정
         if (role == Role.USER) {
