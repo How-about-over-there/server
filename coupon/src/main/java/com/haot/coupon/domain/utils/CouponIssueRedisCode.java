@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public enum CouponIssueRedisCode {
     SUCCESS(1), // 발급 성공
-    ALREADY_ISSUED(2), // 이미 발급된 유저 -> 바로 에러 발생
-    EXCEEDED_LIMIT(3); // 발급 수량 초과 -> 여기는 produce 해야된다.
+    ALREADY_ISSUED(2), // 이미 발급된 유저
+    EXCEEDED_LIMIT(3); // 발급 수량 초과
 
     private final Integer code;
 
@@ -22,7 +22,6 @@ public enum CouponIssueRedisCode {
                 .findFirst()
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.NOT_FOUND_EXCEPTION));
 
-        // 코드가 2인 경우에 바로 예외 발생
         if (redisCode.getCode() == 2) {
             throw new CustomCouponException(ErrorCode.DUPLICATED_ISSUED_COUPON);
         }

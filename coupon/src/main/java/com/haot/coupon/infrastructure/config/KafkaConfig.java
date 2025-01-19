@@ -1,7 +1,7 @@
 package com.haot.coupon.infrastructure.config;
 
-import com.haot.coupon.application.dto.UnlimitedCouponDto;
-import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
+import com.haot.coupon.application.dto.CouponIssueDto;
+import com.haot.coupon.application.dto.EventClosedDto;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -31,21 +31,7 @@ public class KafkaConfig {
     private String bootstrapServers;
 
     @Bean
-    public ProducerFactory<String, String> errorProducerFactory() {
-        Map<String, Object> configProducer = new HashMap<>();
-        configProducer.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        configProducer.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProducer.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProducer);
-    }
-
-    @Bean
-    public KafkaTemplate<String, String> errorKafkaTemplate() {
-        return new KafkaTemplate<>(errorProducerFactory());
-    }
-
-    @Bean
-    public ProducerFactory<String, Object> couponProducerFactory() {
+    public ProducerFactory<String, Object> producerFactory() {
         Map<String, Object> configCouponProducer = new HashMap<>();
         configCouponProducer.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configCouponProducer.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -55,63 +41,78 @@ public class KafkaConfig {
 
     @Bean
     public KafkaTemplate<String, Object> KafkaTemplate() {
-        return new KafkaTemplate<>(couponProducerFactory());
+        return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public ConsumerFactory<String, String> consumerFactory() {
+    public ConsumerFactory<String, EventClosedDto> consumerFactory() {
         HashMap<String, Object> configConsumer = new HashMap<>();
         configConsumer.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configConsumer.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         configConsumer.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configConsumer.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);  // 자동 커밋 비활성화
-        configConsumer.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 500); // 한 번에 처리할 최대 메시지 개수 설정
-        configConsumer.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 300000); // Poll 간 최대 시간 설정
+        configConsumer.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+        configConsumer.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 500);
+        configConsumer.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 300000);
 
-        return new DefaultKafkaConsumerFactory<>(configConsumer);
-    }
-
-    // 쿠폰 issue Consumer
-    @Bean
-    public ConsumerFactory<String, UnlimitedCouponDto> issueConsumerFactory() {
-        HashMap<String, Object> configConsumer = new HashMap<>();
-        configConsumer.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        configConsumer.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configConsumer.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        configConsumer.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);  // 자동 커밋 비활성화
-        configConsumer.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 500); // 한 번에 처리할 최대 메시지 개수 설정
-        configConsumer.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 300000); // Poll 간 최대 시간 설정
-
-        // JsonDeserializer에 대상 클래스 설정 -> 신뢰할 수 있는 패키지 설정
         configConsumer.put(JsonDeserializer.TRUSTED_PACKAGES, "com.haot.coupon.application.dto");
 
         return new DefaultKafkaConsumerFactory<>(configConsumer,
                 new StringDeserializer(),
-                new JsonDeserializer<>(UnlimitedCouponDto.class));
+                new JsonDeserializer<>(EventClosedDto.class));
+    }
+
+    // 쿠폰 issue Consumer
+    @Bean
+    public ConsumerFactory<String, CouponIssueDto> issueConsumerFactory() {
+        HashMap<String, Object> configConsumer = new HashMap<>();
+        configConsumer.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        configConsumer.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        configConsumer.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        configConsumer.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+        configConsumer.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 500);
+        configConsumer.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 300000);
+
+        configConsumer.put(JsonDeserializer.TRUSTED_PACKAGES, "com.haot.coupon.application.dto");
+
+        return new DefaultKafkaConsumerFactory<>(configConsumer,
+                new StringDeserializer(),
+                new JsonDeserializer<>(CouponIssueDto.class));
     }
 
     // 무제한 쿠폰 factory
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, UnlimitedCouponDto>>
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, CouponIssueDto>>
     parallelKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, UnlimitedCouponDto> factory =
+        ConcurrentKafkaListenerContainerFactory<String, CouponIssueDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(issueConsumerFactory());
         factory.setBatchListener(true);
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
-        factory.setConcurrency(3);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+        factory.setConcurrency(5);
 
         return factory;
     }
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>>
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, EventClosedDto>>
     kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory =
+        ConcurrentKafkaListenerContainerFactory<String, EventClosedDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         factory.setBatchListener(true);
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+
+        return factory;
+    }
+
+    @Bean
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, CouponIssueDto>>
+    priorityKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, CouponIssueDto> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(issueConsumerFactory());
+        factory.setBatchListener(true);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
 
         return factory;
     }
@@ -120,7 +121,7 @@ public class KafkaConfig {
     @Bean
     public NewTopic unlimitedIssueCouponTopic() {
         return TopicBuilder.name("coupon-issue-unlimited")
-                .partitions(3)
+                .partitions(5)
                 .replicas(1)
                 .build();
     }
