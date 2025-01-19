@@ -72,37 +72,24 @@ public class RedisRepositoryImpl implements RedisRepository {
         return CouponIssueRedisCode.checkCouponIssueRedisCode(result);
     }
 
-    // todo 삭제해야 된다.
-    @Override
-    public void increaseCouponQuantity(String eventId, String couponId) {
-        countRedisTemplate.opsForValue().increment(EVENT_PREFIX + eventId + COUPON_PREFIX + couponId);
-    }
-
-
-    //  todo 삭제해야 된다. -> 이것도 필요 없을듯 LUASCRIPT가 한번에 해주면?
-    @Override
-    public Integer getCouponQuantityByIds(String eventId, String couponId) {
-        return countRedisTemplate.opsForValue().get(EVENT_PREFIX + eventId + COUPON_PREFIX + couponId);
-    }
-
-    // TODO 동시에 많은 쓰레드 요청시 삭제 후 다시 생기는 일 발생
+    // TODO 동시에 많은 쓰레드 요청시 삭제 후 다시 생기는 일 발생, Expired 없이 다시 생기니 일단 막아놓음.
     @Override
     public void deleteEventClosed(List<CheckAlreadyClosedEventDto> couponEvents) {
 
         couponEvents.forEach(couponEvent -> {
 
-            String eventCouponKey = EVENT_PREFIX + couponEvent.getEventId() + COUPON_PREFIX + couponEvent.getCouponId();
-            String couponKey = COUPON_PREFIX + couponEvent.getCouponId();
+            //String eventCouponKey = getPriorityCouponKey(couponEvent.getEventId(), couponEvent.getCouponId());
+            String couponKey = getDuplicatedUserKey(couponEvent.getCouponId());
 
-            Boolean isEventCouponDeleted = redisTemplate.delete(eventCouponKey);
+            //Boolean isEventCouponDeleted = redisTemplate.delete(eventCouponKey);
             Boolean isCouponDeleted = redisTemplate.delete(couponKey);
 
             // 모니터링을 위한 로그
-            if (Boolean.TRUE.equals(isEventCouponDeleted)) {
-                log.info("Successfully deleted event-coupon key: {}", eventCouponKey);
-            } else {
-                log.warn("Failed to delete event-coupon key (not found): {}", eventCouponKey);
-            }
+//            if (Boolean.TRUE.equals(isEventCouponDeleted)) {
+//                log.info("Successfully deleted event-coupon key: {}", eventCouponKey);
+//            } else {
+//                log.warn("Failed to delete event-coupon key (not found): {}", eventCouponKey);
+//            }
 
             if (Boolean.TRUE.equals(isCouponDeleted)) {
                 log.info("Successfully deleted coupon key: {}", couponKey);

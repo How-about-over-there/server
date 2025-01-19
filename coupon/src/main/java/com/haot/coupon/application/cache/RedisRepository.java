@@ -11,11 +11,7 @@ import java.util.List;
 public interface RedisRepository {
     void save(CouponEvent savedEvent, Coupon coupon);
 
-    void increaseCouponQuantity(String eventId, String couponId);
-
     CouponIssueRedisCode issuePriorityCoupon(String eventId, String couponId, String userId, LocalDateTime eventEndDate);
-
-    Integer getCouponQuantityByIds(String eventId, String couponId);
 
     void deleteEventClosed(List<CheckAlreadyClosedEventDto> list);
 
