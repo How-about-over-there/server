@@ -41,7 +41,7 @@ public class CouponErrorFrontConsumer implements CouponErrorConsumer {
         acknowledgment.acknowledge();
 
 
-        // 원래 front로 보내는 용도로 쓰이는 곳 ->
+        // 원래 front로 보내는 용도로 쓰이는 곳 -> 보장이 됬으면 보내는 거는 보장이 됬는데, 한건한건 될다
         // TODO 여기서 set으로 돌아 log를 찍어줘야 하나? 근데 예를 들어 같은 eventId에 다른 eventstatus 종료값이 3개 있을때?
         // TODO 뭔가 애매해 졌다.. front로 보내 이벤트 정료 처리해 달라는 메시지를 받았다는 가정하기
         // 굳이 신경 안써도 되나?

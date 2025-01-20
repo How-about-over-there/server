@@ -320,7 +320,9 @@ public class CouponServiceImpl implements CouponService {
     }
 
 
-    // 이벤트 상태 변경 consumer, redis 삭제
+    // 이벤트 상태 변경 consumer, redis 삭제 TODO 여기 붙어있어야 될듯, 역할과 책임이 중요 -> 확실하게 commit 되었을때 after commit 같이 이벤트를 쏘던지
+    // 별도의 template메서드(클린코드에서 강의) 사용하던 db에 영속화 됬을때 보내줘야 된다.
+    // 전체적으로 after commit 된 이후에 확실하게 update 된 이벤트만 log찍기!!
     @Transactional
     @Override
     public void updateEndEventStatus(Set<EventClosedDto> eventClosedDtoSet) {
