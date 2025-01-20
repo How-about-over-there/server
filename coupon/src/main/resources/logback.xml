@@ -1,0 +1,19 @@
+<configuration>
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>http://haot-loki:3100/loki/api/v1/push</url>
+        </http>
+        <format>
+            <label>
+                <property name="appName" value="haot" />
+                <property name="serviceName" value="coupon-service" />
+                <pattern>app=haot,service=coupon-service,level=%level</pattern>
+            </label>
+            <message class="com.github.loki4j.logback.JsonLayout" />
+        </format>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="LOKI" />
+    </root>
+</configuration>
