@@ -3,7 +3,7 @@ package com.haot.coupon.infrastructure.kafka;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haot.coupon.application.cache.RedisRepository;
-import com.haot.coupon.application.dto.UnlimitedCouponDto;
+import com.haot.coupon.application.dto.CouponIssueDto;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
 import com.haot.coupon.application.kafka.CouponIssueConsumer;
 import com.haot.coupon.application.service.CouponService;
@@ -27,51 +27,25 @@ public class CouponIssuedConsumer implements CouponIssueConsumer {
     private final RedisRepository redisRepository;
 
     @Override
-    @KafkaListener(topics = "coupon-issue-priority", groupId = "coupon-user-priority")
-    public void issuePriorityCouponListener(@Header("X-User-Id") String userId, String message,
-                                            Acknowledgment acknowledgment) throws JsonProcessingException {
-
-        CouponCustomerCreateRequest request = objectMapper.readValue(message, CouponCustomerCreateRequest.class);
-
-        try {
-            couponService.issueCoupon(userId, request);
-            acknowledgment.acknowledge();
-        } catch (CustomCouponException ex) {
-            if (ex.resCode.getCode().equals("4016")) {
-
-                if (redisRepository.getCouponQuantityByIds(request.eventId(), request.couponId()) != null) {
-                    redisRepository.increaseCouponQuantity(request.eventId(), request.couponId());
-                }
-            }
-        }
+    @KafkaListener(topics = "coupon-issue-priority", groupId = "coupon-user-priority",
+            containerFactory = "priorityKafkaListenerContainerFactory")
+    public void issuePriorityCouponListener(List<CouponIssueDto> requests,
+                                            Acknowledgment acknowledgment) {
+        /*TODO 여기서 List로 받으면 어떻게 해야될까..? for문 해서 여기서 DLQ, DLT 쓰기 어려울듯.. 재시도, 에러처리 안하는 거로..?*/
+        batchCommit(requests, acknowledgment);
     }
 
     @Override
     @KafkaListener(topics = "coupon-issue-unlimited",
             groupId = "coupon-user-unlimited",
             containerFactory = "parallelKafkaListenerContainerFactory")
-    public void batchIssueUnlimitedCouponListener(List<UnlimitedCouponDto> requests,
+    public void batchIssueUnlimitedCouponListener(List<CouponIssueDto> requests,
                                                   Acknowledgment acknowledgment) {
-        couponService.batchIssueCoupon(requests);
-        acknowledgment.acknowledge();
+        batchCommit(requests, acknowledgment);
     }
 
-    @Override
-    @KafkaListener(topics = "coupon-issue-unlimited",
-            groupId = "coupon-user-unlimited",
-            containerFactory = "parallelKafkaListenerContainerFactory")
-    public void batchIssueUnlimitedCouponListener1(List<UnlimitedCouponDto> requests,
-                                                  Acknowledgment acknowledgment) {
-        couponService.batchIssueCoupon(requests);
-        acknowledgment.acknowledge();
-    }
 
-    @Override
-    @KafkaListener(topics = "coupon-issue-unlimited",
-            groupId = "coupon-user-unlimited",
-            containerFactory = "parallelKafkaListenerContainerFactory")
-    public void batchIssueUnlimitedCouponListener2(List<UnlimitedCouponDto> requests,
-                                                  Acknowledgment acknowledgment) {
+    private void batchCommit(List<CouponIssueDto> requests, Acknowledgment acknowledgment){
         couponService.batchIssueCoupon(requests);
         acknowledgment.acknowledge();
     }
