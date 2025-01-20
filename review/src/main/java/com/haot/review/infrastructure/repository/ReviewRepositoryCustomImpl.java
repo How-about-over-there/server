@@ -4,6 +4,7 @@ package com.haot.review.infrastructure.repository;
 import com.haot.review.application.dtos.req.ReviewSearchRequest;
 import com.haot.review.domain.model.QReview;
 import com.haot.review.domain.model.Review;
+import com.haot.submodule.role.Role;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -25,7 +26,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
   QReview review = QReview.review;
 
   @Override
-  public Page<Review> searchReview(String role, ReviewSearchRequest request, Pageable pageable) {
+  public Page<Review> searchReview(Role role, ReviewSearchRequest request, Pageable pageable) {
 
     JPAQuery<Review> query = queryFactory.selectFrom(review)
         .where(conditions(role, request))
@@ -46,12 +47,12 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
   }
 
 
-  private BooleanBuilder conditions(String role, ReviewSearchRequest request) {
+  private BooleanBuilder conditions(Role role, ReviewSearchRequest request) {
     BooleanBuilder builder = new BooleanBuilder()
         .and(lodgeIdEq(request.lodgeId()))
         .and(userIdEq(request.userId()));
 
-    if ("MASTER".equals(role) || "HOST".equals(role)) {
+    if (Role.ADMIN.equals(role) || Role.HOST.equals(role)) {
       builder.and(deletedEq(request.isDeleted()));
     } else {
       builder.and(review.isDeleted.isFalse());

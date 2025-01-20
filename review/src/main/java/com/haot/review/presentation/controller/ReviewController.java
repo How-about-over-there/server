@@ -38,7 +38,7 @@ public class ReviewController {
   @PostMapping
   public ApiResponse<ReviewGetResponse> create(
       @RequestHeader(value = "X-User-Id", required = true) String userId,
-      @RequestHeader(value = "X-User-Role", required = true) String role,
+      @RequestHeader(value = "X-User-Role", required = true) Role role,
       @Valid ReviewCreateRequest request
   ) {
     return ApiResponse.success(reviewService.createReview(userId, request));
@@ -56,7 +56,7 @@ public class ReviewController {
   @ResponseStatus(HttpStatus.OK)
   @GetMapping
   public ApiResponse<Page<ReviewGetResponse>> search(
-      @RequestHeader(value = "X-User-Role", required = true) String role,
+      @RequestHeader(value = "X-User-Role", required = true) Role role,
       ReviewSearchRequest request,
       Pageable pageable
   ) {
@@ -70,7 +70,7 @@ public class ReviewController {
       @PathVariable String reviewId,
       @Valid @RequestBody ReviewUpdateRequest request,
       @RequestHeader(value = "X-User-Id", required = true) String userId,
-      @RequestHeader(value = "X-User-Role", required = true) String role
+      @RequestHeader(value = "X-User-Role", required = true) Role role
   ) {
     reviewService.updateReview(reviewId, request, userId, role);
     return ApiResponse.success(SuccessCode.UPDATE_REVIEW_SUCCESS);
@@ -83,7 +83,7 @@ public class ReviewController {
   public ApiResponse<Void> delete(
       @PathVariable String reviewId,
       @RequestHeader(value = "X-User-Id", required = true) String userId,
-      @RequestHeader(value = "X-User-Role", required = true) String role
+      @RequestHeader(value = "X-User-Role", required = true) Role role
   ) {
     reviewService.deleteReview(reviewId, userId, role);
     return ApiResponse.success(SuccessCode.DELETE_REVIEW_SUCCESS);

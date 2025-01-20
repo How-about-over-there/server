@@ -12,6 +12,7 @@ import com.haot.review.domain.repository.ReviewImageRepository;
 import com.haot.review.domain.repository.ReviewRepository;
 import com.haot.review.presentation.client.LodgeClient;
 import com.haot.review.presentation.dto.LodgeReadOneResponse;
+import com.haot.submodule.role.Role;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -60,7 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Override
   @Transactional(readOnly = true)
-  public Page<ReviewGetResponse> searchReview(String role, ReviewSearchRequest request,
+  public Page<ReviewGetResponse> searchReview(Role role, ReviewSearchRequest request,
       Pageable pageable) {
 
     int pageSize = (pageable.getPageSize() == 30
@@ -78,7 +79,7 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Override
   @Transactional
-  public void updateReview(String reviewId, ReviewUpdateRequest request, String userId, String role) {
+  public void updateReview(String reviewId, ReviewUpdateRequest request, String userId, Role role) {
 
       Review review = findActiveReviewById(reviewId);
 
@@ -90,7 +91,7 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Override
   @Transactional
-  public void deleteReview(String reviewId, String userId, String role) {
+  public void deleteReview(String reviewId, String userId, Role role) {
 
     Review review = findActiveReviewById(reviewId);
 
@@ -106,12 +107,11 @@ public class ReviewServiceImpl implements ReviewService {
         .orElseThrow(() -> new CustomReviewException(ErrorCode.REVIEW_NOT_FOUND));
   }
 
-  private boolean hasPermissionToDeleteReview(Review review, String userId, String role) {
+  private boolean hasPermissionToDeleteReview(Review review, String userId, Role role) {
     return switch (role) {
-      case "USER" -> review.getUserId().equals(userId);
-      case "HOST" -> isLodgeHost(userId, review.getLodgeId());
-      case "ADMIN" -> true;
-      default -> false;
+      case USER -> review.getUserId().equals(userId);
+      case HOST -> isLodgeHost(userId, review.getLodgeId());
+      case ADMIN -> true;
     };
   }
 
