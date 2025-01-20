@@ -24,9 +24,7 @@ public record ReviewGetResponse(
         .lodgeId(review.getLodgeId())
         .imageUrls(review.getImages().stream()
             .map(ReviewImage::getUrl)
-            .toList()
-        )
+            .toList())
         .build();
   }
-
 }

@@ -1,6 +1,7 @@
 package com.haot.review.domain.model;
 
 import com.haot.submodule.auditor.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,7 +39,7 @@ public class Review extends BaseEntity {
   @Column(name = "contents", nullable = false)
   private String contents;
 
-  @OneToMany(mappedBy = "review")
+  @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<ReviewImage> images = new ArrayList<>();
 
@@ -50,7 +51,7 @@ public class Review extends BaseEntity {
         .build();
   }
 
-  public void updateReview( String contents) {
+  public void updateReview(String contents) {
     this.contents = contents;
   }
 
