@@ -5,9 +5,7 @@
         </http>
         <format>
             <label>
-                <property name="appName" value="haot" />
-                <property name="serviceName" value="coupon-service" />
-                <pattern>app=haot,service=coupon-service,level=%level</pattern>
+                <pattern>service=coupon-service,level=%level</pattern>
             </label>
             <message class="com.github.loki4j.logback.JsonLayout" />
         </format>
