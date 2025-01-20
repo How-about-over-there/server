@@ -1,1 +1,5 @@
 .idea
+prometheus/prometheus.yml
+loki/loki-config.yml
+docker-compose-monitoring.yml
+docker-compose.yml
