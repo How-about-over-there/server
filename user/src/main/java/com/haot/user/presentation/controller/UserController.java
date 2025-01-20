@@ -10,8 +10,6 @@ import com.haot.user.application.dto.res.UserValidationResponse;
 import com.haot.user.application.service.UserCRUDService;
 import com.haot.user.application.service.UserValidationService;
 import com.haot.user.common.response.ApiResponse;
-import com.haot.user.domain.model.enums.Gender;
-import com.haot.submodule.role.Role;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,33 +58,17 @@ public class UserController {
 
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/me")
-  public ApiResponse<UserGetMeResponse> getMyInfo() {
-
-    UserGetMeResponse res = UserGetMeResponse.builder()
-        .name("강찬욱")
-        .password("SecurePassword123")
-        .email("저기어때@naver.com")
-        .phoneNumber("+821012345678")
-        .birthDate("1990-01-01")
-        .gender(Gender.MALE)
-        .preferredLanguage("en")
-        .currency("KRW")
-        .profileImageUrl("https://example.com/images/abc.jpg")
-        .address("서울특별시 강남구 테헤란로 123")
-        .role(Role.USER)
-        .build();
-
-    return ApiResponse.success(res);
+  public ApiResponse<UserGetMeResponse> getMyInfo(@RequestHeader("X-User-Id") String userId) {
+    return ApiResponse.success(userCRUDService.getMyInfo(userId));
   }
 
-  /*
-  TODO: API 개발 후 @RequestBody(required = false) 에서 required 프로퍼티 제거 및 @Valid 추가하기
- */
+
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping("/me")
   public ApiResponse<Void> updateMyInfo(
-      @RequestBody(required = false) UserUpdateMeRequest request) {
-
+      @Valid @RequestBody UserUpdateMeRequest request,
+      @RequestHeader("X-User-Id") String userId) {
+    userCRUDService.updateMyInfo(request, userId);
     return ApiResponse.success();
   }
 
