@@ -1,16 +1,18 @@
 package com.haot.review.infrastructure.repository;
 
+import static com.haot.review.domain.model.QReview.review;
+import static com.haot.review.infrastructure.utils.QuerydslSortUtils.getOrderSpecifiers;
 
 import com.haot.review.application.dtos.req.ReviewSearchRequest;
-import com.haot.review.domain.model.QReview;
 import com.haot.review.domain.model.Review;
 import com.haot.submodule.role.Role;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,14 +25,20 @@ import org.springframework.stereotype.Repository;
 public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 
   private final JPAQueryFactory queryFactory;
-  QReview review = QReview.review;
+
+  private static final Map<String, ComparableExpressionBase<?>> SORT_PARAMS = Map.of(
+      "userId", review.userId,
+      "lodgeId", review.lodgeId,
+      "createdAt", review.createdAt,
+      "updatedAt", review.updatedAt
+  );
 
   @Override
   public Page<Review> searchReview(Role role, ReviewSearchRequest request, Pageable pageable) {
 
     JPAQuery<Review> query = queryFactory.selectFrom(review)
         .where(conditions(role, request))
-        .orderBy(getOrderSpecifiers(pageable))
+        .orderBy(getOrderSpecifiers(pageable, SORT_PARAMS))
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize());
 
@@ -39,7 +47,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
             .from(review)
             .where(conditions(role, request))
             .fetchOne())
-        .orElseThrow();
+        .orElse(0L);
 
     List<Review> content = query.stream().toList();
 
@@ -70,21 +78,5 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 
   private BooleanExpression deletedEq(Boolean isDeleted) {
     return isDeleted != null ? review.isDeleted.eq(isDeleted) : null;
-  }
-
-  private OrderSpecifier<?>[] getOrderSpecifiers(Pageable pageable) {
-    return pageable.getSort().stream()
-        .map(order -> {
-          String property = order.getProperty();
-          boolean isAscending = order.isAscending();
-          return switch (property) {
-            case "createdAt" -> isAscending ? review.createdAt.asc() : review.createdAt.desc();
-            case "updatedAt" -> isAscending ? review.updatedAt.asc() : review.updatedAt.desc();
-            case "lodgeId" -> isAscending ? review.lodgeId.asc() : review.lodgeId.desc();
-            case "userId" -> isAscending ? review.userId.asc() : review.userId.desc();
-            default -> review.createdAt.asc();
-          };
-        })
-        .toArray(OrderSpecifier<?>[]::new);
   }
 }

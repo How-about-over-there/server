@@ -61,20 +61,9 @@ public class ReviewServiceImpl implements ReviewService {
 
   @Override
   @Transactional(readOnly = true)
-  public Page<ReviewGetResponse> searchReview(Role role, ReviewSearchRequest request,
-      Pageable pageable) {
+  public Page<ReviewGetResponse> searchReview(Role role, ReviewSearchRequest request, Pageable pageable) {
 
-    int pageSize = (pageable.getPageSize() == 30
-        || pageable.getPageSize() == 50)
-        ? pageable.getPageSize() : 10;
-
-    Pageable customPageable = PageRequest.of(
-        pageable.getPageNumber(),
-        pageSize,
-        pageable.getSort()
-    );
-
-    return reviewRepository.searchReview(role, request, customPageable).map(ReviewGetResponse::of);
+    return reviewRepository.searchReview(role, request, pageable).map(ReviewGetResponse::of);
   }
 
   @Override
