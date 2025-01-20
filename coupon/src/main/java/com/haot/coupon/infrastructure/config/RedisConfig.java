@@ -29,7 +29,6 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-    // args[1] userID, argv[2] expired 날짜, key[2] set Key, Key[1] eventId + couponId key
     // TODO 그냥 수량 체크 하는 key eventId로 바꿔도 될듯?
     @Bean
     public DefaultRedisScript<String> limitedCouponIssueScript() {
