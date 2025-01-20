@@ -1,6 +1,6 @@
 package com.haot.coupon.application.mapper;
 
-import com.haot.coupon.application.dto.UnlimitedCouponDto;
+import com.haot.coupon.application.dto.CouponIssueDto;
 import com.haot.coupon.application.dto.request.coupons.CouponCreateRequest;
 import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponCreateResponse;
@@ -36,5 +36,5 @@ public interface CouponMapper {
     @Mapping(source = "request.eventId", target = "eventId")
     @Mapping(source = "request.couponId", target = "couponId")
     @Mapping(source = "userId", target = "userId")
-    UnlimitedCouponDto toUnlimitedCouponDto(String userId, CouponCustomerCreateRequest request);
+    CouponIssueDto toCouponIssueDto(String userId, CouponCustomerCreateRequest request);
 }

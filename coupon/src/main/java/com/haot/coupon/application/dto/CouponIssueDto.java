@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UnlimitedCouponDto {
+public class CouponIssueDto {
 
     private String eventId;
     private String couponId;

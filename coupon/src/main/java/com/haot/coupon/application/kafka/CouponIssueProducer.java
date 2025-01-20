@@ -1,10 +1,9 @@
 package com.haot.coupon.application.kafka;
 
-import com.haot.coupon.application.dto.UnlimitedCouponDto;
-import com.haot.coupon.application.dto.request.coupons.CouponCustomerCreateRequest;
+import com.haot.coupon.application.dto.CouponIssueDto;
 
 public interface CouponIssueProducer {
-    void sendIssuePriorityCoupon(String userId, CouponCustomerCreateRequest request);
+    void sendIssuePriorityCoupon(CouponIssueDto couponIssueDto);
 
-    void sendIssueUnlimitedCoupon(UnlimitedCouponDto unlimitedCouponDto);
+    void sendIssueUnlimitedCoupon(CouponIssueDto couponIssueDto);
 }
