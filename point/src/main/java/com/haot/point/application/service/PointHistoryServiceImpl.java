@@ -12,6 +12,7 @@ import com.haot.point.domain.enums.PointStatus;
 import com.haot.point.domain.enums.PointType;
 import com.haot.point.domain.model.Point;
 import com.haot.point.domain.model.PointHistory;
+import com.haot.point.domain.utils.CacheEvictUtils;
 import com.haot.point.infrastructure.repository.PointHistoryRepository;
 import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 
     private final PointHistoryRepository pointHistoryRepository;
     private final CacheManager cacheManager;
+    private final CacheEvictUtils cacheEvictUtils;
 
     @Override
     @Transactional
@@ -46,10 +48,8 @@ public class PointHistoryServiceImpl implements PointHistoryService {
         Point point = pointHistory.getPoint();
 
         // userId 검증
-        if (role == Role.USER) {
-            if (!pointHistory.getUserId().equals(userId)) {
+        if (role == Role.USER && !pointHistory.getUserId().equals(userId)) {
                 throw new CustomPointException(ErrorCode.USER_NOT_MATCHED);
-            }
         }
 
         // 2. 현재 상태가 ROLLBACK 또는 CANCELLED 인 경우 상태 전이 불가
@@ -100,6 +100,11 @@ public class PointHistoryServiceImpl implements PointHistoryService {
         String description = PointType.createDescription(request.contextId(), pointHistory.getType());
         pointHistory.updateStatus(description, status);
 
+        // 캐시 삭제
+        cacheEvictUtils.evictPoint(userId);
+        cacheEvictUtils.evictPointHistory(historyId);
+        cacheEvictUtils.evictUserPointHistoriesByUserId(userId);
+
         return PointAllResponse.of(point, pointHistory);
     }
 
@@ -114,16 +119,16 @@ public class PointHistoryServiceImpl implements PointHistoryService {
             if (!pointHistory.getUserId().equals(userId)) {
                 throw new CustomPointException(ErrorCode.USER_NOT_MATCHED);
             }
+            if (pointHistory.getStatus() == PointStatus.PENDING
+            || pointHistory.getStatus() == PointStatus.ROLLBACK) {
+                throw new CustomPointException(ErrorCode.UNAUTHORIZED_EXCEPTION);
+            }
         }
         return PointHistoryResponse.of(pointHistory);
     }
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(
-            value = "pointHistories",
-            key = "T(String).format('%s:%s:%s:%s:%s:%s', #request.userId, #request.status, #pageable.pageNumber, #pageable.pageSize, #userId, #role.name())"
-    )
     public PageResponse<PointHistoryResponse> getPointHistories(
             PointHistorySearchRequest request, Pageable pageable, String userId, Role role) {
         // USER 요청의 경우
@@ -150,7 +155,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
         // 1. 전체 목록 캐싱 확인
         PageResponse<PointHistoryResponse> fullListCachedData = getCachedDataFromCacheManager("userPointHistories", fullListCacheKey);
         if (fullListCachedData == null || fullListCachedData.content().isEmpty()) {
-            System.out.println("Full list cache miss - retrieving data from DB and caching it.");
+            log.info("전체 목록 DB 조회 후 캐싱 처리");
             fullListCachedData = cacheUserPointHistories(userId, pageable); // DB 조회 후 전체 목록 캐싱
             saveToCache("userPointHistories", fullListCacheKey, fullListCachedData); // 전체 목록 저장
         }
@@ -162,8 +167,8 @@ public class PointHistoryServiceImpl implements PointHistoryService {
     /* DB 에서 데이터를 조회하고 캐싱 */
     @Transactional(readOnly = true)
     public PageResponse<PointHistoryResponse> cacheUserPointHistories(String userId, Pageable pageable) {
-        PointStatus status = PointStatus.PROCESSED;
-        Page<PointHistory> pointHistories = pointHistoryRepository.findByUserIdAndStatusAndIsDeletedFalse(userId, status, pageable);
+        List<PointStatus> statuses = List.of(PointStatus.PROCESSED, PointStatus.CANCELLED);
+        Page<PointHistory> pointHistories = pointHistoryRepository.findByUserIdAndStatusInAndIsDeletedFalse(userId, statuses, pageable);
         return PageResponse.of(pointHistories.map(PointHistoryResponse::of));
     }
 
@@ -229,7 +234,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 
     // 취소 데이터 생성
     private PointAllResponse createCancelData(Point point, PointHistory pointHistory, PointType pointType, String contextId) {
-        // 기존 포인트 내역 상태 ROLLBACK 으로 변경
+        // 기존 포인트 내역 상태 CANCELLED 으로 변경
         pointHistory.updateStatus(null, PointStatus.CANCELLED);
         PointHistory cancelHistory = PointHistory.create(
                 point,
@@ -248,6 +253,9 @@ public class PointHistoryServiceImpl implements PointHistoryService {
             point.updateTotalPoint(point.getTotalPoints() - cancelHistory.getPoints()); // 차감
         }
 
+        cacheEvictUtils.evictPoint(point.getUserId());
+        cacheEvictUtils.evictPointHistory(pointHistory.getId());
+        cacheEvictUtils.evictUserPointHistoriesByUserId(point.getUserId());
         return PointAllResponse.of(point, cancelHistory);
     }
 }

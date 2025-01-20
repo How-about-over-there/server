@@ -10,11 +10,13 @@ import com.haot.point.domain.enums.PointStatus;
 import com.haot.point.domain.enums.PointType;
 import com.haot.point.domain.model.Point;
 import com.haot.point.domain.model.PointHistory;
+import com.haot.point.domain.utils.CacheEvictUtils;
 import com.haot.point.infrastructure.repository.PointHistoryRepository;
 import com.haot.point.infrastructure.repository.PointRepository;
 import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +35,7 @@ public class PointServiceImpl implements PointService{
 
     private final PointRepository pointRepository;
     private final PointHistoryRepository pointHistoryRepository;
+    private final CacheEvictUtils cacheEvictUtils;
 
     @Override
     @Transactional
@@ -63,10 +66,8 @@ public class PointServiceImpl implements PointService{
     @Cacheable(cacheNames = "point", key = "#userId")
     public PointResponse getPoint(String userId, String headerUserId, Role role) {
         // 1. 권한 체크 후 userId 설정
-        if (role == Role.USER) {
-            if (!userId.equals(headerUserId)) {
+        if (role == Role.USER && !userId.equals(headerUserId)) {
                 throw new CustomPointException(ErrorCode.USER_NOT_MATCHED);
-            }
         }
 
         // 2. 기존 point 조회
@@ -82,10 +83,8 @@ public class PointServiceImpl implements PointService{
 
         // 기존 포인트 조회 및 userId 검증
         Point point = validPoint(pointId);
-        if (role == Role.USER) {
-            if (!point.getUserId().equals(userId)) {
+        if (role == Role.USER && !point.getUserId().equals(userId)) {
                 throw new CustomPointException(ErrorCode.USER_NOT_MATCHED);
-            }
         }
 
         // 1. 포인트 타입 유효성 검사
@@ -118,7 +117,7 @@ public class PointServiceImpl implements PointService{
                 PointStatus.PENDING
         );
         pointHistoryRepository.save(pointHistory);
-
+        cacheEvictUtils.evictPoint(userId);
         return PointAllResponse.of(point, pointHistory);
     }
 
@@ -162,6 +161,8 @@ public class PointServiceImpl implements PointService{
         // 4. 포인트 적립
         point.updateTotalPoint(point.getTotalPoints() + request.points());
 
+        cacheEvictUtils.evictPoint(userId);
+        cacheEvictUtils.evictUserPointHistoriesByUserId(userId);
         return PointAllResponse.of(point, pointHistory);
     }
 
@@ -205,6 +206,13 @@ public class PointServiceImpl implements PointService{
             // 7. 저장
             pointHistoryRepository.save(expireHistory);
         }
+
+        // 캐시 삭제
+        expiredPoints.forEach(history -> {
+            cacheEvictUtils.evictPoint(history.getPoint().getUserId());
+            cacheEvictUtils.evictUserPointHistoriesByUserId(history.getPoint().getUserId());
+        });
+
         // 8. 페이징 종료 조건
         return !expiredPoints.isEmpty(); // 더 이상 만료할 데이터가 없으면 false 반환
     }

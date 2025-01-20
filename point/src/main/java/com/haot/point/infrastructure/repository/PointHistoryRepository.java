@@ -18,7 +18,7 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Stri
 
     Optional<PointHistory> findByIdAndIsDeletedFalse(String historyId);
 
-    Page<PointHistory> findByUserIdAndStatusAndIsDeletedFalse(String userId, PointStatus status, Pageable pageable);
+    Page<PointHistory> findByUserIdAndStatusInAndIsDeletedFalse(String userId, List<PointStatus> statuses, Pageable pageable);
 
     // 만료 대상 적립 내역 조회
     @Query("SELECT h FROM PointHistory h WHERE h.type = 'EARN' AND h.status = 'PROCESSED'" +
