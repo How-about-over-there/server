@@ -39,12 +39,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.*;
@@ -319,10 +323,7 @@ public class CouponServiceImpl implements CouponService {
         }
     }
 
-
-    // 이벤트 상태 변경 consumer, redis 삭제 TODO 여기 붙어있어야 될듯, 역할과 책임이 중요 -> 확실하게 commit 되었을때 after commit 같이 이벤트를 쏘던지
-    // 별도의 template메서드(클린코드에서 강의) 사용하던 db에 영속화 됬을때 보내줘야 된다.
-    // 전체적으로 after commit 된 이후에 확실하게 update 된 이벤트만 log찍기!!
+    // 이벤트 상태 변경 consumer, redis 삭제, front db에 담을 데이터 요청 log로 대신함
     @Transactional
     @Override
     public void updateEndEventStatus(Set<EventClosedDto> eventClosedDtoSet) {
@@ -331,7 +332,9 @@ public class CouponServiceImpl implements CouponService {
                 .collect
                         (groupingBy(EventClosedDto::getStatus, mapping(EventClosedDto::getEventId, toSet())));
 
-        eventIdsByStatus.forEach(((eventStatus, value) -> {
+        Map<EventStatus, List<String>> updatedEventLogs = new ConcurrentHashMap<>();
+
+        eventIdsByStatus.forEach((eventStatus, value) -> {
 
             StreamSupport.stream(Iterables.partition(value, 200).spliterator(), false)
                     .forEach(eventIds -> {
@@ -344,14 +347,28 @@ public class CouponServiceImpl implements CouponService {
                                     .map(CheckAlreadyClosedEventDto::getEventId)
                                     .toList();
 
-                            // 이미 상태값이 바뀐 이벤트 말고 default인 eventid를 가진 event들을 update해야한다.
                             couponEventRepository.updateStatusForIds(eventStatus, notClosedEventIds);
+
+                            updatedEventLogs.computeIfAbsent(eventStatus, k -> new CopyOnWriteArrayList<>())
+                                    .addAll(notClosedEventIds);
 
                             redisRepository.deleteEventClosed(notClosedEvents.stream().toList());
                         }
 
                     });
-        }));
+        });
+        // 현재 프로젝트에는 Front가 없지만 front에 Front 개발자가 front db에 저장을 한다는 가정
+        //이 이벤트의 요청을 감소 시키기 위함
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                updatedEventLogs.forEach((status, eventIds) -> {
+                    if (!eventIds.isEmpty()) {
+                        log.info("Send To front DB -> Updated events : {}, status : {}", eventIds, status);
+                    }
+                });
+            }
+        });
     }
 
     // 쿠폰 DB check
