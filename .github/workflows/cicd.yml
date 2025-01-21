@@ -42,12 +42,14 @@ jobs:
           DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
           DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
           REDIS_URL: ${{ secrets.REDIS_URL }}
+          SERVER_DNS: ${{ secrets.SERVER_DNS }}
         run: |
           # Update application.yml for each service
           sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" ${{ matrix.service }}/src/main/resources/application.yml
           sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" ${{ matrix.service }}/src/main/resources/application.yml
           sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" ${{ matrix.service }}/src/main/resources/application.yml
           sed -i "s|\${REDIS_URL}|${REDIS_URL}|g" ${{ matrix.service }}/src/main/resources/application.yml
+          sed -i "s|\${SERVER_DNS}|${SERVER_DNS}|g" ${{ matrix.service }}/src/main/resources/application.yml
 
       # Gradle 빌드
       - name: Build with Gradle for ${{ matrix.service }}

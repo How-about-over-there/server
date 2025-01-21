@@ -25,4 +25,4 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://haot-server-service:19090/eureka/
+      defaultZone: http://${SERVER_DNS}/eureka/
