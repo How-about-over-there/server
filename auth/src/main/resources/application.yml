@@ -8,7 +8,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://server:19090/eureka/
+      defaultZone: http://haot-server-service:19090/eureka/
 
 jwt:
   secret:
