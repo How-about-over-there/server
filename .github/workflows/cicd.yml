@@ -83,7 +83,7 @@ jobs:
       - name: Deploy ECS Service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          task-definition: ${{ steps.retrieve-task-def.outputs.task-def-file }}
           service: haot-${{ matrix.service }}-service
           cluster: haot-cluster
           wait-for-service-stability: true
