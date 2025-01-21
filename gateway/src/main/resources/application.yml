@@ -4,9 +4,8 @@ server:
 spring:
   data:
     redis:
-      host: localhost
+      host: ${REDIS_URL}
       port: 6379
-      password: '0000'
   application:
     name: gateway-service
   cloud:
@@ -109,7 +108,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://server:19090/eureka/
 
 
 jwt:
