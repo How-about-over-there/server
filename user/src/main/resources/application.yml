@@ -7,7 +7,10 @@ spring:
   data:
     redis:
       host: ${REDIS_URL}
-      port: 6379
+      port: 6380
+      ssl:
+        enabled: true
+
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
