@@ -46,6 +46,13 @@ public class JwtAuthenticationFilter implements WebFilter {
     log.info("Request Headers: {}", exchange.getRequest().getHeaders());
     log.info("Request Path: {}", path);
 
+    String userAgent = exchange.getRequest().getHeaders().getFirst("User-Agent");
+
+    // ELB health check 요청을 제외하고 JWT 토큰 검사
+    if ("ELB-HealthChecker/2.0".equals(userAgent)) {
+      return chain.filter(exchange);
+    }
+
     if (prefixPaths.stream().anyMatch(path::startsWith)) {
       log.info("Bypassing authentication for prefixPaths path: {}", path);
       return chain.filter(exchange);
