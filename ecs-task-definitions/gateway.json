@@ -2,7 +2,7 @@
   "family": "haot-gateway-task",
   "containerDefinitions": [
     {
-      "name": "user",
+      "name": "gateway",
       "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/haot-ecr:gateway-latest",
       "cpu": 256,
       "memory": 512,
