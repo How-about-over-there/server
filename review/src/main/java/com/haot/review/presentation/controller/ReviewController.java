@@ -10,6 +10,8 @@ import com.haot.review.common.response.ApiResponse;
 import com.haot.review.common.response.enums.SuccessCode;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Review Management", description = "리뷰 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/reviews")
@@ -33,6 +36,7 @@ public class ReviewController {
 
   private final ReviewService reviewService;
 
+  @Operation(summary = "리뷰 생성", description = "사용자가 리뷰를 작성할 수 있습니다.")
   @RoleCheck(Role.USER)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
@@ -44,6 +48,7 @@ public class ReviewController {
     return ApiResponse.success(reviewService.createReview(userId, request));
   }
 
+  @Operation(summary = "리뷰 단건 조회", description = "사용자가 리뷰를 조회할 수 있습니다.")
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/{reviewId}")
   public ApiResponse<ReviewGetResponse> readOne(
@@ -52,6 +57,7 @@ public class ReviewController {
     return ApiResponse.success(reviewService.readOne(reviewId));
   }
 
+  @Operation(summary = "리뷰 검색 조회", description = "사용자가 검색 조건에 따라 리뷰를 조회할 수 있습니다.")
   @RoleCheck({Role.ADMIN, Role.HOST, Role.USER})
   @ResponseStatus(HttpStatus.OK)
   @GetMapping
@@ -63,6 +69,7 @@ public class ReviewController {
     return ApiResponse.success(reviewService.searchReview(role, request, pageable));
   }
 
+  @Operation(summary = "리뷰 수정", description = "사용자가 리뷰를 수정할 수 있습니다.")
   @RoleCheck(Role.USER)
   @ResponseStatus(HttpStatus.OK)
   @PatchMapping("/{reviewId}")
@@ -77,6 +84,7 @@ public class ReviewController {
   }
 
 
+  @Operation(summary = "리뷰 삭제", description = "사용자가 리뷰를 삭제할 수 있습니다.")
   @RoleCheck({Role.ADMIN, Role.HOST, Role.USER})
   @ResponseStatus(HttpStatus.OK)
   @DeleteMapping("/{reviewId}")
