@@ -44,26 +44,7 @@ public class KafkaConfig {
         return new KafkaTemplate<>(producerFactory());
     }
 
-    @Bean
-    public ConsumerFactory<String, EventClosedDto> consumerFactory() {
-        HashMap<String, Object> configConsumer = new HashMap<>();
-        configConsumer.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        configConsumer.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configConsumer.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configConsumer.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-        configConsumer.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 500);
-        configConsumer.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 300000);
-
-        configConsumer.put(JsonDeserializer.TRUSTED_PACKAGES, "com.haot.coupon.application.dto");
-
-        return new DefaultKafkaConsumerFactory<>(configConsumer,
-                new StringDeserializer(),
-                new JsonDeserializer<>(EventClosedDto.class));
-    }
-
-    // 쿠폰 issue Consumer
-    @Bean
-    public ConsumerFactory<String, CouponIssueDto> issueConsumerFactory() {
+    private Map<String, Object> createConsumerConfig() {
         HashMap<String, Object> configConsumer = new HashMap<>();
         configConsumer.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configConsumer.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -71,12 +52,26 @@ public class KafkaConfig {
         configConsumer.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         configConsumer.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 500);
         configConsumer.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 300000);
-
         configConsumer.put(JsonDeserializer.TRUSTED_PACKAGES, "com.haot.coupon.application.dto");
+        return configConsumer;
+    }
 
-        return new DefaultKafkaConsumerFactory<>(configConsumer,
+    @Bean
+    public ConsumerFactory<String, EventClosedDto> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(
+                createConsumerConfig(),
                 new StringDeserializer(),
-                new JsonDeserializer<>(CouponIssueDto.class));
+                new JsonDeserializer<>(EventClosedDto.class)
+        );
+    }
+
+    @Bean
+    public ConsumerFactory<String, CouponIssueDto> issueConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(
+                createConsumerConfig(),
+                new StringDeserializer(),
+                new JsonDeserializer<>(CouponIssueDto.class)
+        );
     }
 
     // 무제한 쿠폰 factory
