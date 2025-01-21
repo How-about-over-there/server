@@ -1,9 +1,11 @@
 package com.haot.coupon.application.dto.response.coupons;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+@Schema(description = "내 쿠폰함 보기 RESPONSE DTO")
 @Builder
 public record CouponReadMeResponse(
         String couponId,

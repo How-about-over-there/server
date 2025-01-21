@@ -1,34 +1,22 @@
 package com.haot.coupon.presentation.controller;
 
 import com.haot.coupon.application.dto.request.coupons.CouponCreateRequest;
-import com.haot.coupon.application.dto.request.coupons.CouponSearchRequest;
 import com.haot.coupon.application.dto.response.coupons.CouponCreateResponse;
-import com.haot.coupon.application.dto.response.coupons.CouponHistoryResponse;
-import com.haot.coupon.application.dto.response.coupons.CouponSearchResponse;
 import com.haot.coupon.application.service.AdminCouponService;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.common.response.enums.SuccessCode;
-import com.haot.coupon.domain.model.enums.CouponType;
-import com.haot.coupon.domain.model.enums.DiscountPolicy;
-import com.haot.coupon.domain.model.enums.ReservationCouponStatus;
-import com.haot.coupon.domain.model.vo.CouponDiscountRate;
+import com.haot.coupon.presentation.docs.AdminCouponControllerDocs;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/v1/coupons")
-public class AdminCouponController {
+public class AdminCouponController implements AdminCouponControllerDocs {
 
     private final AdminCouponService adminCouponService;
 

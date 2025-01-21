@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/events")
-public class EventController {
+public class EventController implements com.haot.coupon.presentation.docs.EventControllerDocs {
 
     private final EventService eventService;
 
