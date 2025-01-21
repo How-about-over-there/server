@@ -1,4 +1,4 @@
-package com.haot.reservation.application.dtos.res;
+package com.haot.reservation.application.dto.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.haot.reservation.domain.model.Reservation;

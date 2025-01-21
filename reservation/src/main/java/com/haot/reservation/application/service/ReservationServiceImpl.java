@@ -1,13 +1,13 @@
 package com.haot.reservation.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haot.reservation.application.dtos.ReservationData;
-import com.haot.reservation.application.dtos.req.ReservationAdminSearchRequest;
-import com.haot.reservation.application.dtos.req.ReservationCancelRequest;
-import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
-import com.haot.reservation.application.dtos.req.ReservationSearchRequest;
-import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
-import com.haot.reservation.application.dtos.res.ReservationGetResponse;
+import com.haot.reservation.application.dto.ReservationData;
+import com.haot.reservation.application.dto.req.ReservationAdminSearchRequest;
+import com.haot.reservation.application.dto.req.ReservationCancelRequest;
+import com.haot.reservation.application.dto.req.ReservationCreateRequest;
+import com.haot.reservation.application.dto.req.ReservationSearchRequest;
+import com.haot.reservation.application.dto.req.ReservationUpdateRequest;
+import com.haot.reservation.application.dto.res.ReservationGetResponse;
 import com.haot.reservation.common.exceptions.DateUnavailableException;
 import com.haot.reservation.common.exceptions.FeignExceptionUtils;
 import com.haot.reservation.common.exceptions.ReservationException;
