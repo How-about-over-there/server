@@ -44,6 +44,7 @@ jobs:
           REDIS_URL: ${{ secrets.REDIS_URL }}
           SERVER_DNS: ${{ secrets.SERVER_DNS }}
           USER_SERVICE_DNS: ${{ secrets.USER_SERVICE_DNS }}
+          SERVER_HOST: ${{ secrets.SERVICE_HOST }}
         run: |
           # Update application.yml for each service
           sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" ${{ matrix.service }}/src/main/resources/application.yml
@@ -52,6 +53,7 @@ jobs:
           sed -i "s|\${REDIS_URL}|${REDIS_URL}|g" ${{ matrix.service }}/src/main/resources/application.yml
           sed -i "s|\${SERVER_DNS}|${SERVER_DNS}|g" ${{ matrix.service }}/src/main/resources/application.yml
           sed -i "s|\${USER_SERVICE_DNS}|${USER_SERVICE_DNS}|g" ${{ matrix.service }}/src/main/resources/application.yml
+          sed -i "s|\${SERVER_HOST}|${SERVER_HOST}|g" ${{ matrix.service }}/src/main/resources/application.yml
 
       # Gradle 빌드
       - name: Build with Gradle for ${{ matrix.service }}
