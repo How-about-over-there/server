@@ -2,8 +2,10 @@ package com.haot.lodge.application.dto;
 
 
 import com.haot.lodge.domain.model.LodgeImage;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
+@Schema(description = "숙소 이미지 정보")
 @Builder
 public record LodgeImageDto(
         String id,
