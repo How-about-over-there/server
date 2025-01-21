@@ -1,6 +1,7 @@
 package com.haot.gateway.client;
 
 import com.haot.gateway.data.UserValidationResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -10,8 +11,10 @@ public class UserWebClient {
 
   private final WebClient webClient;
 
+  @Value("${user.service}")
+  private String userServiceDNS;
   public UserWebClient(WebClient.Builder webClientBuilder) {
-    this.webClient = webClientBuilder.baseUrl("http://user-service/api/v1/users").build();
+    this.webClient = webClientBuilder.baseUrl("http://"+userServiceDNS+"/api/v1/users").build();
   }
 
   public Mono<Void> validateUser(String userIdToValidate) {

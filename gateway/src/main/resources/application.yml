@@ -123,4 +123,7 @@ filter:
     exact-paths: /api/v1/auth/login, /api/v1/auth/signup, /payment.html, /
     prefix-paths: /api/v1/auth, /actuator
 
+user:
+  service: ${USER_SERVICE_DNS}
+
 
