@@ -11,6 +11,7 @@ public class PointHistorySearchRequest {
     private Boolean isEarn;
     private Boolean isUse;
     private String status;
+    private Boolean isUser;
     private Double minPoint;
     private Double maxPoint;
     private LocalDate start;

@@ -8,6 +8,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/how_about_over_there
     username:
     password:
+  data:
+    redis:
+      port:
+      host:
+      username:
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,3 +26,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:19090/eureka/
+logging:
+  level:
+    org.springframework.cache: DEBUG
