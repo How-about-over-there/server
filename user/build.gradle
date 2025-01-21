@@ -42,6 +42,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
+	//Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 	//Spring AOP
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 

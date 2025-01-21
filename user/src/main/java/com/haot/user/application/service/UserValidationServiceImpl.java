@@ -9,7 +9,10 @@ import com.haot.user.common.exception.ErrorCode;
 import com.haot.user.common.util.Argon2PasswordEncoder;
 import com.haot.user.domain.model.User;
 import com.haot.user.infrastructure.repository.UserRepository;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class UserValidationServiceImpl implements UserValidationService {
 
   private final UserRepository userRepository;
+  private final StringRedisTemplate stringRedisTemplate;
 
   @Override
   public UserLoginValidationResponse validateLoginInformation(UserLoginValidationRequest request) {
@@ -29,6 +33,10 @@ public class UserValidationServiceImpl implements UserValidationService {
     if (!Argon2PasswordEncoder.matches(request.password().toCharArray(), findUserByEmail.getPassword())) {
       throw new UserException(ErrorCode.INVALID_PASSWORD_EXCEPTION);
     }
+
+    ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+    stringStringValueOperations.set("auth:user:valid_id:" + findUserByEmail.getId(),
+        findUserByEmail.getId(), 60, TimeUnit.MINUTES);
 
     // return : 로그인 성공한 유저 정보 반환
     return UserLoginValidationResponse.of(
