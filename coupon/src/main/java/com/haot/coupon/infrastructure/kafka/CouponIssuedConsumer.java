@@ -22,9 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CouponIssuedConsumer implements CouponIssueConsumer {
 
-    private final ObjectMapper objectMapper;
     private final CouponService couponService;
-    private final RedisRepository redisRepository;
 
     @Override
     @KafkaListener(topics = "coupon-issue-priority", groupId = "coupon-user-priority",
