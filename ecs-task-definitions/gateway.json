@@ -1,0 +1,19 @@
+{
+  "family": "haot-gateway-task",
+  "containerDefinitions": [
+    {
+      "name": "user",
+      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/haot-ecr:gateway-latest",
+      "cpu": 256,
+      "memory": 512,
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 19091,
+          "hostPort": 19091,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
