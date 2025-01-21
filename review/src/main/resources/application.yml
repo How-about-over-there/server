@@ -5,7 +5,7 @@ spring:
   application:
     name: review-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/reservation
+    url: jdbc:postgresql://localhost:5432/review
     username: ws
     password: 1234
     driver-class-name: org.postgresql.Driver
@@ -22,3 +22,13 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:19090/eureka/
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION}
+    s3:
+      bucket: ${AWS_S3_BUCKET}
