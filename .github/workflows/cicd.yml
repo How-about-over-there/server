@@ -71,19 +71,10 @@ jobs:
           docker tag haot-ecr/${{ matrix.service }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:${{ matrix.service }}-latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:${{ matrix.service }}-latest
 
-      - name: Retrieve most recent ECS task definition JSON file
-        id: retrieve-task-def
+      # ECS 서비스 강제 업데이트 (Task Definition을 변경하지 않고 서비스만 재시작)
+      - name: Force restart ECS service
         run: |
-          aws ecs describe-task-definition --task-definition haot-${{ matrix.service }}-task --query taskDefinition > task-definition.json
-          cat task-definition.json
-          echo "::set-output name=task-def-file::task-definition.json"
-
-
-      # ECS 서비스 업데이트
-      - name: Deploy ECS Service
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.retrieve-task-def.outputs.task-def-file }}
-          service: haot-${{ matrix.service }}-service
-          cluster: haot-cluster
-          wait-for-service-stability: true
+          aws ecs update-service \
+            --cluster haot-cluster \
+            --service haot-${{ matrix.service }}-service \
+            --force-new-deployment
