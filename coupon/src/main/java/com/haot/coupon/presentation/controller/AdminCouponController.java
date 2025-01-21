@@ -32,44 +32,6 @@ public class AdminCouponController {
 
     private final AdminCouponService adminCouponService;
 
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping
-    public ApiResponse<Page<CouponSearchResponse>> couponSearch(@ModelAttribute CouponSearchRequest request,
-                                                                Pageable pageable) {
-
-        List<CouponSearchResponse> response = List.of(
-                CouponSearchResponse.builder()
-                        .couponId("sadflkdsflksandf")
-                        .couponName("테스트 쿠폰 1")
-                        .availableDate(LocalDateTime.now().minusDays(1))
-                        .expiredDate(LocalDateTime.now().plusDays(1))
-                        .couponType(CouponType.PRIORITY.toString())
-                        .discountPolicy(DiscountPolicy.PERCENTAGE.toString())
-                        .maxAvailableAmount(500000.0)
-                        .minAvailableAmount(50000.0)
-                        .discountRate(10)
-                        .totalQuantity(5000)
-                        .issuedQuantity(3000)
-                        .build(),
-                CouponSearchResponse.builder()
-                        .couponId("sadflkdsflksandf")
-                        .couponName("테스트 쿠폰 1")
-                        .availableDate(LocalDateTime.now().minusDays(1))
-                        .expiredDate(LocalDateTime.now().plusDays(1))
-                        .couponType(CouponType.PRIORITY.toString())
-                        .discountPolicy(DiscountPolicy.PERCENTAGE.toString())
-                        .maxAvailableAmount(500000.0)
-                        .minAvailableAmount(50000.0)
-                        .discountRate(10)
-                        .totalQuantity(5000)
-                        .issuedQuantity(3000)
-                        .build()
-
-        );
-
-        return ApiResponse.success(new PageImpl<>(response, pageable, response.size()));
-    }
-
     // 쿠폰 생성 API
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
@@ -89,31 +51,5 @@ public class AdminCouponController {
     public ApiResponse<Void> deleteCouponHistory(@PathVariable(value = "reservationCouponId") String reservationCouponId) {
         return ApiResponse.success();
     }
-
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{userCouponId}")
-    public ApiResponse<List<CouponHistoryResponse>> getCouponHistories(@PathVariable(value = "userCouponId") String userCouponId) {
-
-        List<CouponHistoryResponse> response = List.of(
-                CouponHistoryResponse.builder()
-                        .reservationCouponId("dnfjdsvcjxv")
-                        .userCouponId(userCouponId)
-                        .reservationCouponStatus(ReservationCouponStatus.COMPLETED)
-                        .reservationPrice(50000.0)
-                        .reservationDiscountedPrice(5000.0)
-                        .build(),
-                CouponHistoryResponse.builder()
-                        .reservationCouponId("dnfjdsdsvcvvcjxv")
-                        .userCouponId(userCouponId)
-                        .reservationCouponStatus(ReservationCouponStatus.CANCEL)
-                        .reservationPrice(40000.0)
-                        .reservationDiscountedPrice(4000.0)
-                        .build()
-        );
-
-        return ApiResponse.success(response);
-
-    }
-
 
 }
