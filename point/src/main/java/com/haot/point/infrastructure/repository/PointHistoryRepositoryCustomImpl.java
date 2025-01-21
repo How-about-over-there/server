@@ -60,6 +60,7 @@ public class PointHistoryRepositoryCustomImpl implements PointHistoryRepositoryC
                 .and(eqType(request.getType()))
                 .and(filterEarnOrUse(request.getIsEarn(), request.getIsUse()))
                 .and(eqStatus(request.getStatus()))
+                .and(filterUser(request.getIsUser()))
                 .and(betweenPoint(request.getMinPoint(), request.getMaxPoint()))
                 .and(betweenDates(request.getStart(), request.getEnd()));
     }
@@ -86,6 +87,14 @@ public class PointHistoryRepositoryCustomImpl implements PointHistoryRepositoryC
         }
         if (Boolean.TRUE.equals(isUse)) {
             return pointHistory.type.in(PointType.USE, PointType.CANCEL_EARN, PointType.EXPIRE);
+        }
+        return null;
+    }
+
+    // USER 필터 조건
+    private BooleanExpression filterUser(Boolean isUser) {
+        if (Boolean.TRUE.equals(isUser)) {
+            return pointHistory.status.in(PointStatus.PROCESSED, PointStatus.CANCELLED);
         }
         return null;
     }

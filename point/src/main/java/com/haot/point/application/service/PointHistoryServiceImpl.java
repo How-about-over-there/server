@@ -134,7 +134,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
         // USER 요청의 경우
         if (role == Role.USER) {
             request.setUserId(userId);
-            request.setStatus("PROCESSED");
+            request.setIsUser(true);
         }
         Page<PointHistoryResponse> pointHistories = pointHistoryRepository.searchPointHistories(request, pageable);
         return PageResponse.of(pointHistories);
