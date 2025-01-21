@@ -1,8 +1,15 @@
 <configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %level %thread --- [%X{instanceId}] %logger{36} : %msg%n</pattern>
+        </encoder>
+    </appender>
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
         <http>
             <url>http://haot-loki:3100/loki/api/v1/push</url>
         </http>
+        <!--<batchSize>102400</batchSize> &lt;!&ndash; 한 번에 전송할 로그 크기 &ndash;&gt;
+        <batchTimeoutMs>5000</batchTimeoutMs> &lt;!&ndash; 전송 주기 &ndash;&gt;-->
         <format>
             <label>
                 <pattern>service=coupon-service,level=%level</pattern>
@@ -11,7 +18,8 @@
         </format>
     </appender>
 
-    <root level="DEBUG">
+<!--  DEBUG  -->
+    <root level="INFO">
         <appender-ref ref="LOKI" />
     </root>
 </configuration>
