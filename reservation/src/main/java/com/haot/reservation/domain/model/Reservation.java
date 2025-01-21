@@ -106,7 +106,7 @@ public class Reservation extends BaseEntity {
     this.status = ReservationStatus.CANCELED;
   }
 
-  public void getPayment(String paymentId) {
+  public void updatePaymentId(String paymentId) {
     this.paymentId = paymentId;
   }
 }
