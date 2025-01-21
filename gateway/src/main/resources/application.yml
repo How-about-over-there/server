@@ -121,6 +121,6 @@ jwt:
 filter:
   bypass:
     exact-paths: /api/v1/auth/login, /api/v1/auth/signup, /payment.html
-    prefix-paths: /api/v1/auth
+    prefix-paths: /api/v1/auth, /actuator
 
 
