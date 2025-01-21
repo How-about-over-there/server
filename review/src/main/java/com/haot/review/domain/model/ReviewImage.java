@@ -44,4 +44,8 @@ public class ReviewImage extends BaseEntity {
         .build();
   }
 
+  public void deleteReviewImage(String userId) {
+    deleteEntity(userId);
+  }
+
 }

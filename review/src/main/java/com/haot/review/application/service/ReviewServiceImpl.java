@@ -87,6 +87,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     review.deleteReview(userId);
+    review.getImages().forEach(reviewImage -> reviewImage.deleteReviewImage(userId));
   }
 
   private Review findActiveReviewById(String reviewId) {
