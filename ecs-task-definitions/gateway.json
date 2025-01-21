@@ -15,5 +15,9 @@
         }
       ]
     }
-  ]
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "networkMode": "awsvpc",
+  "memory": "512MB",
+  "cpu": "256"
 }
