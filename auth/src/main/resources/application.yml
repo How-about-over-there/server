@@ -6,6 +6,8 @@ spring:
     name: auth-service
 
 eureka:
+  instance:
+    hostname: ${AUTH_SERVICE_HOST}
   client:
     service-url:
       defaultZone: http://${SERVER_DNS}/eureka/

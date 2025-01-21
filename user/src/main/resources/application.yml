@@ -23,6 +23,8 @@ spring:
         highlight_sql: true
 
 eureka:
+  instance:
+    hostname: ${USER_SERVICE_HOST}
   client:
     service-url:
       defaultZone: http://${SERVER_DNS}/eureka/

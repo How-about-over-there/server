@@ -106,6 +106,8 @@ spring:
             - Path=/admin/v1/points/**
 
 eureka:
+  instance:
+    hostname: ${GATEWAY_SERVICE_HOST}
   client:
     service-url:
       defaultZone: http://${SERVER_DNS}/eureka/
