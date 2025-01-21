@@ -71,21 +71,13 @@ jobs:
           docker tag haot-ecr/${{ matrix.service }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:${{ matrix.service }}-latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:${{ matrix.service }}-latest
 
-      # Task Definition JSON 파일 수정
-      - name: Create task definition JSON
+      - name: Retrieve most recent ECS task definition JSON file
+        id: retrieve-task-def
         run: |
-          # image 값을 동적으로 변경
-          sed -i 's|{{AWS_ACCOUNT_ID}}|${{ secrets.AWS_ACCOUNT_ID }}|g' ecs-task-definitions/${{ matrix.service }}.json
-          sed -i 's|{{AWS_DEFAULT_REGION}}|${{ secrets.AWS_DEFAULT_REGION }}|g' ecs-task-definitions/${{ matrix.service }}.json
+          aws ecs describe-task-definition --task-definition haot-${{ matrix.service }}-task --query taskDefinition > task-definition.json
+          cat task-definition.json
+          echo "::set-output name=task-def-file::task-definition.json"
 
-        # ECS 태스크 정의 업데이트
-      - name: Update ECS Task Definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ecs-task-definitions/${{ matrix.service }}.json
-          container-name: ${{ matrix.service }}
-          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:${{ matrix.service }}-latest
 
       # ECS 서비스 업데이트
       - name: Deploy ECS Service
