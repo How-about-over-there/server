@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/lodge-dates")
 @RequiredArgsConstructor
-public class LodgeDateController {
+public class LodgeDateController implements LodgeDateControllerDocs {
 
     private final LodgeDateFacade lodgeDateFacade;
 
