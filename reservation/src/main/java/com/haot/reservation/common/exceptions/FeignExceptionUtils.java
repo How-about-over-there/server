@@ -2,6 +2,7 @@ package com.haot.reservation.common.exceptions;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.haot.reservation.common.response.enums.ErrorCode;
 import feign.FeignException;
 import java.io.IOException;
 
@@ -11,7 +12,7 @@ public class FeignExceptionUtils {
     if (e instanceof FeignException) {
       return handleFeignException((FeignException) e);
     } else {
-      return new FeignClientException("7202", "ERROR", "예기치 않은 오류 발생: " + e.getMessage());
+      return new FeignClientException(ErrorCode.UNEXPECTED_ERROR, e.getMessage());
     }
   }
 
@@ -21,9 +22,9 @@ public class FeignExceptionUtils {
       ObjectMapper objectMapper = new ObjectMapper();
       JsonNode jsonNode = objectMapper.readTree(responseBody);
       String message = jsonNode.get("message").asText();
-      return new FeignClientException("7200", "ERROR", message);
+      return new FeignClientException(ErrorCode.FEIGN_CLIENT_ERROR, message);
     } catch (IOException ex) {
-      return new FeignClientException("7201", "ERROR", responseBody);
+      return new FeignClientException(ErrorCode.GATEWAY_ERROR, responseBody);
     }
   }
 }
