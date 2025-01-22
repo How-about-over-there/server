@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/lodges")
 @RequiredArgsConstructor
-public class LodgeController {
+public class LodgeController implements LodgeControllerDocs{
 
     private final LodgeFacade lodgeFacade;
 
