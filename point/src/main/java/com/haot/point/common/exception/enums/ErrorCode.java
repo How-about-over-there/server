@@ -35,7 +35,8 @@ public enum ErrorCode implements ResCodeIfs {
     POINT_CHANGE_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "9011", "지원하지 않는 포인트 상태 변경입니다."),
     INVALID_CANCEL_TYPE_FOR_USE(HttpStatus.BAD_REQUEST, "9012", "USE 상태에서는 CANCEL_USE 만 허용됩니다."),
     INVALID_CANCEL_TYPE_FOR_EARN(HttpStatus.BAD_REQUEST, "9013", "EARN 상태에서는 CANCEL_EARN 만 허용됩니다."),
-    USER_NOT_MATCHED(HttpStatus.BAD_REQUEST,"9014" , "유저 ID 가 일치하지 않습니다.");
+    USER_NOT_MATCHED(HttpStatus.BAD_REQUEST,"9014" , "유저 ID 가 일치하지 않습니다."),
+    POINT_ALREADY_PRESENT(HttpStatus.BAD_REQUEST, "9015", "이미 Point 가 존재하는 유저입니다." );
 
 
     private final HttpStatus httpStatus;

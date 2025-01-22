@@ -1,6 +1,6 @@
 package com.haot.point.presentation.controller;
 
-import com.haot.point.application.dto.request.PointHistoryUpdateRequest;
+import com.haot.point.application.dto.request.history.PointHistoryUpdateRequest;
 import com.haot.point.application.dto.response.PointResponse;
 import com.haot.point.common.response.ApiResponse;
 import jakarta.validation.Valid;

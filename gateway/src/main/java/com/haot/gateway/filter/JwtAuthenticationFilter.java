@@ -37,12 +37,16 @@ public class JwtAuthenticationFilter implements WebFilter {
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
     String path = exchange.getRequest().getURI().getPath();
+    log.info("Request Headers: {}", exchange.getRequest().getHeaders());
+    log.info("Request Path: {}", path);
 
     if (prefixPaths.stream().anyMatch(path::startsWith)) {
+      log.info("Bypassing authentication for prefixPaths path: {}", path);
       return chain.filter(exchange);
     }
 
     if (exactPaths.stream().anyMatch(path::equals)) {
+      log.info("Bypassing authentication for exactPaths path: {}", path);
       return chain.filter(exchange);
     }
 
@@ -68,6 +72,7 @@ public class JwtAuthenticationFilter implements WebFilter {
         .then(Mono.defer(() -> {
           // 검증 성공 시
           ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
+              .header("Authorization", token)
               .header("X-User-Id", userId)
               .header("X-User-Role", role.name())
               .build();

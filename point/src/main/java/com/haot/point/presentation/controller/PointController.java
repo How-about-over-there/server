@@ -1,6 +1,6 @@
 package com.haot.point.presentation.controller;
 
-import com.haot.point.application.dto.request.PointCreateRequest;
+import com.haot.point.application.dto.request.point.PointCreateRequest;
 import com.haot.point.application.dto.request.PointTransactionRequest;
 import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointResponse;

@@ -1,5 +1,7 @@
 package com.haot.user.application.dto.req;
 
+import com.haot.user.domain.model.enums.Gender;
+import java.time.LocalDate;
 import lombok.Builder;
 
 @Builder
@@ -8,8 +10,8 @@ public record UserUpdateMeRequest(
     String password,
     String email,
     String phoneNumber,
-    String birthDate,
-    String gender,
+    LocalDate birthDate,
+    Gender gender,
     String preferredLanguage,
     String currency,
     String profileImageUrl,

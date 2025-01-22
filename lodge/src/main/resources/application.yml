@@ -1,6 +1,8 @@
 server:
   port: 19098
 spring:
+  profiles:
+    include: s3
   application:
    name: lodge-service
   datasource:
@@ -13,6 +15,12 @@ spring:
          dialect: org.hibernate.dialect.PostgreSQLDialect
          format_sql: true
      show-sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6389
+      username: default
+
 
 eureka:
   client:

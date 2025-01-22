@@ -1,7 +1,7 @@
 package com.haot.point.presentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haot.point.application.dto.request.PointCreateRequest;
+import com.haot.point.application.dto.request.point.PointCreateRequest;
 import com.haot.point.application.dto.request.PointTransactionRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

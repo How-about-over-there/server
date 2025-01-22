@@ -98,7 +98,15 @@ public class Reservation extends BaseEntity {
         .build();
   }
 
-  public void getPayment(String paymentId) {
+  public void completedReservation() {
+    this.status = ReservationStatus.COMPLETED;
+  }
+
+  public void cancelReservation() {
+    this.status = ReservationStatus.CANCELED;
+  }
+
+  public void updatePaymentId(String paymentId) {
     this.paymentId = paymentId;
   }
 }

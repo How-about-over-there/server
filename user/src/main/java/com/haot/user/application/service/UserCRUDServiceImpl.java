@@ -1,7 +1,9 @@
 package com.haot.user.application.service;
 
 import com.haot.user.application.dto.req.UserCreateRequest;
+import com.haot.user.application.dto.req.UserUpdateMeRequest;
 import com.haot.user.application.dto.res.UserCreateResponse;
+import com.haot.user.application.dto.res.UserGetMeResponse;
 import com.haot.user.common.exception.UserException;
 import com.haot.user.common.exception.ErrorCode;
 import com.haot.user.common.util.Argon2PasswordEncoder;
@@ -18,6 +20,7 @@ public class UserCRUDServiceImpl implements UserCRUDService {
 
   private final UserRepository userRepository;
 
+  @Override
   @Transactional
   public UserCreateResponse createUser(UserCreateRequest request) {
     // validation : 이미 해당 이메일을 가진 유저가 존재하는지 확인
@@ -56,4 +59,30 @@ public class UserCRUDServiceImpl implements UserCRUDService {
     );
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public UserGetMeResponse getMyInfo(String userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
+    return UserGetMeResponse.of(user);
+  }
+
+  @Override
+  @Transactional
+  public void updateMyInfo(UserUpdateMeRequest userUpdateMeRequest, String userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
+    user.updateName(userUpdateMeRequest.name());
+    if (userUpdateMeRequest.password() != null) {
+      user.updatePassword(Argon2PasswordEncoder.encode(userUpdateMeRequest.password().toCharArray()));
+    }
+    user.updateEmail(userUpdateMeRequest.email());
+    user.updatePhoneNumber(userUpdateMeRequest.phoneNumber());
+    user.updateBirthDate(userUpdateMeRequest.birthDate());
+    user.updateGender(userUpdateMeRequest.gender());
+    user.updatePreferredLanguage(userUpdateMeRequest.preferredLanguage());
+    user.updateCurrency(userUpdateMeRequest.currency());
+    user.updateProfileImageUrl(userUpdateMeRequest.profileImageUrl());
+    user.updateAddress(userUpdateMeRequest.address());
+  }
 }
