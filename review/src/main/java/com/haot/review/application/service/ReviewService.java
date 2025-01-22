@@ -4,6 +4,7 @@ import com.haot.review.application.dtos.req.ReviewCreateRequest;
 import com.haot.review.application.dtos.req.ReviewSearchRequest;
 import com.haot.review.application.dtos.req.ReviewUpdateRequest;
 import com.haot.review.application.dtos.res.ReviewGetResponse;
+import com.haot.submodule.role.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,7 @@ public interface ReviewService {
    * @param pageable 페이징 정보
    * @return 검색된 리뷰 정보 목록 (페이징)
    */
-  Page<ReviewGetResponse> searchReview(String role, ReviewSearchRequest request, Pageable pageable);
+  Page<ReviewGetResponse> searchReview(Role role, ReviewSearchRequest request, Pageable pageable);
 
   /**
    * 리뷰 업데이트
@@ -45,7 +46,7 @@ public interface ReviewService {
    * @param userId   요청을 보낸 사용자 ID
    * @param role     사용자 역할 USER
    */
-  void updateReview(String reviewId, ReviewUpdateRequest request, String userId, String role);
+  void updateReview(String reviewId, ReviewUpdateRequest request, String userId, Role role);
 
   /**
    * 리뷰 삭제
@@ -54,5 +55,5 @@ public interface ReviewService {
    * @param userId   요청을 보낸 사용자 ID
    * @param role     사용자 역할 (USER, HOST, ADMIN)
    */
-  void deleteReview(String reviewId, String userId, String role);
+  void deleteReview(String reviewId, String userId, Role role);
 }
