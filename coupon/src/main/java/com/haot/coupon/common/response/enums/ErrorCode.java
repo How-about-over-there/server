@@ -11,6 +11,7 @@ public enum ErrorCode implements ResCodeIfs {
 
     // 0000: Common Error
     INTERNAL_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "0000", "Unknown Server Error"),
+    NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "0001", "존재하지 않는 리소스입니다."),
     VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "0009", "Validation failed"),
 
     // user exception
