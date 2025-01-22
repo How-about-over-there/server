@@ -59,6 +59,7 @@ services:
       - kafka
       - redis
       - eureka-service
+      - gateway-service
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/how_about_over_there
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
@@ -67,10 +68,7 @@ services:
       - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
     networks:
       - msa-network
-      - eureka-service
-      - gateway-service
-    networks:
-      - msa-network
+
   #lodge
   lodge-service:
     build:
