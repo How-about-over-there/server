@@ -2,9 +2,7 @@ name: HAOT CI/CD Pipeline
 
 on:
   push:
-    branches: [ "cicd/feat" ]  # feat/cicd 브랜치에 push 시 트리거
-  pull_request:
-    branches: [ "cicd/feat" ]
+    branches: [ "deploy" ]  # deploy 브랜치에 push 시 트리거
 
 jobs:
   build-and-deploy:
@@ -48,6 +46,7 @@ jobs:
           USER_SERVICE_HOST: ${{ secrets.USER_SERVICE_HOST }}
           AUTH_SERVICE_HOST: ${{ secrets.AUTH_SERVICE_HOST }}
           GATEWAY_SERVICE_HOST: ${{ secrets.GATEWAY_SERVICE_HOST }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
         run: |
           # Update application.yml for each service
@@ -61,6 +60,7 @@ jobs:
           sed -i "s|\${USER_SERVICE_HOST}|${USER_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application.yml
           sed -i "s|\${AUTH_SERVICE_HOST}|${AUTH_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application.yml
           sed -i "s|\${GATEWAY_SERVICE_HOST}|${GATEWAY_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application.yml
+          sed -i "s|\${JWT_SECRET}|${JWT_SECRET}|g" ${{ matrix.service }}/src/main/resources/application.yml
 
       # Gradle 빌드
       - name: Build with Gradle for ${{ matrix.service }}

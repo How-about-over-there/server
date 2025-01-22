@@ -14,4 +14,4 @@ eureka:
 
 jwt:
   secret:
-    key: W3JwO3COO+XEYBKoVl3VNMfehUaEOnKWL48J+bqsOII8jSehu/sSO3GGrwyKxQyQHBNCUAJMmWldSA6Dyo7azA==
+    key: ${JWT_SECRET}
