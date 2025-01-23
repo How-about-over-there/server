@@ -42,10 +42,6 @@ public class CouponEvent extends BaseEntity {
     @Column(nullable = false)
     private EventStatus eventStatus;
 
-    @Column(name = "is_delete", nullable = false)
-    private boolean isDelete;
-
-
     public void updateExpiredEventStatus(){
 
         LocalDateTime now = LocalDateTime.now();
