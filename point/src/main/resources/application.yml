@@ -5,7 +5,7 @@ spring:
     name: point-service
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/how_about_over_there
+    url: jdbc:postgresql://host.docker.internal:5432/how_about_over_there
     username:
     password:
   data:
@@ -16,12 +16,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+#    show-sql: true
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
+#      hibernate:
+#        format_sql: true
+#        use_sql_comments: true
 eureka:
   client:
     service-url:
@@ -29,3 +29,13 @@ eureka:
 logging:
   level:
     org.springframework.cache: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: never
