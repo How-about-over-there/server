@@ -48,13 +48,13 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
 
         // event 끝 날짜가 쿠폰 만료 날짜보다 전이어야 된다.
-        Coupon coupon = couponRepository.findByIdAndExpiredDateIsAfterAndIsDeleteFalse(eventCreateRequest.couponId(),
+        Coupon coupon = couponRepository.findByIdAndExpiredDateIsAfterAndIsDeletedFalse(eventCreateRequest.couponId(),
                         eventCreateRequest.eventEndDate())
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.COUPON_NOT_FOUND));
 
 
         // 이벤트에 같은 선착순 쿠폰이 설정되면 안된다, 무제한은 가능하게!
-        if(CouponType.PRIORITY == coupon.getType() && couponEventRepository.existsByCouponIdAndIsDeleteFalse(coupon.getId())) {
+        if(CouponType.PRIORITY == coupon.getType() && couponEventRepository.existsByCouponIdAndIsDeletedFalse(coupon.getId())) {
             throw new CustomCouponException(ErrorCode.EXIST_PRIORITY_COUPON_EVENTS);
         }
 
@@ -62,7 +62,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         if(CouponType.UNLIMITED == coupon.getType()){
 
             List<CouponEvent> promotions = couponEventRepository
-                    .findByCouponIdAndEventEndDateIsAfterAndIsDeleteFalse(coupon.getId(), LocalDateTime.now())
+                    .findByCouponIdAndEventEndDateIsAfterAndIsDeletedFalse(coupon.getId(), LocalDateTime.now())
                     .stream()
                     .peek(couponEvent -> {
                         if (couponEvent.getEventStatus() == EventStatus.DEFAULT) {
@@ -95,7 +95,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
         validateNonEmptyFields(request.eventName(), request.eventDescription(), request.eventStatus());
 
-        CouponEvent event = couponEventRepository.findByIdAndIsDeleteFalse(eventId)
+        CouponEvent event = couponEventRepository.findByIdAndIsDeletedFalse(eventId)
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.EVENT_NOT_FOUND));
 
         // status 수정시 이벤트 관리자 강제 종료

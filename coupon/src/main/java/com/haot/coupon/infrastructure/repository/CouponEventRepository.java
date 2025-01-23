@@ -25,7 +25,7 @@ public interface CouponEventRepository extends JpaRepository<CouponEvent, String
     Optional<CouponEvent> findByIdAndEventStatusAndIsDeleteFalse(@Param("eventId") String eventId,
                                                                  @Param("eventStatus") EventStatus eventStatus);
 
-    Optional<CouponEvent> findByIdAndIsDeleteFalse(String eventId);
+    Optional<CouponEvent> findByIdAndIsDeletedFalse(String eventId);
 
     @Query("SELECT new com.haot.coupon.application.dto.CheckAlreadyClosedEventDto(e.id, e.coupon.id) " +
             "FROM CouponEvent e " +

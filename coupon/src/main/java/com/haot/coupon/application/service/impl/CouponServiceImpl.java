@@ -260,7 +260,7 @@ public class CouponServiceImpl implements CouponService {
     // user 쿠폰이 reservationCoupon 테이블에 CANCEL, ROLLBACK 상태가 아닌 다른 상태값이 DB에 있으면 사용불가
     private void checkReservedCouponAvailable(UserCoupon userCoupon) {
 
-        if (reservationCouponRepository.existsByUserCouponAndReservationCouponStatusNotInAndIsDeleteFalse(
+        if (reservationCouponRepository.existsByUserCouponAndReservationCouponStatusNotInAndIsDeletedFalse(
                 userCoupon, List.of(ReservationCouponStatus.ROLLBACK, ReservationCouponStatus.CANCEL))) {
             throw new CustomCouponException(ErrorCode.COUPON_UNAVAILABLE);
         }
@@ -268,7 +268,7 @@ public class CouponServiceImpl implements CouponService {
 
     // UserCoupon 조회 메소드
     private UserCoupon findUserCoupon(String userId, Coupon coupon) {
-        return userCouponRepository.findByUserIdAndCouponIdAndIsDeleteFalse(userId, coupon.getId())
+        return userCouponRepository.findByUserIdAndCouponIdAndIsDeletedFalse(userId, coupon.getId())
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.USER_COUPON_NOT_FOUND));
     }
 
@@ -374,7 +374,7 @@ public class CouponServiceImpl implements CouponService {
     // 쿠폰 DB check
     private Coupon checkExistsCoupon(String couponId) {
 
-        return couponRepository.findByIdAndIsDeleteFalse(couponId)
+        return couponRepository.findByIdAndIsDeletedFalse(couponId)
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.COUPON_NOT_FOUND));
     }
 
