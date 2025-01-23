@@ -11,6 +11,7 @@ import com.haot.coupon.domain.model.CouponEvent;
 import com.haot.coupon.infrastructure.repository.CouponEventRepository;
 import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,20 +38,17 @@ public class EventServiceImpl implements EventService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "eventPageCache",
+            key = "T(String).format('%s:%s', #pageable.pageNumber, #pageable.pageSize)",
+            condition = "#request != null && #request.isAllFieldsNull()")
     @Override
     public PageResponse<EventSearchResponse> searchEvent(Role userRole, EventSearchRequest request, Pageable pageable) {
 
         if(userRole == Role.USER){
-
-            // 사용자일때 삭제된 이벤트 보여주지 않는다.
-            if(request.getIsDelete() == null || request.getIsDelete()){
-                request.setDelete(false);
-            }
-
             validateIfUserNonNullFields(request.getStartDate(), request.getEndDate(), request.getEventStatus());
         }
 
-        return eventMapper.toPageResponse(couponEventRepository.searchEventByRole(request, pageable));
+        return eventMapper.toPageResponse(couponEventRepository.searchEventByRole(userRole, request, pageable));
     }
 
     private void validateIfUserNonNullFields(LocalDateTime startDate, LocalDateTime endDate, String eventStatus) {

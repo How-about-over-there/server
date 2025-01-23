@@ -38,7 +38,12 @@ public class EventSearchRequest {
     @Pattern(regexp = "DEFAULT|MANUALLY_CLOSED|EXPIRED|OUT_OF_STOCK", message = "유효한 상태 값을 입력하세요.")
     private String eventStatus;
 
-    public void setDelete(Boolean delete) {
-        this.isDelete = delete;
+    public boolean isAllFieldsNull() {
+        return nameKeyword == null &&
+                descriptionKeyword == null &&
+                startDate == null &&
+                endDate == null &&
+                isDelete == null &&
+                eventStatus == null;
     }
 }
