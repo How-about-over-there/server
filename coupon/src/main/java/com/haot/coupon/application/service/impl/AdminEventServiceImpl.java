@@ -30,7 +30,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     private final CouponEventRepository couponEventRepository;
     private final CouponRepository couponRepository;
 
-    private final EventMapper mapper;
+    private final EventMapper eventMapper;
 
     private final RedisRepository redisRepository;
 
@@ -74,7 +74,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
 
         // mapper로 event 만든다.
-        CouponEvent event = mapper.toEntity(eventCreateRequest, coupon);
+        CouponEvent event = eventMapper.toEntity(eventCreateRequest, coupon);
 
         // 현재 시간으로 eventStatus update
         event.updateExpiredEventStatus();
@@ -85,7 +85,7 @@ public class AdminEventServiceImpl implements AdminEventService {
             redisRepository.save(savedEvent, coupon);
         }
 
-        return mapper.toCreateResponse(savedEvent);
+        return eventMapper.toCreateResponse(savedEvent);
     }
 
     // 이벤트 수정 API, 문제가 생겼을때 확산 방지용 API or 이름, 설명 변경 API
@@ -112,7 +112,7 @@ public class AdminEventServiceImpl implements AdminEventService {
             }else{
                 Coupon coupon = event.getCoupon();
                 deleteCoupon(coupon, userId);
-                couponErrorProducer.sendEventClosed(EventStatus.MANUALLY_CLOSED + " " + event.getId());
+                couponErrorProducer.sendEventClosed(eventMapper.toProduce(eventId, EventStatus.MANUALLY_CLOSED));
             }
 
         }else{

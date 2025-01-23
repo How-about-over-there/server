@@ -9,6 +9,7 @@ import com.haot.coupon.application.dto.feign.response.ReservationVerifyResponse;
 import com.haot.coupon.application.service.CouponService;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.common.response.enums.SuccessCode;
+import com.haot.coupon.presentation.docs.CouponControllerDocs;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/coupons")
-public class CouponController {
+public class CouponController implements CouponControllerDocs {
 
     private final CouponService couponService;
 
@@ -47,7 +48,7 @@ public class CouponController {
     public ApiResponse<Void> customerIssueCoupon(@RequestHeader("X-User-Id") String userId,
                                                  @RequestBody CouponCustomerCreateRequest request) {
 
-        //String testUserId = UUID.randomUUID().toString();
+        //String userId = UUID.randomUUID().toString();
 
         couponService.customerIssueCoupon(request, userId);
 

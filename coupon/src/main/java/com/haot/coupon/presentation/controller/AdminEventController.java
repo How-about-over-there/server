@@ -6,6 +6,7 @@ import com.haot.coupon.application.dto.response.events.EventCreateResponse;
 import com.haot.coupon.application.service.AdminEventService;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.common.response.enums.SuccessCode;
+import com.haot.coupon.presentation.docs.AdminEventControllerDocs;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/v1/events")
-public class AdminEventController {
+public class AdminEventController implements AdminEventControllerDocs {
 
     private final AdminEventService adminEventService;
 

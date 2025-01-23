@@ -67,4 +67,8 @@ public class Coupon extends BaseEntity {
         return this.totalQuantity != -1;
     }
 
+    public boolean checkDiscountPolicy(){
+        return this.discountPolicy == DiscountPolicy.PERCENTAGE;
+    }
+
 }

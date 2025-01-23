@@ -6,34 +6,43 @@ import com.haot.point.domain.enums.PointStatus;
 import com.haot.point.domain.enums.PointType;
 import com.haot.point.domain.model.PointHistory;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.haot.point.domain.model.QPointHistory.pointHistory;
+import static com.haot.point.domain.utils.QueryDslSortUtils.getOrderSpecifiers;
 
 @RequiredArgsConstructor
 public class PointHistoryRepositoryCustomImpl implements PointHistoryRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
+    // 동적 정렬 조건 생성
+    private static final Map<String, ComparableExpressionBase<?>> SORT_PARAMS = Map.of(
+            "type", pointHistory.type,
+            "status", pointHistory.status,
+            "points", pointHistory.points,
+            "createdAt", pointHistory.createdAt
+    );
+
     @Override
     public Page<PointHistoryResponse> searchPointHistories(PointHistorySearchRequest request, Pageable pageable) {
+
         // 조건 추가
         JPAQuery<PointHistory> query = queryFactory.selectFrom(pointHistory)
                 .where(booleanBuilder(request))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(buildOrderSpecifier(pageable).toArray(new OrderSpecifier[0])); // 정렬 조건
+                .orderBy(getOrderSpecifiers(pageable, SORT_PARAMS)); // 정렬 조건
 
         // 페이징 처리
         long total = query.fetchCount(); // 전체 데이터 수 계산
@@ -51,6 +60,7 @@ public class PointHistoryRepositoryCustomImpl implements PointHistoryRepositoryC
                 .and(eqType(request.getType()))
                 .and(filterEarnOrUse(request.getIsEarn(), request.getIsUse()))
                 .and(eqStatus(request.getStatus()))
+                .and(filterUser(request.getIsUser()))
                 .and(betweenPoint(request.getMinPoint(), request.getMaxPoint()))
                 .and(betweenDates(request.getStart(), request.getEnd()));
     }
@@ -81,12 +91,20 @@ public class PointHistoryRepositoryCustomImpl implements PointHistoryRepositoryC
         return null;
     }
 
+    // USER 필터 조건
+    private BooleanExpression filterUser(Boolean isUser) {
+        if (Boolean.TRUE.equals(isUser)) {
+            return pointHistory.status.in(PointStatus.PROCESSED, PointStatus.CANCELLED);
+        }
+        return null;
+    }
+
     // 포인트 내역 상태 조건
     private BooleanExpression eqStatus(String status) {
         return status != null ? pointHistory.status.eq(PointStatus.fromString(status)) : null;
     }
 
-    // 결제 가격 범위 조건
+    // 포인트 범위 조건
     private BooleanExpression betweenPoint(Double minPoint, Double maxPoint) {
         if (minPoint != null && maxPoint != null) {
             return pointHistory.points.between(minPoint, maxPoint);
@@ -108,27 +126,5 @@ public class PointHistoryRepositoryCustomImpl implements PointHistoryRepositoryC
             return pointHistory.createdAt.loe(end.atTime(23, 59, 59));
         }
         return null;
-    }
-
-    // 동적 정렬 조건 생성
-    private List<OrderSpecifier<?>> buildOrderSpecifier(Pageable pageable) {
-        List<OrderSpecifier<?>> orders = new ArrayList<>();
-
-        for (Sort.Order sortOrder : pageable.getSort()) {
-            // 정렬 방향 결정 (ASC/DESC)
-            com.querydsl.core.types.Order direction = sortOrder.isAscending()
-                    ? com.querydsl.core.types.Order.ASC
-                    : com.querydsl.core.types.Order.DESC;
-
-            // 정렬 필드에 따른 OrderSpecifier 추가
-            switch (sortOrder.getProperty()) {
-                case "type" -> orders.add(new OrderSpecifier<>(direction, pointHistory.type));
-                case "status" -> orders.add(new OrderSpecifier<>(direction, pointHistory.status));
-                case "points" -> orders.add(new OrderSpecifier<>(direction, pointHistory.points));
-                case "createdAt" -> orders.add(new OrderSpecifier<>(direction, pointHistory.createdAt));
-                default -> orders.add(new OrderSpecifier<>(com.querydsl.core.types.Order.ASC, pointHistory.createdAt)); // 기본 정렬
-            }
-        }
-        return orders;
     }
 }

@@ -44,4 +44,9 @@ public class UserCoupon extends BaseEntity {
     public void reservationCancel() {
         this.couponStatus = CouponStatus.UNUSED;
     }
+
+    public boolean checkUserCouponUsed(){
+        return this.couponStatus == CouponStatus.USED;
+    }
+
 }

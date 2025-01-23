@@ -1,10 +1,12 @@
 package com.haot.coupon.application.mapper;
 
+import com.haot.coupon.application.dto.EventClosedDto;
 import com.haot.coupon.application.dto.request.events.EventCreateRequest;
 import com.haot.coupon.application.dto.response.events.EventCreateResponse;
 import com.haot.coupon.application.dto.response.events.EventSearchResponse;
 import com.haot.coupon.domain.model.Coupon;
 import com.haot.coupon.domain.model.CouponEvent;
+import com.haot.coupon.domain.model.enums.EventStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -13,6 +15,8 @@ public interface EventMapper {
 
     @Mapping(target = "coupon.id", source = "coupon.id")
     @Mapping(target = "description", source = "request.eventDescription")
+    @Mapping(target = "eventStatus", constant = "DEFAULT")
+    @Mapping(target = "isDelete", ignore = true)
     CouponEvent toEntity(EventCreateRequest request, Coupon coupon);
 
     @Mapping(target = "eventId", source = "id")
@@ -30,4 +34,6 @@ public interface EventMapper {
     @Mapping(source = "description", target = "eventDescription")
     EventSearchResponse toEventResponseDTO(CouponEvent event);
 
+
+    EventClosedDto toProduce(String eventId, EventStatus status);
 }

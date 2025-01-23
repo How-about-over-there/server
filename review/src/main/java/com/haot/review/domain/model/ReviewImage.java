@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_review_image")
+@Table(name = "p_review_image", schema = "review")
 public class ReviewImage extends BaseEntity {
 
   @Id
@@ -42,6 +42,10 @@ public class ReviewImage extends BaseEntity {
         .review(review)
         .url(url)
         .build();
+  }
+
+  public void deleteReviewImage(String userId) {
+    deleteEntity(userId);
   }
 
 }

@@ -1,7 +1,9 @@
 package com.haot.point.application.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.haot.point.domain.model.PointHistory;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public record PointHistoryResponse(
@@ -13,7 +15,9 @@ public record PointHistoryResponse(
         String description,
         LocalDateTime expiredAt,
         String status
-) {
+) implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public static PointHistoryResponse of(PointHistory pointHistory) {
         return new PointHistoryResponse(
                 pointHistory.getId(),

@@ -11,6 +11,8 @@ import com.haot.user.domain.model.User;
 import com.haot.user.infrastructure.repository.UserRepository;
 import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +63,7 @@ public class UserCRUDServiceImpl implements UserCRUDService {
 
   @Override
   @Transactional(readOnly = true)
+  @Cacheable(cacheNames = "userInfoCache", key = "args[0]")
   public UserGetMeResponse getMyInfo(String userId) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
@@ -69,6 +72,7 @@ public class UserCRUDServiceImpl implements UserCRUDService {
 
   @Override
   @Transactional
+  @CacheEvict(cacheNames = "userInfoCache", key = "args[1]")
   public void updateMyInfo(UserUpdateMeRequest userUpdateMeRequest, String userId) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
