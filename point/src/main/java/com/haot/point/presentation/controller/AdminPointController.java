@@ -1,8 +1,9 @@
 package com.haot.point.presentation.controller;
 
-import com.haot.point.application.dto.request.history.PointHistoryUpdateRequest;
+import com.haot.point.application.dto.request.point.PointUpdateRequest;
 import com.haot.point.application.dto.response.PointResponse;
 import com.haot.point.common.response.ApiResponse;
+import com.haot.point.presentation.docs.AdminPointControllerDocs;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,12 +15,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/v1/points")
-public class AdminPointController {
+public class AdminPointController implements AdminPointControllerDocs {
 
     // 포인트 수정
     @PutMapping("/{pointId}")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Void> updatePoint(@Valid @RequestBody PointHistoryUpdateRequest request,
+    public ApiResponse<Void> updatePoint(@Valid @RequestBody PointUpdateRequest request,
                                          @PathVariable String pointId) {
         return ApiResponse.success();
     }
