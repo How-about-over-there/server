@@ -4,31 +4,43 @@ spring:
   application:
     name: coupon-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/how_about_over_there
+    url: jdbc:postgresql://localhost:5432/how_about_over_there?currentSchema=coupon
     username: sunghun
     password: 12345
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-        use_sql_comments: true
+        #format_sql: true
+        #use_sql_comments: true
         jdbc:
           batch_size: 1000
-    show-sql: true
+    #show-sql: true
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
 
   data:
     redis:
-      host: localhost
-      port: 6389
+      host: redis
+      port: 6379
       username: default
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://eureka-service:19090/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: never

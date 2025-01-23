@@ -1,9 +1,14 @@
 package com.haot.coupon.application.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.messaging.handler.annotation.Header;
+import com.haot.coupon.application.dto.CouponIssueDto;
+import org.springframework.kafka.support.Acknowledgment;
+
+import java.util.List;
 
 public interface CouponIssueConsumer {
 
-    void issuePriorityCouponListener(@Header("X-User-Id") String userId, String message) throws JsonProcessingException;
+    void issuePriorityCouponListener(List<CouponIssueDto> requests, Acknowledgment acknowledgment);
+
+    void batchIssueUnlimitedCouponListener(List<CouponIssueDto> requests, Acknowledgment acknowledgment);
 }

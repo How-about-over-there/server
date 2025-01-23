@@ -1,5 +1,6 @@
 package com.haot.coupon.infrastructure.kafka;
 
+import com.haot.coupon.application.dto.EventClosedDto;
 import com.haot.coupon.application.kafka.CouponErrorProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -11,13 +12,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CouponErrorFrontProducer implements CouponErrorProducer {
 
-    private final KafkaTemplate<String, String> errorKafkaTemplate;
+    private final KafkaTemplate<String, Object> errorKafkaTemplate;
 
     @Override
-    public void sendEventClosed(String message) {
+    public void sendEventClosed(EventClosedDto eventClosedDto) {
 
         errorKafkaTemplate.send(
-                MessageBuilder.withPayload(message)
+                MessageBuilder.withPayload(eventClosedDto)
                         .setHeader(KafkaHeaders.TOPIC, "coupon-event-end")
                         .build())
                 ;

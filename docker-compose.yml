@@ -10,6 +10,7 @@ services:
       - "19090:19090"
     networks:
       - msa-network
+
   gateway-service:
     build:
       context: ./gateway
@@ -55,10 +56,19 @@ services:
     ports:
       - "19096:19096"
     depends_on:
+      - kafka
+      - redis
       - eureka-service
       - gateway-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/how_about_over_there
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_ZIPKIN_BASE_URL=http://haot-zipkin:9411
+      - SPRING_SLEUTH_SAMPLER_PROBABILITY=1.0
     networks:
       - msa-network
+
   #lodge
   lodge-service:
     build:
@@ -142,15 +152,23 @@ services:
     ports:
       - "9092:9092"
       - "29092:29092"
+      - "39092:39092"
     environment:
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:39092,DOCKER://host.docker.internal:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_BROKER_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9999
     depends_on:
       - zookeeper
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "9092" ]
+      interval: 1m
+      retries: 3
+      timeout: 10s
+      start_period: 40s
     networks:
       - msa-network
 
@@ -168,19 +186,42 @@ services:
     networks:
       - msa-network
 
-  zipkin:
-    image: openzipkin/zipkin:latest
-    container_name: haot-zipkin
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:latest
+    container_name: haot-kafka-exporter
+    depends_on:
+      kafka :
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "nc", "-z", "kafka", "9092"]
+      interval: 1m10s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     ports:
-      - "9411:9411"
+      - "9308:9308"
+    command:
+      - "--kafka.server=kafka:9092"
     networks:
       - msa-network
-      -
+
   redis:
     image: redis:latest
     container_name: redis
     ports:
-      - "6389:6379"
+      - "6379:6379"
+    networks:
+      - msa-network
+
+  redis-exporter:
+    image: oliver006/redis_exporter
+    container_name: haot-redis-exporter
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis://redis:6379
+    depends_on:
+      - redis
     networks:
       - msa-network
 

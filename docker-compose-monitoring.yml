@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: haot-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - how-about-over-there_msa-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: haot-grafana
+    ports:
+      - "3000:3000"
+    user: "472"
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=1234
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+      #- ./grafana.ini:/etc/grafana/grafana.ini
+    networks:
+      - how-about-over-there_msa-network
+
+  loki:
+    image: grafana/loki:latest
+    container_name: haot-loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/mnt/config/loki-config.yml
+    volumes:
+      - ./loki/loki-config.yml:/mnt/config/loki-config.yml
+    networks:
+      - how-about-over-there_msa-network
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: haot-zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - how-about-over-there_msa-network
+
+volumes:
+  grafana-data:
+
+networks:
+  how-about-over-there_msa-network:
+    external: true  # 이미 생성된 네트워크를 사용
