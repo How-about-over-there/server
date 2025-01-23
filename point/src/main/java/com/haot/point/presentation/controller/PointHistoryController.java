@@ -13,8 +13,6 @@ import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +37,7 @@ public class PointHistoryController {
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<PageResponse<PointHistoryResponse>> getPointHistories(
             @ModelAttribute PointHistorySearchRequest request,
-            @PageableDefault(size = 10, direction = Sort.Direction.ASC, sort = "createdAt") Pageable pageable,
+            Pageable pageable,
             @RequestHeader("X-User-Id") String userId,
             @RequestHeader("X-User-Role") Role role
     ) {
