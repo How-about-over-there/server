@@ -20,7 +20,6 @@ public interface EventMapper {
     @Mapping(target = "coupon.id", source = "coupon.id")
     @Mapping(target = "description", source = "request.eventDescription")
     @Mapping(target = "eventStatus", constant = "DEFAULT")
-    @Mapping(target = "isDelete", ignore = true)
     CouponEvent toEntity(EventCreateRequest request, Coupon coupon);
 
     @Mapping(target = "eventId", source = "id")

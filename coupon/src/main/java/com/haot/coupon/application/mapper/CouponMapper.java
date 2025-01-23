@@ -21,7 +21,6 @@ public interface CouponMapper {
     @Mapping(source = "maxDiscountAmount", target = "maxAvailableAmount")
     @Mapping(source = "discountRate", target = "discountRate.rate")
     @Mapping(source = "discountAmount", target = "discountAmount")
-    @Mapping(ignore = true, target = "isDelete")
     @Mapping(ignore = true, target = "id")
     Coupon toEntity(CouponCreateRequest couponCreateRequest);
 

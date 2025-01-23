@@ -13,9 +13,9 @@ import java.util.Set;
 
 public interface CouponRepository extends JpaRepository<Coupon, String> {
 
-    Optional<Coupon> findByIdAndExpiredDateIsAfterAndIsDeleteFalse(String couponId, LocalDateTime eventEndDate);
+    Optional<Coupon> findByIdAndExpiredDateIsAfterAndIsDeletedFalse(String couponId, LocalDateTime eventEndDate);
 
-    Optional<Coupon> findByIdAndIsDeleteFalse(String couponId);
+    Optional<Coupon> findByIdAndIsDeletedFalse(String couponId);
 
     @Modifying
     @Query(value = "update coupon.p_coupon SET issued_quantity = issued_quantity + :issuedCount WHERE id = :id", nativeQuery = true)
