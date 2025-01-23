@@ -72,7 +72,7 @@ public class UserCRUDServiceImpl implements UserCRUDService {
 
   @Override
   @Transactional
-  @CacheEvict(cacheNames = "userInfoCache", key = "args[0]")
+  @CacheEvict(cacheNames = "userInfoCache", key = "args[1]")
   public void updateMyInfo(UserUpdateMeRequest userUpdateMeRequest, String userId) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
