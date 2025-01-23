@@ -89,8 +89,7 @@ public class CouponEventCustomRepositoryImpl implements CouponEventCustomReposit
         if(roleCheckIfUser(userRole)) {
             LocalDateTime now = LocalDateTime.now();
 
-            builder.and(couponEvent.eventEndDate.after(now));
-            builder.and(couponEvent.eventStartDate.before(now));
+            builder.and(couponEvent.eventEndDate.after(now).and(couponEvent.eventStartDate.before(now)));
         }
 
         if (startDate != null) {
