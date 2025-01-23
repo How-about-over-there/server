@@ -113,11 +113,11 @@ public class CouponServiceImpl implements CouponService {
     // 쿠폰 유효성 검사 API
     @Transactional
     @Override
-    public ReservationVerifyResponse verify(FeignVerifyRequest request) {
+    public ReservationVerifyResponse verify(String userId, FeignVerifyRequest request) {
 
         Coupon coupon = checkExistsCoupon(request.couponId());
 
-        UserCoupon userCoupon = findUserCoupon(request.userId(), coupon);
+        UserCoupon userCoupon = findUserCoupon(userId, coupon);
 
         // reservationCoupon 테이블 체크
         checkReservedCouponAvailable(userCoupon);
