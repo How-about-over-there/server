@@ -8,6 +8,7 @@ import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointHistoryResponse;
 import com.haot.point.application.service.PointHistoryService;
 import com.haot.point.common.response.ApiResponse;
+import com.haot.point.presentation.docs.PointHistoryControllerDocs;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/points/histories")
 @RequiredArgsConstructor
-public class PointHistoryController {
+public class PointHistoryController implements PointHistoryControllerDocs {
 
     private final PointHistoryService pointHistoryService;
 

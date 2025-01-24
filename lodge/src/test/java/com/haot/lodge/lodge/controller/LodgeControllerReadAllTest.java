@@ -16,6 +16,7 @@ import com.haot.lodge.application.response.LodgeReadAllResponse;
 import com.haot.lodge.common.response.SliceResponse;
 import com.haot.lodge.presentation.controller.LodgeController;
 import com.haot.lodge.presentation.request.lodge.LodgeSearchParams;
+import com.haot.lodge.util.TestDtoFixture;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -62,9 +63,9 @@ public class LodgeControllerReadAllTest {
                 LocalDate.of(2025, 1, 7)
         );
 
-        LodgeDto lodgeDto = TestUtil.createMockLodgeDto();
+        LodgeDto lodgeDto = TestDtoFixture.createMockLodgeDto();
 
-        LodgeImageDto imageDto = TestUtil.createMockLodgeImageDto();
+        LodgeImageDto imageDto = TestDtoFixture.createMockLodgeImageDto();
 
         LodgeReadAllResponse responseItem = new LodgeReadAllResponse(lodgeDto, List.of(imageDto));
 

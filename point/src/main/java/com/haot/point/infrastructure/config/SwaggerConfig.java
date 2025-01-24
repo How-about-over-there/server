@@ -1,4 +1,4 @@
-package com.haot.payment.infrastructure.config;
+package com.haot.point.infrastructure.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
@@ -29,12 +29,11 @@ public class SwaggerConfig {
 
         return new OpenAPI()
                 .info(new Info()
-                        .title("Haot-Payment-Service")
-                        .description("HAOT 결제 서비스")
+                        .title("Haot-Point-Service")
+                        .description("HAOT 포인트 서비스")
                         .version("v1"))
                 .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
                 .security(Arrays.asList(securityRequirement))
                 .addServersItem(new io.swagger.v3.oas.models.servers.Server().url("/"));
     }
 }
-

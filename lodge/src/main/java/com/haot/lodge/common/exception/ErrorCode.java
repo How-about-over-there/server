@@ -36,6 +36,7 @@ public enum ErrorCode {
     FORBIDDEN_ACCESS_LODGE(HttpStatus.FORBIDDEN,"5501", "해당 숙소의 관리자만 접근 가능합니다."),
     UNSUPPORTED_SORT_TYPE(HttpStatus.BAD_REQUEST, "5500", "지원하지 않는 정렬 방식입니다."),
     FIlE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "5502", "이미지 업로드에 실패했습니다."),
+
     // Redis Lock Error
     REDIS_LOCK_ACQUISITION_FAILED(HttpStatus.CONFLICT, "5503", "현재 처리 중인 리소스가 있습니다. 잠시 후 다시 시도해주세요."),
     REDIS_LOCK_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "5504", "Lock 획득 중 인터럽트가 발생했습니다."),
