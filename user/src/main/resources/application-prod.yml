@@ -30,3 +30,14 @@ eureka:
   client:
     service-url:
       defaultZone: http://${SERVER_DNS}/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: never

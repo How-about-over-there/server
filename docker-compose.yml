@@ -34,7 +34,7 @@ services:
       - gateway-service
     networks:
       - msa-network
-  #user
+#  #user
   user-service:
     build:
       context: ./user
@@ -59,7 +59,7 @@ services:
       - kafka
       - redis
       - eureka-service
-      - gateway-service
+     # - gateway-service
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/how_about_over_there
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
@@ -108,7 +108,7 @@ services:
       - gateway-service
     networks:
       - msa-network
-  #reservation
+#  #reservation
   reservation-service:
     build:
       context: ./reservation
@@ -121,7 +121,7 @@ services:
       - gateway-service
     networks:
       - msa-network
-  #review
+#  #review
   review-service:
     build:
       context: ./review
