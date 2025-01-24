@@ -24,3 +24,13 @@ eureka:
 portone:
   api:
     secret:
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: never

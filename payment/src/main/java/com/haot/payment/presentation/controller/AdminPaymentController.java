@@ -1,8 +1,11 @@
 package com.haot.payment.presentation.controller;
 
+import com.haot.payment.application.dto.request.PaymentSearchRequest;
 import com.haot.payment.application.dto.request.PaymentUpdateRequest;
+import com.haot.payment.application.dto.response.PageResponse;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.common.response.ApiResponse;
+import com.haot.payment.presentation.docs.AdminPaymentControllerDocs;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/v1/payments")
-public class AdminPaymentController {
+public class AdminPaymentController implements AdminPaymentControllerDocs {
 
     // 결제 수정
     @PutMapping("/{paymentId}")
