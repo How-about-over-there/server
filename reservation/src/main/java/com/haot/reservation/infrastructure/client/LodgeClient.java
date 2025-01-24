@@ -25,13 +25,13 @@ public interface LodgeClient {
   ApiResponse<LodgeReadOneResponse> readOne(@PathVariable String lodgeId);
 
   @GetMapping("/api/v1/lodge-dates")
-  ApiResponse<SliceResponse<LodgeDateReadResponse>> read(
+  ApiResponse<SliceResponse<LodgeDateReadResponse>> readAll(
       @PageableDefault(size = 30)
       @SortDefault(sort = "date", direction = Direction.ASC)
       Pageable pageable,
-      @RequestParam(name = "lodgeId", required = true) String lodgeId,
-      @RequestParam(name = "start", required = false) LocalDate start,
-      @RequestParam(name = "end", required = false) LocalDate end
+      @RequestParam String lodgeId,
+      @RequestParam LocalDate start,
+      @RequestParam LocalDate end
   );
 
   @PostMapping("/api/v1/lodge-dates/status")

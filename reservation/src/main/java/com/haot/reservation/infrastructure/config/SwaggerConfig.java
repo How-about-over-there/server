@@ -25,10 +25,11 @@ public class SwaggerConfig {
         .type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
         .in(SecurityScheme.In.HEADER).name("Authorization");
     SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
+
     return new OpenAPI()
         .info(new Info()
             .title("Haot-Reservation-Service")
-            .description("예약 서비스 API")
+            .description("HAOT 예약 서비스 API")
             .version("v1"))
         .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
         .security(Arrays.asList(securityRequirement))

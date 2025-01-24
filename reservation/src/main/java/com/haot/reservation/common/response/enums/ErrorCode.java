@@ -20,9 +20,9 @@ public enum ErrorCode implements ResCodeIfs {
   UNSUPPORTED_SORT_TYPE(HttpStatus.BAD_REQUEST, "7500", "지원하지 않는 정렬 방식입니다."),
 
   // 7200번 부터는 feignClient 에러입니다.
-  FEIGN_CLIENT_ERROR(HttpStatus.BAD_REQUEST, "7200", "Feign 클라이언트 호출 중 오류 발생: "),
+  FEIGN_CLIENT_ERROR(HttpStatus.BAD_REQUEST, "7200", "Feign 클라이언트 호출 오류 -> "),
   GATEWAY_ERROR(HttpStatus.BAD_GATEWAY, "7201","gateway 오류: "),
-  UNEXPECTED_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "7202", "예기치 않은 오류 발생: ");
+  UNEXPECTED_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "7202", "예기치 않은 오류 -> ");
 
   private final HttpStatus httpStatus;
   private final String code;

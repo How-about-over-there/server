@@ -16,11 +16,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface CouponClient {
 
   @PostMapping("/api/v1/coupons/verify")
-  ApiResponse<ReservationVerifyResponse> verify(@RequestBody FeignVerifyRequest request);
+  ApiResponse<ReservationVerifyResponse> verify(
+      @RequestHeader("X-User-Id") String userId,
+      @RequestBody FeignVerifyRequest request
+  );
 
   // 쿠폰 상태 변경
   @PutMapping("/api/v1/coupons/{reservationCouponId}")
   ApiResponse<Void> confirmReservation(
+      @RequestHeader("X-User-Id") String userId,
       @PathVariable(value = "reservationCouponId") String reservationCouponId,
       @RequestBody FeignConfirmReservationRequest request
   );

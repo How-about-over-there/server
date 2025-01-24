@@ -8,15 +8,15 @@ import java.io.IOException;
 
 public class FeignExceptionUtils {
 
-  public static FeignClientException parseFeignException(Exception e) {
+  public static FeignClientException convertToFeignClientException(Exception e) {
     if (e instanceof FeignException) {
-      return handleFeignException((FeignException) e);
+      return extractErrorMessageFromFeignException((FeignException) e);
     } else {
       return new FeignClientException(ErrorCode.UNEXPECTED_ERROR, e.getMessage());
     }
   }
 
-  private static FeignClientException handleFeignException(FeignException e) {
+  private static FeignClientException extractErrorMessageFromFeignException(FeignException e) {
     String responseBody = e.contentUTF8();
     try {
       ObjectMapper objectMapper = new ObjectMapper();
