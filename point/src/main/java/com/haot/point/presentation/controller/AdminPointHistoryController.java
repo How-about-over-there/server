@@ -4,6 +4,7 @@ import com.haot.point.application.dto.request.history.PointHistoryCreateRequest;
 import com.haot.point.application.dto.request.history.PointHistoryUpdateRequest;
 import com.haot.point.application.dto.response.PointHistoryResponse;
 import com.haot.point.common.response.ApiResponse;
+import com.haot.point.presentation.docs.AdminPointHistoryControllerDocs;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/v1/points/histories")
-public class AdminPointHistoryController {
+public class AdminPointHistoryController implements AdminPointHistoryControllerDocs {
 
     // 포인트 내역 생성
     @PostMapping
