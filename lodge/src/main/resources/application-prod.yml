@@ -1,0 +1,33 @@
+server:
+  port: 19098
+spring:
+  profiles:
+    include: s3
+  application:
+    name: lodge-service
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  data:
+    redis:
+      host: ${REDIS_URL}
+      port: 6379
+      password: ${REDIS_PASSWORD}
+
+
+eureka:
+  instance:
+    hostname: ${LODGE_SERVICE_HOST}
+  client:
+    service-url:
+      defaultZone: http://${SERVER_DNS}/eureka/

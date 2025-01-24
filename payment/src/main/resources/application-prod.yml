@@ -1,0 +1,28 @@
+server:
+  port: 19102
+spring:
+  application:
+    name: payment-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+eureka:
+  instance:
+    hostname: ${PAYMENT_SERVICE_HOST}
+  client:
+    service-url:
+      defaultZone: http://${SERVER_DNS}/eureka/
+portone:
+  api:
+    secret:
