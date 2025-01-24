@@ -1,5 +1,6 @@
 global:
   scrape_interval: 15s
+  evaluation_interval: 15s
 
 scrape_configs:
   - job_name: 'haot-prometheus'
@@ -18,10 +19,13 @@ scrape_configs:
     static_configs:
       - targets: [ 'haot-redis-exporter:9121' ]
 
-  # 각각 서비스
+  # 각각 서비스 promehtues가 EC2 같은 네트워크를 쓰면? 이렇게 해도 될거 같은데? 다른 네트워크 쓰면 aws url로 바꿔야 될듯
+  # 클러스터해도 같은 네트워크로 묶이지는 않는다. docker에서, gateway까지만 targets, Eureka server 까지?
   - job_name: 'haot-applications'
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
     static_configs:
       - targets:
+          - 'eureka-service:19090'
+          - 'gateway-service:19091'
           - 'coupon-service:19096'
