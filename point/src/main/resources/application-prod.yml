@@ -1,0 +1,30 @@
+server:
+  port: 19104
+spring:
+  application:
+    name: point-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_URL}
+      port: 6379
+      password: ${REDIS_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+eureka:
+  instance:
+    hostname: ${POINT_SERVICE_HOST}
+  client:
+    service-url:
+      defaultZone: http://${SERVER_DNS}/eureka/

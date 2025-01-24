@@ -1,0 +1,17 @@
+server:
+  port: 19092
+
+spring:
+  application:
+    name: auth-service
+
+eureka:
+  instance:
+    hostname: ${AUTH_SERVICE_HOST}
+  client:
+    service-url:
+      defaultZone: http://${SERVER_DNS}/eureka/
+
+jwt:
+  secret:
+    key: ${JWT_SECRET}
