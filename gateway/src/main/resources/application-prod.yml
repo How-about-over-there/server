@@ -124,7 +124,7 @@ jwt:
 filter:
   bypass:
     exact-paths: /api/v1/auth/login, /api/v1/auth/signup, /payment.html, /, /actuator/prometheus
-    prefix-paths: /api/v1/auth, /actuator
+    prefix-paths: /api/v1/auth
 
 user:
   service: ${USER_SERVICE_DNS}
