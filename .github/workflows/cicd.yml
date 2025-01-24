@@ -2,9 +2,7 @@ name: HAOT CI/CD Pipeline
 
 on:
   push:
-    branches: [ "nouse" ]  # feat/cicd 브랜치에 push 시 트리거
-  pull_request:
-    branches: [ "nouse" ]
+    branches: [ "deploy" ]  # deploy 브랜치에 push 시 트리거
 
 jobs:
   build-and-deploy:
@@ -41,18 +39,39 @@ jobs:
           DATABASE_URL: ${{ secrets.DB_URL}}
           DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
           DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          SERVER_DNS: ${{ secrets.SERVER_DNS }}
+          USER_SERVICE_DNS: ${{ secrets.USER_SERVICE_DNS }}
+          SERVER_HOST: ${{ secrets.SERVICE_HOST }}
+          USER_SERVICE_HOST: ${{ secrets.USER_SERVICE_HOST }}
+          AUTH_SERVICE_HOST: ${{ secrets.AUTH_SERVICE_HOST }}
+          GATEWAY_SERVICE_HOST: ${{ secrets.GATEWAY_SERVICE_HOST }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT_ONE: ${{ secrets.PORT_ONE }}
+
         run: |
           # Update application.yml for each service
-          sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" ${{ matrix.service }}/src/main/resources/application.yml
-          sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" ${{ matrix.service }}/src/main/resources/application.yml
-          sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" ${{ matrix.service }}/src/main/resources/application.yml
+          sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${REDIS_URL}|${REDIS_URL}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${REDIS_PASSWORD}|${REDIS_PASSWORD}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${SERVER_DNS}|${SERVER_DNS}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${USER_SERVICE_DNS}|${USER_SERVICE_DNS}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${SERVER_HOST}|${SERVER_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${USER_SERVICE_HOST}|${USER_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${AUTH_SERVICE_HOST}|${AUTH_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${GATEWAY_SERVICE_HOST}|${GATEWAY_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${JWT_SECRET}|${JWT_SECRET}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${PORT_ONE}|${PORT_ONE}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
 
       # Gradle 빌드
       - name: Build with Gradle for ${{ matrix.service }}
         run: |
           cd ./${{ matrix.service }}
           chmod +x ./gradlew
-          ./gradlew bootJar
+          ./gradlew bootJar -Dspring.profiles.active=prod
 
       # Docker 이미지 빌드
       - name: Build Docker images for ${{ matrix.service }}
@@ -68,55 +87,11 @@ jobs:
         run: |
           docker tag haot-ecr/${{ matrix.service }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:${{ matrix.service }}-latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:${{ matrix.service }}-latest
-      # Application 의 Data source 설정
-      - name: Set environment variables for all services
-        env:
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-        run: |
-          # Update application.yml for each service
-          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
-          sed -i "s|\${AWS_ACCOUNT_ID}|${AWS_ACCOUNT_ID}|g" docker-compose.yml
-          sed -i "s|\${AWS_DEFAULT_REGION}|${AWS_DEFAULT_REGION}|g" docker-compose.yml
-      # Set up SSH key
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.EC2_KEY }}
 
-      # Copy docker-compose.yml to EC2
-      - name: Copy docker-compose.yml to EC2
+      # ECS 서비스 강제 업데이트 (Task Definition을 변경하지 않고 서비스만 재시작)
+      - name: Force restart ECS service
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml ubuntu@${{ secrets.EC2_HOST }}:/docker/compose
-
-      # EC2 SSH로 연결하여 Docker Compose 실행
-      - name: SSH to EC2 and deploy with Docker Compose
-        uses : appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          port: 22
-          script: |
-            # 도커 이미지 폴더로 이동
-            cd /docker/compose
-            # 실행중인 컨테이너 중지 및 삭제
-            docker-compose down
-            # ECR 로그인
-            aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
-            
-            # EC2에서 Docker 이미지 pull
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:server-latest
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:gateway-latest
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:user-latest
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:auth-latest
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:coupon-latest
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:lodge-latest
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:payment-latest
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:point-latest
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:reservation-latest
-            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/haot-ecr:review-latest
-            
-            # Docker Compose로 서비스 실행
-            cd /docker/compose
-            docker-compose up -d
+          aws ecs update-service \
+            --cluster haot-cluster \
+            --service haot-${{ matrix.service }}-service \
+            --force-new-deployment

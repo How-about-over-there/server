@@ -5,9 +5,9 @@ spring:
     name: payment-service
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/how_about_over_there
-    username:
-    password:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,19 +18,11 @@ spring:
         format_sql: true
         use_sql_comments: true
 eureka:
+  instance:
+    hostname: ${PAYMENT_SERVICE_HOST}
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://${SERVER_DNS}/eureka/
 portone:
   api:
-    secret:
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-  endpoint:
-    prometheus:
-      enabled: true
-    health:
-      show-details: never
+    secret: ${PORT_ONE}

@@ -6,6 +6,7 @@ import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointResponse;
 import com.haot.point.application.service.PointService;
 import com.haot.point.common.response.ApiResponse;
+import com.haot.point.presentation.docs.PointControllerDocs;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/points")
 @RequiredArgsConstructor
-public class PointController {
+public class PointController implements PointControllerDocs {
 
     private final PointService pointService;
 
