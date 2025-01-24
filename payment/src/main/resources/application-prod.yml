@@ -25,4 +25,4 @@ eureka:
       defaultZone: http://${SERVER_DNS}/eureka/
 portone:
   api:
-    secret:
+    secret: ${PORT_ONE}

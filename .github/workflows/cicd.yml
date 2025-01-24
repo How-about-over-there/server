@@ -48,6 +48,7 @@ jobs:
           AUTH_SERVICE_HOST: ${{ secrets.AUTH_SERVICE_HOST }}
           GATEWAY_SERVICE_HOST: ${{ secrets.GATEWAY_SERVICE_HOST }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT_ONE: ${{ secrets.PORT_ONE }}
 
         run: |
           # Update application.yml for each service
@@ -63,6 +64,7 @@ jobs:
           sed -i "s|\${AUTH_SERVICE_HOST}|${AUTH_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s|\${GATEWAY_SERVICE_HOST}|${GATEWAY_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s|\${JWT_SECRET}|${JWT_SECRET}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|\${PORT_ONE}|${PORT_ONE}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
 
       # Gradle 빌드
       - name: Build with Gradle for ${{ matrix.service }}
