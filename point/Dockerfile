@@ -5,6 +5,10 @@ FROM eclipse-temurin:17-jdk
 # 2. JAR 파일 경로를 빌드 아규먼트로 받음
 ARG JAR_FILE=build/libs/*.jar
 
+# 타임존 설정
+RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime \
+    && echo Asia/Seoul > /etc/timezone
+
 # 3. JAR 파일을 컨테이너 내부로 복사
 COPY ${JAR_FILE} app.jar
 
