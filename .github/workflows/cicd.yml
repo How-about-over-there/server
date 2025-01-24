@@ -43,7 +43,7 @@ jobs:
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
           SERVER_DNS: ${{ secrets.SERVER_DNS }}
           USER_SERVICE_DNS: ${{ secrets.USER_SERVICE_DNS }}
-          SERVER_HOST: ${{ secrets.SERVICE_HOST }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
           USER_SERVICE_HOST: ${{ secrets.USER_SERVICE_HOST }}
           AUTH_SERVICE_HOST: ${{ secrets.AUTH_SERVICE_HOST }}
           GATEWAY_SERVICE_HOST: ${{ secrets.GATEWAY_SERVICE_HOST }}
@@ -52,19 +52,20 @@ jobs:
 
         run: |
           # Update application.yml for each service
-          sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${REDIS_URL}|${REDIS_URL}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${REDIS_PASSWORD}|${REDIS_PASSWORD}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${SERVER_DNS}|${SERVER_DNS}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${USER_SERVICE_DNS}|${USER_SERVICE_DNS}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${SERVER_HOST}|${SERVER_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${USER_SERVICE_HOST}|${USER_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${AUTH_SERVICE_HOST}|${AUTH_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${GATEWAY_SERVICE_HOST}|${GATEWAY_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${JWT_SECRET}|${JWT_SECRET}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${PORT_ONE}|${PORT_ONE}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${DATABASE_URL}#${DATABASE_URL}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${DATABASE_USERNAME}#${DATABASE_USERNAME}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${DATABASE_PASSWORD}#${DATABASE_PASSWORD}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${REDIS_URL}#${REDIS_URL}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${REDIS_PASSWORD}#${REDIS_PASSWORD}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${SERVER_DNS}#${SERVER_DNS}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${USER_SERVICE_DNS}#${USER_SERVICE_DNS}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${SERVER_HOST}#${SERVER_HOST}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${USER_SERVICE_HOST}#${USER_SERVICE_HOST}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${AUTH_SERVICE_HOST}#${AUTH_SERVICE_HOST}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${GATEWAY_SERVICE_HOST}#${GATEWAY_SERVICE_HOST}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${JWT_SECRET}#${JWT_SECRET}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${PORT_ONE}@${PORT_ONE}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+      
 
       # Gradle 빌드
       - name: Build with Gradle for ${{ matrix.service }}
