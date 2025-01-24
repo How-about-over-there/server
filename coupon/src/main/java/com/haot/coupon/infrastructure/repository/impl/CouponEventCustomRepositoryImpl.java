@@ -6,6 +6,7 @@ import com.haot.coupon.application.mapper.EventMapper;
 import com.haot.coupon.domain.model.CouponEvent;
 import com.haot.coupon.domain.model.enums.EventStatus;
 import com.haot.coupon.infrastructure.repository.CouponEventCustomRepository;
+import com.haot.submodule.role.Role;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
@@ -38,9 +39,9 @@ public class CouponEventCustomRepositoryImpl implements CouponEventCustomReposit
     );
 
     @Override
-    public Page<EventSearchResponse> searchEventByRole(EventSearchRequest request, Pageable pageable) {
+    public Page<EventSearchResponse> searchEventByRole(Role userRole, EventSearchRequest request, Pageable pageable) {
 
-        BooleanBuilder booleanBuilder = getBooleanBuilder(request);
+        BooleanBuilder booleanBuilder = getBooleanBuilder(userRole, request);
 
         List<CouponEvent> couponEvents = queryFactory
                 .selectFrom(couponEvent)
@@ -68,18 +69,28 @@ public class CouponEventCustomRepositoryImpl implements CouponEventCustomReposit
 
     }
 
-    private BooleanBuilder getBooleanBuilder(EventSearchRequest request) {
+    private BooleanBuilder getBooleanBuilder(Role userRole, EventSearchRequest request) {
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(likeEventName(request.getNameKeyword()));
         builder.and(likeEventDescription(request.getDescriptionKeyword()));
-        builder.and(checkIsDeleted(request.getIsDelete()));
-        builder.and(searchToEventStatus(request.getEventStatus()));
-        builder.and(searchToDate(request.getStartDate(), request.getEndDate()));
+        builder.and(checkIsDeleted(userRole, request.getIsDelete()));
+        builder.and(searchToEventStatus(userRole, request.getEventStatus()));
+        builder.and(searchToDate(userRole, request.getStartDate(), request.getEndDate()));
         return builder;
     }
 
-    private BooleanExpression searchToDate(LocalDateTime startDate, LocalDateTime endDate) {
+    private boolean roleCheckIfUser(Role userRole) {
+        return userRole == Role.USER;
+    }
+
+    private BooleanExpression searchToDate(Role userRole, LocalDateTime startDate, LocalDateTime endDate) {
         BooleanBuilder builder = new BooleanBuilder();
+
+        if(roleCheckIfUser(userRole)) {
+            LocalDateTime now = LocalDateTime.now();
+
+            builder.and(couponEvent.eventEndDate.after(now).and(couponEvent.eventStartDate.before(now)));
+        }
 
         if (startDate != null) {
             builder.and(couponEvent.eventStartDate.after(startDate));
@@ -101,11 +112,21 @@ public class CouponEventCustomRepositoryImpl implements CouponEventCustomReposit
         return StringUtils.hasText(eventDescription) ? couponEvent.eventName.containsIgnoreCase(eventDescription.trim()) : null;
     }
 
-    private BooleanExpression checkIsDeleted(Boolean isDeleted) {
+    private BooleanExpression checkIsDeleted(Role userRole, Boolean isDeleted) {
+
+        if(roleCheckIfUser(userRole)){
+            return couponEvent.isDeleted.eq(false);
+        }
+
         return isDeleted == null ? null : couponEvent.isDeleted.eq(isDeleted);
     }
 
-    private BooleanExpression searchToEventStatus(String eventStatus) {
+    private BooleanExpression searchToEventStatus(Role userRole, String eventStatus) {
+
+        if (roleCheckIfUser(userRole)) {
+            return couponEvent.eventStatus.eq(EventStatus.DEFAULT);
+        }
+
         return StringUtils.hasText(eventStatus) ? couponEvent.eventStatus.eq(EventStatus.checkEventStatus(eventStatus)) : null;
     }
 

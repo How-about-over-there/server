@@ -22,7 +22,7 @@ public interface CouponService {
 
     CouponSearchResponse getCouponDetails(String couponId);
 
-    ReservationVerifyResponse verify(FeignVerifyRequest request);
+    ReservationVerifyResponse verify(String userId, FeignVerifyRequest request);
 
     void confirmReservation(String reservationCouponId, FeignConfirmReservationRequest request);
 

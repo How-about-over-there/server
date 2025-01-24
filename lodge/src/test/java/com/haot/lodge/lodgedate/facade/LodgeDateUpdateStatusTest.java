@@ -1,4 +1,4 @@
-package com.haot.lodge.lodgedate.service;
+package com.haot.lodge.lodgedate.facade;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

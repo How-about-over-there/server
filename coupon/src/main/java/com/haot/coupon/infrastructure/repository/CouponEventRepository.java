@@ -15,17 +15,17 @@ import java.util.Set;
 
 public interface CouponEventRepository extends JpaRepository<CouponEvent, String>, CouponEventCustomRepository {
 
-    boolean existsByCouponIdAndIsDeleteFalse(String CouponId);
+    boolean existsByCouponIdAndIsDeletedFalse(String CouponId);
 
-    List<CouponEvent> findByCouponIdAndEventEndDateIsAfterAndIsDeleteFalse(String id, LocalDateTime now);
+    List<CouponEvent> findByCouponIdAndEventEndDateIsAfterAndIsDeletedFalse(String id, LocalDateTime now);
 
     @Query("SELECT ce FROM CouponEvent ce JOIN FETCH ce.coupon c " +
             "WHERE ce.id = :eventId AND ce.eventStatus = :eventStatus " +
-            "AND ce.isDelete = false AND c.isDelete = false")
+            "AND ce.isDeleted = false AND c.isDeleted = false")
     Optional<CouponEvent> findByIdAndEventStatusAndIsDeleteFalse(@Param("eventId") String eventId,
                                                                  @Param("eventStatus") EventStatus eventStatus);
 
-    Optional<CouponEvent> findByIdAndIsDeleteFalse(String eventId);
+    Optional<CouponEvent> findByIdAndIsDeletedFalse(String eventId);
 
     @Query("SELECT new com.haot.coupon.application.dto.CheckAlreadyClosedEventDto(e.id, e.coupon.id) " +
             "FROM CouponEvent e " +
