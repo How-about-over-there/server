@@ -5,7 +5,7 @@ spring:
   application:
     name: reservation-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/reservation
+    url: jdbc:postgresql://localhost:5432/how_about_over_there?currentSchema=reservation
     username: ws
     password: 1234
     driver-class-name: org.postgresql.Driver

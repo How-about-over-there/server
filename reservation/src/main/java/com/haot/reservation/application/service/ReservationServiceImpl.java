@@ -193,8 +193,9 @@ public class ReservationServiceImpl implements ReservationService {
     validateReservationOwnership(reservation, userId);
     validateCancellationReason(request.reason());
 
-    String paymentStatus = requestCancelPayment(request.reason(), reservation.getPaymentId(),
-        userId, role);
+    String paymentStatus = requestCancelPayment(
+        request.reason(), reservation.getPaymentId(), userId, role
+    );
 
     if ("CANCELLED".equals(paymentStatus)) {
       cancelReservation(reservation, userId, role);
