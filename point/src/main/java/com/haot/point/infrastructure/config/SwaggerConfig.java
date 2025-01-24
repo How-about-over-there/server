@@ -14,7 +14,8 @@ import java.util.Arrays;
 
 @OpenAPIDefinition(
         servers = {
-                @Server(url = "http://gateway-service:19091", description = "Gateway URL")
+                @Server(url = "http://gateway-service:19091", description = "Gateway URL"),
+                @Server(url = "http://localhost:19091", description = "Local Gateway URL")
         }
 )
 @Configuration
