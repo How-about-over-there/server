@@ -15,6 +15,7 @@ import com.haot.lodge.application.facade.LodgeFacade;
 import com.haot.lodge.application.response.LodgeReadOneResponse;
 import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.presentation.controller.LodgeController;
+import com.haot.lodge.util.TestDtoFixture;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,9 +44,9 @@ public class LodgeControllerReadOneTest {
         // Given
         String lodgeId = "LodgeUUID";
 
-        LodgeDto lodgeDto = TestUtil.createMockLodgeDto();
-        LodgeImageDto imageDto = TestUtil.createMockLodgeImageDto();
-        LodgeRuleDto ruleDto = TestUtil.createMockLodgeRuleDto();
+        LodgeDto lodgeDto = TestDtoFixture.createMockLodgeDto();
+        LodgeImageDto imageDto = TestDtoFixture.createMockLodgeImageDto();
+        LodgeRuleDto ruleDto = TestDtoFixture.createMockLodgeRuleDto();
 
         LodgeReadOneResponse response = new LodgeReadOneResponse(
                 lodgeDto,

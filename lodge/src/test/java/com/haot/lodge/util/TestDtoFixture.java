@@ -1,10 +1,13 @@
-package com.haot.lodge.lodge.controller;
+package com.haot.lodge.util;
 
+
+import com.haot.lodge.application.dto.LodgeDateDto;
 import com.haot.lodge.application.dto.LodgeDto;
 import com.haot.lodge.application.dto.LodgeImageDto;
 import com.haot.lodge.application.dto.LodgeRuleDto;
 
-public class TestUtil {
+public class TestDtoFixture {
+
     public static LodgeDto createMockLodgeDto() {
         return LodgeDto.builder()
                 .id("LodgeUUID")
@@ -13,7 +16,7 @@ public class TestUtil {
                 .description("아름다운 해변가 숙소입니다.")
                 .address("123 Ocean View Drive")
                 .term(7)
-                .basicPrice(250.00)
+                .basicPrice(2500.0)
                 .build();
     }
 
@@ -34,4 +37,5 @@ public class TestUtil {
                 .customization("애완견 출입 금지입니다.")
                 .build();
     }
+
 }

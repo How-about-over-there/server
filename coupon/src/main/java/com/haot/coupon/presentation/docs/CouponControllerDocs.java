@@ -26,11 +26,11 @@ public interface CouponControllerDocs {
     ApiResponse<Void> customerIssueCoupon(String userId, CouponCustomerCreateRequest request);
 
     @Operation(summary = "쿠폰 유효성 검사 API", description = "[Feign] 쿠폰 사용하기 전 유효성 검사 API 입니다.")
-    ApiResponse<ReservationVerifyResponse> verify(FeignVerifyRequest request);
+    ApiResponse<ReservationVerifyResponse> verify(String userId, FeignVerifyRequest request);
 
     @Operation(summary = "쿠폰 rollback API", description = "[Feign] 쿠폰 사용 취소시 쿠폰 사용 Rollback API 입니다.")
     ApiResponse<Void> rollbackReservationCoupon(String userId, Role role, String reservationCouponId);
 
     @Operation(summary = "쿠폰 사용 확정 API", description = "[Feign] 쿠폰 사용 확정하는 API 입니다.")
-    ApiResponse<Void> confirmReservation(String reservationCouponId, FeignConfirmReservationRequest request);
+    ApiResponse<Void> confirmReservation(String userId, String reservationCouponId, FeignConfirmReservationRequest request);
 }
