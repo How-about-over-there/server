@@ -36,6 +36,9 @@ public class JwtAuthenticationFilter implements WebFilter {
 
   @Value("${filter.bypass.prefix-paths}")
   private List<String> prefixPaths;
+
+  @Value("${filter.bypass.contains-paths}")
+  private List<String> containsPaths;
   /*
     1. 토큰에 대한 유효성 검증
     2. 유저 ID 의 유효성 검증
@@ -48,6 +51,11 @@ public class JwtAuthenticationFilter implements WebFilter {
 
     if (prefixPaths.stream().anyMatch(path::startsWith)) {
       log.info("Bypassing authentication for prefixPaths path: {}", path);
+      return chain.filter(exchange);
+    }
+
+    if (exactPaths.stream().anyMatch(path::contains)) {
+      log.info("Bypassing authentication for containsPaths path: {}", path);
       return chain.filter(exchange);
     }
 
