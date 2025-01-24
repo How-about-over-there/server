@@ -19,7 +19,8 @@ public interface ReservationControllerDocs {
   ApiResponse<ReservationGetResponse> createReservation(
       ReservationCreateRequest reservationCreateRequest,
       String userId,
-      Role role
+      Role role,
+      String token
   );
 
   @Operation(summary = "예약 단건 조회", description = "사용자가 예약 번호로 조회할 수 있습니다.")

@@ -23,7 +23,8 @@ public interface ReservationService {
   ReservationGetResponse createReservation(
       ReservationCreateRequest request,
       String userId,
-      Role role
+      Role role,
+      String token
   );
 
   /**

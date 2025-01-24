@@ -13,8 +13,8 @@ public class FeignClientException extends RuntimeException {
   public String message;
 
   public FeignClientException(ErrorCode errorCode, String details) {
-    super(errorCode.getMessage() + details);
-    this.statusCode = String.valueOf(errorCode.getHttpStatus());
-    this.status = errorCode.getCode();
+    this.statusCode = errorCode.getCode();
+    this.status = "ERROR";
+    this.message = errorCode.getMessage() + details;
   }
 }

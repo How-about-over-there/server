@@ -40,10 +40,11 @@ public class ReservationController implements ReservationControllerDocs {
   public ApiResponse<ReservationGetResponse> createReservation(
       @Valid @RequestBody ReservationCreateRequest reservationCreateRequest,
       @RequestHeader(value = "X-User-Id", required = true) String userId,
-      @RequestHeader(value = "X-User-Role", required = true) Role role
+      @RequestHeader(value = "X-User-Role", required = true) Role role,
+      @RequestHeader("Authorization") String token
   ) {
     return ApiResponse.SUCCESS(
-        reservationService.createReservation(reservationCreateRequest, userId, role));
+        reservationService.createReservation(reservationCreateRequest, userId, role, token));
   }
 
   @RoleCheck(Role.USER)
