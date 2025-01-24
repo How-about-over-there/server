@@ -26,9 +26,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:19090/eureka/
-logging:
-  level:
-    org.springframework.cache: DEBUG
 management:
   endpoints:
     web:
