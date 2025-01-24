@@ -1,4 +1,4 @@
-package com.haot.reservation.application.dtos;
+package com.haot.reservation.application.dto;
 
 import java.util.ArrayList;
 import java.util.List;

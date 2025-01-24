@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_reservation")
+@Table(name = "p_reservation", schema = "reservation")
 public class Reservation extends BaseEntity {
 
   @Id
