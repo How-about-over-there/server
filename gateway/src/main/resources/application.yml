@@ -6,7 +6,7 @@ spring:
     web-application-type: reactive  # Spring 애플리케이션 리액티브 웹 애플리케이션으로 설정
   data:
     redis:
-      host: redis # redis, localhost
+      host: localhost
       port: 6379
       password: '0000'
   application:
@@ -17,6 +17,7 @@ spring:
         locator:
           enabled: true  # 서비스 디스커버리를 통해 동적으로 라우트를 생성하도록 설정
       routes:
+        # Doc start
         # coupon doc
         - id: coupon-service-doc
           uri: lb://coupon-service
@@ -80,6 +81,8 @@ spring:
             - Path=/api/v1/points/v3/api-docs
           filters:
             - RewritePath=/api/v1/points/v3/api-docs, /v3/api-docs
+
+        # Doc End
 
         #Auth
         - id: auth-service-api
@@ -175,7 +178,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-service:19090/eureka/ # eureka-service , localhost
+      defaultZone: http://localhost:19090/eureka/
 
 
 jwt:
