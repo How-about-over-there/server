@@ -55,6 +55,7 @@ jobs:
           REVIEW_SERVICE_HOST: ${{ secrets.REVIEW_SERVICE_HOST }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           PORT_ONE: ${{ secrets.PORT_ONE }}
+          LOKI_PUSH_URL: ${{ secrets.LOKI_PUSH_URL }}
 
         run: |
           # Update application.yml for each service
@@ -77,6 +78,7 @@ jobs:
           sed -i "s@\${POINT_SERVICE_HOST}@${POINT_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s@\${RESERVATION_SERVICE_HOST}@${RESERVATION_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s@\${REVIEW_SERVICE_HOST}@${REVIEW_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s|<url>http://.*</url>|<url>${LOKI_PUSH_URL}</url>|" ${{ matrix.service }}/src/main/resources/loki-config.xml
 
 
       # Gradle 빌드
