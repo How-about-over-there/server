@@ -82,7 +82,7 @@
 
 💰**결제 서비스**:
 
-[결제 요청/취소 과정](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-%EA%B2%B0%EC%A0%9C-%EC%9A%94%EC%B2%AD-&-%EA%B2%B0%EC%A0%9C-%EC%B7%A8%EC%86%8C-%EA%B3%BC%EC%A0%95)
+- [📖 결제 요청/취소 과정](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-%EA%B2%B0%EC%A0%9C-%EC%9A%94%EC%B2%AD-&-%EA%B2%B0%EC%A0%9C-%EC%B7%A8%EC%86%8C-%EA%B3%BC%EC%A0%95)
 
 - 포트원 API 연동으로 결제 처리
 - 결제 성공, 취소 상태 관리
@@ -92,7 +92,7 @@
 
 💵**포인트 서비스**:
 
-[포인트 적립/사용 과정]([https://www.notion.so/1842dc3ef514812e81b8cdd71a7e2231?pvs=21](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EC%A0%81%EB%A6%BD-&-%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EC%82%AC%EC%9A%A9-%EA%B3%BC%EC%A0%95))
+- [📖 포인트 적립/사용 과정](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EC%A0%81%EB%A6%BD-&-%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EC%82%AC%EC%9A%A9-%EA%B3%BC%EC%A0%95)
 
 - 포인트 적립, 사용 및 자동 만료 처리
 - Redis Cache 로 포인트 사용/적립/만료 내역 관리
