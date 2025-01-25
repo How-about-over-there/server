@@ -52,11 +52,11 @@
 
 | 이름      | 포지션   | 담당(개인별 기여점)                                                                                                            | Github 링크                  |
 |-----------|----------|-----------------------------------------------------------------------------------------------------------------------------|------------------------------|
-| 김성훈     | 리더     |▶ Coupon 도메인 서비스 개발 <br>- Kafka 활용 병렬, 비동기 처리 쿠폰 발급, 빠른 응답속도 제공 <br>- QueryDSL 활용한 검색 기능 구현 <br>- Redis LuaScript 활용 동시성 제어, 순서보장 <br>- JPQL을 활용한 벌크 insert, update 구현으로 DB I/O 부하 감소 <br>- kafka batchListener, 수동 커밋 전략 사용 후 Consumer lag 감소 후 성능 최적화<br>- Jmeter 부하 테스트 (쿠폰 발급)<br>▶ Swagger 문서화 & Gateway 통합 swagger 설정 완료<br>▶모니터링(Promethues, Grafana, Loki)설정, Kafka, Redis<br>-Prometheus와 Grafana 연동으로 서버 모니터링 및 Slack으로 알림 발송 기능 구현<br>- Docker-compose 파일 설정→  kafka exporter, redis exporter 설정해 모니터링 가능<br>- Loki 활용하여 로그 관리 및 시각화<br>- Service up/down시, CPU 사용량이 50% 이상일 때 자동으로 Slack에 알림이 전송| [(https://github.com/kimsung3113)] |
-| 조우석 | 부리더   | ▶ 예약 관련 서비스 개발<br>- FeignClient를 사용하여 예약 로직 및 보상 트랜잭션 구현<br>▶ 리뷰 관련 서비스 개발<br>- QueryDSL를 활용한 검색 기능 구현<br>- S3 이미지 업로드 구현                          | [https://github.com/wooseok50]    |
-| 강찬욱 | 팀원     | ▶ Auth/User 서비스 개발<br>- 회원가입/로그인, 유저 정보 관리 API 구현<br>▶ Gateway 개발<br>- JWT 토큰을 이용한 유저 인증 구현<br>- Redis를 이용하여 토큰 내부 유저 ID 유효성 검증 최적화<br>▶ 깃 서브모듈 구현<br>- RoleCheck 어노테이션을 구현하여 어노테이션 기반 메소드 단위의 인가 처리 구현<br>- AuditorAware, RoleCheck 어노테이션 등 공통 코드들을 깃 서브모듈을 이용하여 모듈화 구현<br>▶ 인프라 및 CI/CD 구축<br>- ECS, EC2, RDS, ElasticCache 를 이용한 인프라 구축<br>- Git Actions 와 ECR을 이용한 CI/CD 파이프라인 구축                                                | [https://github.com/chanwookK]     |
-| 김지수 | 팀원     | ▶ Payment 서비스 개발<br>- 포트원 API 연동을 통해 실제 결제 환경 제공<br>- FeignClient 통신을 사용하여 결제 성공/실패 여부 전달<br>- QueryDSL 활용한 검색 기능 구현<br>- Swagger 를 통한 API 문서화<br>▶ Point 서비스 개발<br>- 분산 배치 작업으로 포인트 만료 처리<br>- Redis 캐싱을 통해 사용자의 포인트 내역 조회시 성능 개선<br>- QueryDSL 활용한 검색 기능 구현<br>- Swagger 를 통한 API 문서화 | [https://github.com/jelliclesu]    |
-| 문시원 | 팀원     | ▶ 숙소 도메인 서비스 개발<br>- Redisson 분산락을 적용해 특정 날짜 예약 시 발생할 수 있는동시성 문제를 해결<br>- QueryDSL를 활용한 검색 기능 구현<br>- Swagger 통한 API 문서화<br>- S3 이미지 업로드 구현<br>▶ 협업을 위한 깃허브 설정<br>- 협업을  위한 PR 및 이슈 템플릿과 규칙 등을 설정<br>- 공통 응답 설정| [https://github.com/muncool39]    |
+| 김성훈     | 리더     |▶ Coupon 도메인 서비스 개발 <br>▶Gateway 통합 swagger 설정 완료<br>▶모니터링(Promethues, Grafana, Loki)설정, Kafka, Redis<br>▶Docker-compose 파일 설정| [(https://github.com/kimsung3113)] |
+| 조우석 | 부리더   | ▶ 예약 관련 서비스 개발<br>▶ 리뷰 관련 서비스 개발<br>▶S3 이미지 업로드 구현                          | [https://github.com/wooseok50]    |
+| 강찬욱 | 팀원     | ▶ Auth/User 서비스 개발<br>▶ Gateway 개발<br>▶ 깃 서브모듈 구현<br>▶ 인프라 및 CI/CD 구축<br>                                               | [https://github.com/chanwookK]     |
+| 김지수 | 팀원     | ▶ Payment 서비스 개발<br>▶ 포트원 API 연동을 통해 실제 결제 환경 제공<br>▶ Point 서비스 개발<br>| [https://github.com/jelliclesu]    |
+| 문시원 | 팀원     | ▶ 숙소 도메인 서비스 개발<br>▶S3 이미지 업로드 구현<br>▶ 협업을 위한 깃허브 설정<br>| [https://github.com/muncool39]    |
 
 ## 🖌 인프라 설계도
 <details>
