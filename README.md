@@ -135,7 +135,7 @@
 
 🐰 Kafka Consumer 역직렬화 문제 
 
-🍀 Redis 역/직렬화 문제 해결 과정(https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-Redis-%EC%97%AD-%EC%A7%81%EB%A0%AC%ED%99%94-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0-%EA%B3%BC%EC%A0%95)
+[🍀 Redis 역/직렬화 문제 해결 과정](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-Redis-%EC%97%AD-%EC%A7%81%EB%A0%AC%ED%99%94-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0-%EA%B3%BC%EC%A0%95)
 
 🎀 Feign Client 통신 문제
 
