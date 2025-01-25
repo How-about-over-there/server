@@ -2,6 +2,8 @@ server:
   port: 19091
 
 spring:
+  main:
+    web-application-type: reactive  # Spring 애플리케이션 리액티브 웹 애플리케이션으로 설정
   data:
     redis:
       host: ${REDIS_URL}
@@ -15,6 +17,73 @@ spring:
         locator:
           enabled: true  # 서비스 디스커버리를 통해 동적으로 라우트를 생성하도록 설정
       routes:
+        # Doc start
+        # coupon doc
+        - id: coupon-service-doc
+          uri: lb://coupon-service
+          predicates:
+            - Path=/api/v1/coupons/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/coupons/v3/api-docs, /v3/api-docs
+
+        # lodge doc
+        - id: lodge-service-doc
+          uri: lb://lodge-service
+          predicates:
+            - Path=/api/v1/lodges/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/lodges/v3/api-docs, /v3/api-docs
+
+        # review doc
+        - id: review-service-doc
+          uri: lb://review-service
+          predicates:
+            - Path=/api/v1/reviews/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/reviews/v3/api-docs, /v3/api-docs
+
+        # auth doc
+        - id: auth-service-doc
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/v1/auth/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/auth/v3/api-docs, /v3/api-docs
+
+        # user doc
+        - id: user-service-doc
+          uri: lb://user-service
+          predicates:
+            - Path=/api/v1/users/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/users/v3/api-docs, /v3/api-docs
+
+        # reservation doc
+        - id: reservation-service-doc
+          uri: lb://reservation-service
+          predicates:
+            - Path=/api/v1/reservations/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/reservations/v3/api-docs, /v3/api-docs
+
+        # payment doc
+        - id: payment-service-doc
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/payments/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/payments/v3/api-docs, /v3/api-docs
+
+        # point doc
+        - id: point-service-doc
+          uri: lb://point-service
+          predicates:
+            - Path=/api/v1/points/v3/api-docs
+          filters:
+            - RewritePath=/api/v1/points/v3/api-docs, /v3/api-docs
+
+        # Doc End
+
         #Auth
         - id: auth-service-api
           uri: lb://auth-service
@@ -121,10 +190,44 @@ jwt:
 # 두가지 방식으로 필터링 받지 않을 URL 을 설정할 수 있습니다
 # exact-paths: 완전히 일치하면 필터링 X
 # prefix-paths: 입력 url 로 시작하면 필터링 X
+# contains-paths: 포함되어 있으면 필터링 X
 filter:
   bypass:
     exact-paths: /api/v1/auth/login, /api/v1/auth/signup, /payment.html, /, /actuator/prometheus
     prefix-paths: /api/v1/auth
+    contains-paths: /v3/api-docs, /swagger-ui
 
 user:
   service: ${USER_SERVICE_DNS}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: never
+
+springdoc:
+  swagger-ui:
+    use-root-path: true
+    urls:
+      - name: user-service
+        url: /api/v1/users/v3/api-docs
+      - name: coupon-service
+        url: /api/v1/coupons/v3/api-docs
+      - name: auth-service
+        url: /api/v1/auth/v3/api-docs
+      - name: lodge-service
+        url: /api/v1/lodges/v3/api-docs
+      - name: review-service
+        url: /api/v1/reviews/v3/api-docs
+      - name: reservation-service
+        url: /api/v1/reservations/v3/api-docs
+      - name: payment-service
+        url: /api/v1/payments/v3/api-docs
+      - name: point-service
+        url: /api/v1/points/v3/api-docs
