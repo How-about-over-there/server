@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum SuccessCode implements ResCodeIfs {
 
-  UPDATE_RESERVATION_SUCCESS(HttpStatus.OK, "7000", "예약 상태 변경 성공하였습니다."),
-  CANCEL_RESERVATION_SUCCESS(HttpStatus.OK, "7000", "예약 취소에 성공하였습니다.");
+  UPDATE_RESERVATION_SUCCESS(HttpStatus.OK, "7002", "예약 상태 변경 성공하였습니다."),
+  CANCEL_RESERVATION_SUCCESS(HttpStatus.OK, "7003", "예약 취소에 성공하였습니다.");
 
   private final HttpStatus httpStatus;
   private final String code;

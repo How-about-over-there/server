@@ -1,4 +1,4 @@
-package com.haot.review.presentation.dto;
+package com.haot.review.infrastructure.dto;
 
 import java.util.List;
 
