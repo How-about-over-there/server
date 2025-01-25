@@ -93,7 +93,7 @@ jobs:
           cd ./${{ matrix.service }}
           chmod +x ./gradlew
           ./gradlew clean
-          ./gradlew bootJar -Dspring.profiles.active=prod
+          ./gradlew bootJar -Pprofile=prod
 
       # Docker 이미지 빌드
       - name: Build Docker images for ${{ matrix.service }}
