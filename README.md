@@ -41,10 +41,10 @@
         
 </aside>
 
-## 🖌 인프라 설계도
-
+<details>
+<summary>## 🖌 인프라 설계도</summary>
 ![제목 없는 다이어그램 drawio](https://github.com/user-attachments/assets/fc4cbd06-5619-484b-839d-bc6734ab42f7)
-
+</details>
 
 ## 📄 주요 기능
 
