@@ -110,17 +110,17 @@
 <aside>
 
 ## 🗣️ 기술적 의사 결정
-💡 ELK Stack Vs Prometheus + Grafana + Loki
+[💡 ELK Stack Vs Prometheus + Grafana + Loki](https://github.com/How-about-over-there/server/wiki/%5BConcern%5D-ELK-Stack-Vs-Prometheus---Grafana---Loki)
 
-💡 팩토리 메서드 생성 vs Mapstruct
+[💡 팩토리 메서드 생성 vs Mapstruct](https://github.com/How-about-over-there/server/wiki/%5BConcern%5D-%ED%8E%99%ED%86%A0%EB%A6%AC-%EB%A9%94%EC%84%9C%EB%93%9C-%EC%83%9D%EC%84%B1-vs-Mapstruct)
 
-💡 Kafka, RabbitMQ 중 Kafka 선택
+[💡 Kafka, RabbitMQ 중 Kafka 선택](https://github.com/How-about-over-there/server/wiki/%5BConcern%5D-Kafka,-RabbitMQ-%EC%A4%91-Kafka-%EC%84%A0%ED%83%9D)
 
-💡 Redis 자료구조 SortedSet vs Set
+[💡 Redis 자료구조 SortedSet vs Set](https://github.com/How-about-over-there/server/wiki/%5BConcern%5D-Redis-%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-SortedSet-vs-Set)
 
 [💡 숙소 날짜 예약 시의 동시성 문제 해결 방법 결정](https://github.com/How-about-over-there/server/wiki/%5BConcern%5D-%EB%8F%99%EC%8B%9C%EC%84%B1)
 
-💡 보안 전략에 관한 기술적 의사 결정
+[💡 보안 전략에 관한 기술적 의사 결정](https://github.com/How-about-over-there/server/wiki/%5BConcern%5D-%EB%B3%B4%EC%95%88-%EC%A0%84%EB%9E%B5%EC%97%90-%EA%B4%80%ED%95%9C-%EA%B8%B0%EC%88%A0%EC%A0%81-%EC%9D%98%EC%82%AC-%EA%B2%B0%EC%A0%95)
 
 [💡 특정 포인트 내역 조회에 Redis 캐싱 적용](https://github.com/How-about-over-there/server/wiki/%5BConcern%5D-%ED%8A%B9%EC%A0%95-%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EB%82%B4%EC%97%AD-%EC%A1%B0%ED%9A%8C%EC%97%90-Redis-%EC%BA%90%EC%8B%B1-%EC%A0%81%EC%9A%A9)
 
@@ -128,22 +128,24 @@
 
 ## 🔥 트러블 슈팅
 
-🦄 서브 모듈 분리
+[🦄 서브 모듈 분리](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-%EC%84%9C%EB%B8%8C-%EB%AA%A8%EB%93%88-%EB%B6%84%EB%A6%AC)
 
-🌸 관리자 API와 유저 API 분리 
+[🌸 관리자 API와 유저 API 분리](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-%EA%B4%80%EB%A6%AC%EC%9E%90-API-%EC%99%80-%EC%9C%A0%EC%A0%80-API-%EB%B6%84%EB%A6%AC)
 
-🐢 쿠폰 발급 동시 요청으로 인한 Consumer Lag 문제, Jmeter 부하테스트
+[🐢 쿠폰 발급 동시 요청으로 인한 Consumer Lag 문제, Jmeter 부하테스트](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-%EC%BF%A0%ED%8F%B0-%EB%B0%9C%EA%B8%89-%EB%8F%99%EC%8B%9C-%EC%9A%94%EC%B2%AD%EC%9C%BC%EB%A1%9C-%EC%9D%B8%ED%95%9C-Consumer-Lag-%EB%AC%B8%EC%A0%9C,-Jmeter-%EB%B6%80%ED%95%98%ED%85%8C%EC%8A%A4%ED%8A%B8)
 
-🐥 front가 있다는 가정: 요청 제한을 위해  front에 데이터 전송 = 로그 출력 시점 문제 해결
+[🐯 쿠폰 발급 동시성 문제 해결 및 기술 선택, Redis ‐ 분산락 vs LuaScript](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-%EC%BF%A0%ED%8F%B0-%EB%B0%9C%EA%B8%89-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0-%EB%B0%8F-%EA%B8%B0%EC%88%A0-%EC%84%A0%ED%83%9D,-Redis-%E2%80%90-%EB%B6%84%EC%82%B0%EB%9D%BD-vs-LuaScript)
 
-🐻 Coupon, Event N+1 문제 
+[🐥 front가 있다는 가정: 요청 제한을 위해  front에 데이터 전송 = 로그 출력 시점 문제 해결](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-%5Bfront%EA%B0%80-%EC%9E%88%EB%8B%A4%EB%8A%94-%EA%B0%80%EC%A0%95%5D-%EC%9A%94%EC%B2%AD-%EC%A0%9C%ED%95%9C%EC%9D%84-%EC%9C%84%ED%95%B4--front%EC%97%90-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%84%EC%86%A1-=-%EB%A1%9C%EA%B7%B8-%EC%B6%9C%EB%A0%A5-%EC%8B%9C%EC%A0%90-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0)
 
-🦋 Kafka Exporter 자동 종료 문제 해결 
+[🐻 Coupon, Event N+1 문제](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-Coupon,-Event-N-1-%EB%AC%B8%EC%A0%9C) 
 
-🐰 Kafka Consumer 역직렬화 문제 
+[🦋 Kafka Exporter 자동 종료 문제 해결](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-Kafka-Exporter-%EC%9E%90%EB%8F%99-%EC%A2%85%EB%A3%8C-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0)
+
+[🐰 Kafka Consumer 역직렬화 문제](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-Kafka-Consumer-%EC%97%AD%EC%A7%81%EB%A0%AC%ED%99%94-%EB%AC%B8%EC%A0%9C)
 
 [🍀 Redis 역/직렬화 문제 해결 과정](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-Redis-%EC%97%AD-%EC%A7%81%EB%A0%AC%ED%99%94-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0-%EA%B3%BC%EC%A0%95)
 
-🎀 Feign Client 통신 문제
+[🎀 Feign Client 통신 문제](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-Feign-Client-%ED%86%B5%EC%8B%A0-%EB%AC%B8%EC%A0%9C)
 
-🐸 Feign Client 예외 처리 문제 
+[🐸 Feign Client 예외 처리 문제](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-Feign-Client-%EC%98%88%EC%99%B8-%EC%B2%98%EB%A6%AC-%EB%AC%B8%EC%A0%9C)
