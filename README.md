@@ -1,6 +1,7 @@
 ## 🏡 저기어때 : 대규모 트래픽 처리 숙박 예약 서비스
 
-![Modern App Portfolio Mockup Presentation (3) (1).png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/09ebf1b7-b8bf-4f81-81f9-493edc63f59a/Modern_App_Portfolio_Mockup_Presentation_(3)_(1).png)
+![Modern App Portfolio Mockup Presentation (3) (1)](https://github.com/user-attachments/assets/61b3d03e-f550-451f-9dab-c6416631ee1c)
+
 
 ## 👋 서비스/프로젝트 소개
 
@@ -42,13 +43,15 @@
 
 ## 🖌 인프라 설계도
 
-![제목 없는 다이어그램.drawio.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/34226674-3b13-404a-aa48-8278a1bcad05/%EC%A0%9C%EB%AA%A9_%EC%97%86%EB%8A%94_%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8.drawio.png)
+![제목 없는 다이어그램 drawio](https://github.com/user-attachments/assets/fc4cbd06-5619-484b-839d-bc6734ab42f7)
+
 
 ## 📄 주요 기능
 
 ### 예약-결제 Flow
 
-![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/2323b609-17b9-4419-b04b-8201e01fca58/image.png)
+<img width="1075" alt="image" src="https://github.com/user-attachments/assets/1dbcfbbc-5454-43c3-9da4-8d0c474e3cf9" />
+
 
 - 예약에 쿠폰, 포인트가 모두 사용된 경우를 나타내며, 사용되지 않았을 경우 유효성 검사 및 상태 변경 진행되지 않음
 - 현재 테스트 환경에서는 결제 URL 을 직접 브라우저에 입력해야 하지만, 최종적인 목표는 MVC 패턴
@@ -56,12 +59,10 @@
 
 ### 쿠폰 발급 Flow
 
-![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/7ee96953-5919-4085-818b-58d91648eab9/image.png)
+![image (1)](https://github.com/user-attachments/assets/059c7716-6669-4c3b-854a-5464d080f135)
 
 <aside>
-🏠
-
-**숙소 예약 서비스**
+🏠**숙소 예약 서비스**
 
 - 숙소 정보 검색 및 숙박 날짜 예약
 - 예약 시 쿠폰 및 포인트 적용
