@@ -36,6 +36,13 @@
       <summary>Dashboard 설정 변경</summary>
             <image src="https://github.com/user-attachments/assets/dc5dfedd-a383-44a1-b61e-4b574ef1dce1" width="900"></image>
     </details>
+
+ - **데이터 일관성 및 트랜잭션 관리**
+   - TransactionSynchronizationManager로 데이터 일관성 관리
+   - 중복 및 데이터 손실을 방지하는 Kafka Batch Listener 구현
+
+- **운영 및 배포 효율화**
+   - Docker와 Github Actions를 이용한 CI/CD 파이프라인 구축으로 배포 자동화
         
 </aside>
 
