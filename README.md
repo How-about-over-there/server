@@ -122,6 +122,24 @@
 
 💡 보안 전략에 관한 기술적 의사 결정
 
-💡 특정 포인트 내역 조회에 Redis 캐싱 적용
+## 🔥 트러블 슈팅
 
-💡 포인트 만료 처리 설계: 분산 배치 처리
+서브 모듈 분리
+
+관리자 API와 유저 API 분리 
+
+쿠폰 발급 동시 요청으로 인한 Consumer Lag 문제, Jmeter 부하테스트
+
+front가 있다는 가정: 요청 제한을 위해  front에 데이터 전송 = 로그 출력 시점 문제 해결
+
+Coupon, Event N+1 문제 
+
+Kafka Exporter 자동 종료 문제 해결 
+
+Kafka Consumer 역직렬화 문제 
+
+Redis 역/직렬화 문제 해결 과정
+
+Feign Client 통신 문제
+
+Feign Client 예외 처리 문제 
