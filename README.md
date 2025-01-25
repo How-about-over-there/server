@@ -108,3 +108,20 @@
 - 숙소 리뷰 관리 서비스
 - S3 이미지 업로드
 </aside>
+
+## 🗣️ 기술적 의사 결정
+💡 ELK Stack Vs Prometheus + Grafana + Loki
+
+💡 팩토리 메서드 생성 vs Mapstruct
+
+💡 Kafka, RabbitMQ 중 Kafka 선택
+
+💡 Redis 자료구조 SortedSet vs Set
+
+[💡 숙소 날짜 예약 시의 동시성 문제 해결 방법 결정](https://github.com/How-about-over-there/server/wiki/%5BConcern%5D-%EB%8F%99%EC%8B%9C%EC%84%B1)
+
+💡 보안 전략에 관한 기술적 의사 결정
+
+💡 특정 포인트 내역 조회에 Redis 캐싱 적용
+
+💡 포인트 만료 처리 설계: 분산 배치 처리
