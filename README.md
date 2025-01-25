@@ -115,9 +115,9 @@
 
 💡 보안 전략에 관한 기술적 의사 결정
 
-💡 특정 포인트 내역 조회에 Redis 캐싱 적용
+[💡 특정 포인트 내역 조회에 Redis 캐싱 적용](https://github.com/How-about-over-there/server/wiki/%5BConcern%5D-%ED%8A%B9%EC%A0%95-%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EB%82%B4%EC%97%AD-%EC%A1%B0%ED%9A%8C%EC%97%90-Redis-%EC%BA%90%EC%8B%B1-%EC%A0%81%EC%9A%A9)
 
-💡 포인트 만료 처리 설계: 분산 배치 처리
+[💡 포인트 만료 처리 설계: 분산 배치 처리](https://github.com/How-about-over-there/server/wiki/%5BConcern%5D-%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EB%A7%8C%EB%A3%8C-%EC%B2%98%EB%A6%AC-%EC%84%A4%EA%B3%84:-%EB%B6%84%EC%82%B0-%EB%B0%B0%EC%B9%98-%EC%B2%98%EB%A6%AC)
 
 ## 🔥 트러블 슈팅
 
@@ -135,7 +135,7 @@
 
 🐰 Kafka Consumer 역직렬화 문제 
 
-🍀 Redis 역/직렬화 문제 해결 과정
+🍀 Redis 역/직렬화 문제 해결 과정(https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-Redis-%EC%97%AD-%EC%A7%81%EB%A0%AC%ED%99%94-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0-%EA%B3%BC%EC%A0%95)
 
 🎀 Feign Client 통신 문제
 
