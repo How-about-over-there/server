@@ -47,6 +47,12 @@ jobs:
           USER_SERVICE_HOST: ${{ secrets.USER_SERVICE_HOST }}
           AUTH_SERVICE_HOST: ${{ secrets.AUTH_SERVICE_HOST }}
           GATEWAY_SERVICE_HOST: ${{ secrets.GATEWAY_SERVICE_HOST }}
+          COUPON_SERVICE_HOST: ${{ secrets.COUPON_SERVICE_HOST }}
+          LODGE_SERVICE_HOST: ${{ secrets.LODGE_SERVICE_HOST }}
+          PAYMENT_SERVICE_HOST: ${{ secrets.PAYMENT_SERVICE_HOST }}
+          POINT_SERVICE_HOST: ${{ secrets.POINT_SERVICE_HOST }}
+          RESERVATION_SERVICE_HOST: ${{ secrets.RESERVATION_SERVICE_HOST }}
+          REVIEW_SERVICE_HOST: ${{ secrets.REVIEW_SERVICE_HOST }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           PORT_ONE: ${{ secrets.PORT_ONE }}
 
@@ -65,7 +71,13 @@ jobs:
           sed -i "s#\${GATEWAY_SERVICE_HOST}#${GATEWAY_SERVICE_HOST}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s#\${JWT_SECRET}#${JWT_SECRET}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s@\${PORT_ONE}@${PORT_ONE}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-      
+          sed -i "s@\${COUPON_SERVICE_HOST}@${COUPON_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${LODGE_SERVICE_HOST}@${LODGE_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${PAYMENT_SERVICE_HOST}@${PAYMENT_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${POINT_SERVICE_HOST}@${POINT_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${RESERVATION_SERVICE_HOST}@${RESERVATION_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${REVIEW_SERVICE_HOST}@${REVIEW_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+
 
       # Gradle 빌드
       - name: Build with Gradle for ${{ matrix.service }}
