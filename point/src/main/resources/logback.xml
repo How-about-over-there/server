@@ -8,8 +8,6 @@
         <http>
             <url>http://haot-loki:3100/loki/api/v1/push</url>
         </http>
-        <!--<batchSize>102400</batchSize> &lt;!&ndash; 한 번에 전송할 로그 크기 &ndash;&gt;
-        <batchTimeoutMs>5000</batchTimeoutMs> &lt;!&ndash; 전송 주기 &ndash;&gt;-->
         <format>
             <label>
                 <pattern>service=coupon-service,level=%level</pattern>

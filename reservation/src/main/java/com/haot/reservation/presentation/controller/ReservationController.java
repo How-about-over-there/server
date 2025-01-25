@@ -1,17 +1,16 @@
 package com.haot.reservation.presentation.controller;
 
-import com.haot.reservation.application.dtos.req.ReservationCancelRequest;
-import com.haot.reservation.application.dtos.req.ReservationCreateRequest;
-import com.haot.reservation.application.dtos.req.ReservationSearchRequest;
-import com.haot.reservation.application.dtos.req.ReservationUpdateRequest;
-import com.haot.reservation.application.dtos.res.ReservationGetResponse;
+import com.haot.reservation.application.dto.req.ReservationCancelRequest;
+import com.haot.reservation.application.dto.req.ReservationCreateRequest;
+import com.haot.reservation.application.dto.req.ReservationSearchRequest;
+import com.haot.reservation.application.dto.req.ReservationUpdateRequest;
+import com.haot.reservation.application.dto.res.ReservationGetResponse;
 import com.haot.reservation.application.service.ReservationService;
 import com.haot.reservation.common.response.ApiResponse;
 import com.haot.reservation.common.response.enums.SuccessCode;
+import com.haot.reservation.presentation.docs.ReservationControllerDocs;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,28 +27,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Reservation Management", description = "예약 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/reservations")
-public class ReservationController {
+public class ReservationController implements ReservationControllerDocs {
 
   private final ReservationService reservationService;
 
-  @Operation(summary = "예약 생성", description = "사용자가 예약을 생성할 수 있습니다.")
   @RoleCheck(Role.USER)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   public ApiResponse<ReservationGetResponse> createReservation(
       @Valid @RequestBody ReservationCreateRequest reservationCreateRequest,
       @RequestHeader(value = "X-User-Id", required = true) String userId,
-      @RequestHeader(value = "X-User-Role", required = true) Role role
+      @RequestHeader(value = "X-User-Role", required = true) Role role,
+      @RequestHeader("Authorization") String token
   ) {
     return ApiResponse.SUCCESS(
-        reservationService.createReservation(reservationCreateRequest, userId, role));
+        reservationService.createReservation(reservationCreateRequest, userId, role, token));
   }
 
-  @Operation(summary = "예약 단건 조회", description = "사용자가 예약 번호로 조회할 수 있습니다.")
   @RoleCheck(Role.USER)
   @ResponseStatus(HttpStatus.OK)
   @GetMapping("/{reservationId}")
@@ -61,7 +58,6 @@ public class ReservationController {
     return ApiResponse.SUCCESS(reservationService.getReservation(reservationId, userId, role));
   }
 
-  @Operation(summary = "예약 검색 조회", description = "사용자가 예약 내역을 검색할 수 있습니다.")
   @RoleCheck(Role.USER)
   @ResponseStatus(HttpStatus.OK)
   @GetMapping
@@ -75,7 +71,6 @@ public class ReservationController {
         reservationService.searchReservation(reservationSearchRequest, userId, role, pageable));
   }
 
-  @Operation(summary = "예약 상태 변경", description = "예약 내역을 성공, 실패로 수정할 수 있습니다.")
   @ResponseStatus(HttpStatus.OK)
   @PutMapping("/{reservationId}")
   public ApiResponse<Void> updateReservation(
@@ -88,7 +83,6 @@ public class ReservationController {
     return ApiResponse.SUCCESS(SuccessCode.UPDATE_RESERVATION_SUCCESS);
   }
 
-  @Operation(summary = "예약 취소", description = "생성된 예약을 취소할 수 있습니다.")
   @RoleCheck(Role.USER)
   @ResponseStatus(HttpStatus.OK)
   @DeleteMapping("/{reservationId}")

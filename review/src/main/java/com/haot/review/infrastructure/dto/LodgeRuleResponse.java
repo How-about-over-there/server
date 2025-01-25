@@ -1,4 +1,4 @@
-package com.haot.review.presentation.dto;
+package com.haot.review.infrastructure.dto;
 
 public record LodgeRuleResponse(
     String id,

@@ -47,12 +47,12 @@ public class CacheConfig {
         pointHistorySerializer.setObjectMapper(objectMapper);
 
         RedisCacheConfiguration pointConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(30))
+                .entryTtl(Duration.ofSeconds(10))
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(pointSerializer));
 
         RedisCacheConfiguration pointHistoryConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(30))
+                .entryTtl(Duration.ofSeconds(10))
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(pointHistorySerializer));
 
@@ -64,9 +64,9 @@ public class CacheConfig {
                 );
 
         return RedisCacheManager.builder(redisConnectionFactory)
-                .withCacheConfiguration("pointCache", pointConfig)
-                .withCacheConfiguration("pointHistoryCache", pointHistoryConfig)
-                .withCacheConfiguration("pageCache", pageConfig)
+                .withCacheConfiguration("point", pointConfig)
+                .withCacheConfiguration("pointHistory", pointHistoryConfig)
+                .withCacheConfiguration("userPointHistories", pageConfig)
                 .build();
     }
 

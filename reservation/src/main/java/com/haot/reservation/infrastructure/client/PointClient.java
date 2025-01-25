@@ -25,7 +25,8 @@ public interface PointClient {
 
   // 포인트 사용 상태 변경
   @PostMapping("/api/v1/points/histories/{historyId}/status")
-  ApiResponse<PointAllResponse> updateStatusPoint(@Valid @RequestBody PointStatusRequest request,
+  ApiResponse<PointAllResponse> updateStatusPoint(
+      @Valid @RequestBody PointStatusRequest request,
       @PathVariable String historyId,
       @RequestHeader("X-User-Id") String userId,
       @RequestHeader("X-User-Role") Role role);

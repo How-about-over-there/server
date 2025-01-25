@@ -1,4 +1,4 @@
-package com.haot.payment.infrastructure.config;
+package com.haot.reservation.infrastructure.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
@@ -7,10 +7,11 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         servers = {
@@ -30,12 +31,11 @@ public class SwaggerConfig {
 
         return new OpenAPI()
                 .info(new Info()
-                        .title("Haot-Payment-Service")
-                        .description("HAOT 결제 서비스")
+                        .title("Haot-Reservation-Service")
+                        .description("HAOT 예약 서비스 API")
                         .version("v1"))
                 .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
                 .security(Arrays.asList(securityRequirement))
                 .addServersItem(new io.swagger.v3.oas.models.servers.Server().url("/"));
     }
 }
-
