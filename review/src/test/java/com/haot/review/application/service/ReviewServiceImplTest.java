@@ -19,7 +19,7 @@ import com.haot.review.application.dtos.res.ReviewGetResponse;
 import com.haot.review.common.exceptions.CustomReviewException;
 import com.haot.review.domain.model.Review;
 import com.haot.review.domain.repository.ReviewRepository;
-import com.haot.review.presentation.client.LodgeClient;
+import com.haot.review.infrastructure.client.LodgeClient;
 import com.haot.submodule.role.Role;
 import java.util.List;
 import java.util.Optional;

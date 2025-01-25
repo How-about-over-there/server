@@ -54,11 +54,6 @@ public class LodgeController implements LodgeControllerDocs{
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public ApiResponse<SliceResponse<LodgeReadAllResponse>> readAll(
-            @PageableDefault(size = 10)
-            @SortDefault.SortDefaults({
-                    @SortDefault(sort = "createdAt", direction = Direction.DESC),
-                    @SortDefault(sort = "updatedAt", direction = Direction.DESC)
-            })
             Pageable pageable,
             @ModelAttribute LodgeSearchParams searchParams
     ) {

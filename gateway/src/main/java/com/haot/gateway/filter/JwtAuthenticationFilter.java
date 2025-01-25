@@ -7,9 +7,14 @@ import com.haot.gateway.exception.GatewayException;
 import com.haot.gateway.util.JwtUtils;
 import io.jsonwebtoken.Claims;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -24,12 +29,16 @@ public class JwtAuthenticationFilter implements WebFilter {
 
   private final JwtUtils jwtUtils;
   private final UserWebClient userWebClient;
+  private final StringRedisTemplate stringRedisTemplate;
 
   @Value("${filter.bypass.exact-paths}")
   private List<String> exactPaths;
 
   @Value("${filter.bypass.prefix-paths}")
   private List<String> prefixPaths;
+
+  @Value("${filter.bypass.contains-paths}")
+  private List<String> containsPaths;
   /*
     1. 토큰에 대한 유효성 검증
     2. 유저 ID 의 유효성 검증
@@ -42,6 +51,11 @@ public class JwtAuthenticationFilter implements WebFilter {
 
     if (prefixPaths.stream().anyMatch(path::startsWith)) {
       log.info("Bypassing authentication for prefixPaths path: {}", path);
+      return chain.filter(exchange);
+    }
+
+    if (exactPaths.stream().anyMatch(path::contains)) {
+      log.info("Bypassing authentication for containsPaths path: {}", path);
       return chain.filter(exchange);
     }
 
@@ -64,9 +78,18 @@ public class JwtAuthenticationFilter implements WebFilter {
     Role role = Role.valueOf((String) userInfoFromToken.get(JwtUtils.AUTHORIZATION_KEY));
     String userId = (String) userInfoFromToken.get(JwtUtils.ID_KEY);
 
-    /*
-      TODO: Global Cache 도입하여 User service 에 대한 접근을 줄이자
-     */
+    boolean isMember = Boolean.TRUE.equals(stringRedisTemplate.hasKey("auth:user:valid_id:" + userId));
+
+    if (isMember) {
+      // 검증 성공 시
+      ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
+          .header("Authorization", token)
+          .header("X-User-Id", userId)
+          .header("X-User-Role", role.name())
+          .build();
+      return chain.filter(exchange.mutate().request(modifiedRequest).build());
+    }
+
     // 유저에 ID에 대한 검증
     return userWebClient.validateUser(userId)
         .then(Mono.defer(() -> {

@@ -31,10 +31,6 @@ public class ReservationCoupon extends BaseEntity {
     @Column(nullable = false, name = "reservation_discount_price")
     private Double reservationDiscountPrice;
 
-    @Column(name = "is_delete", nullable = false)
-    private boolean isDelete;
-
-
     public void confirmReservationStatus(ReservationCouponStatus status) {
         this.reservationCouponStatus = status;
     }

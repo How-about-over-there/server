@@ -20,8 +20,8 @@ public interface PaymentClient {
   ApiResponse<Map<String, Object>> createPayment(
       @Valid @RequestBody PaymentCreateRequest request,
       @RequestHeader("X-User-Id") String userId,
-      @RequestHeader("X-User-Role") Role role
-  );
+      @RequestHeader("X-User-Role") Role role,
+      @RequestHeader("Authorization") String token);
 
   @PostMapping("/api/v1/payments/{paymentId}/cancel")
   ApiResponse<PaymentResponse> cancelPayment(

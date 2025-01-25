@@ -16,6 +16,7 @@ import com.haot.coupon.domain.model.enums.EventStatus;
 import com.haot.coupon.infrastructure.repository.CouponEventRepository;
 import com.haot.coupon.infrastructure.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     private final CouponErrorProducer couponErrorProducer;
 
     @Transactional
+    @CacheEvict(value = "eventPageCache", allEntries = true)
     @Override
     public EventCreateResponse create(EventCreateRequest eventCreateRequest) {
 
@@ -48,21 +50,21 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
 
         // event 끝 날짜가 쿠폰 만료 날짜보다 전이어야 된다.
-        Coupon coupon = couponRepository.findByIdAndExpiredDateIsAfterAndIsDeleteFalse(eventCreateRequest.couponId(),
+        Coupon coupon = couponRepository.findByIdAndExpiredDateIsAfterAndIsDeletedFalse(eventCreateRequest.couponId(),
                         eventCreateRequest.eventEndDate())
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.COUPON_NOT_FOUND));
 
 
         // 이벤트에 같은 선착순 쿠폰이 설정되면 안된다, 무제한은 가능하게!
-        if(CouponType.PRIORITY == coupon.getType() && couponEventRepository.existsByCouponIdAndIsDeleteFalse(coupon.getId())) {
+        if (CouponType.PRIORITY == coupon.getType() && couponEventRepository.existsByCouponIdAndIsDeletedFalse(coupon.getId())) {
             throw new CustomCouponException(ErrorCode.EXIST_PRIORITY_COUPON_EVENTS);
         }
 
         // 무제한은 이벤트들 안에서 여러번 같은 쿠폰을 쓸 수 있게 한다.
-        if(CouponType.UNLIMITED == coupon.getType()){
+        if (CouponType.UNLIMITED == coupon.getType()) {
 
             List<CouponEvent> promotions = couponEventRepository
-                    .findByCouponIdAndEventEndDateIsAfterAndIsDeleteFalse(coupon.getId(), LocalDateTime.now())
+                    .findByCouponIdAndEventEndDateIsAfterAndIsDeletedFalse(coupon.getId(), LocalDateTime.now())
                     .stream()
                     .peek(couponEvent -> {
                         if (couponEvent.getEventStatus() == EventStatus.DEFAULT) {
@@ -81,7 +83,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
         CouponEvent savedEvent = couponEventRepository.save(event);
 
-        if(coupon.checkPriorityCoupon()){
+        if (coupon.checkPriorityCoupon()) {
             redisRepository.save(savedEvent, coupon);
         }
 
@@ -90,16 +92,18 @@ public class AdminEventServiceImpl implements AdminEventService {
 
     // 이벤트 수정 API, 문제가 생겼을때 확산 방지용 API or 이름, 설명 변경 API
     @Transactional
+    @CacheEvict(value = "eventPageCache", allEntries = true,
+            condition = "#request.eventStatus() != null")
     @Override
     public void modify(String userId, String eventId, EventModifyRequest request) {
 
         validateNonEmptyFields(request.eventName(), request.eventDescription(), request.eventStatus());
 
-        CouponEvent event = couponEventRepository.findByIdAndIsDeleteFalse(eventId)
+        CouponEvent event = couponEventRepository.findByIdAndIsDeletedFalse(eventId)
                 .orElseThrow(() -> new CustomCouponException(ErrorCode.EVENT_NOT_FOUND));
 
         // status 수정시 이벤트 관리자 강제 종료
-        if(request.eventStatus() != null) {
+        if (request.eventStatus() != null) {
 
             // 이미 끝난 이벤트는 status 수정 필요가 없게
             if (event.getEventStatus() != EventStatus.DEFAULT) {
@@ -107,22 +111,22 @@ public class AdminEventServiceImpl implements AdminEventService {
             }
 
             // 이벤트가 시작하기 전이면 상태값만 변경 -> 할당된 쿠폰은 쓰지 못하고 확인 후 delete 해야될듯
-            if(LocalDateTime.now().isBefore(event.getEventStartDate())){
+            if (LocalDateTime.now().isBefore(event.getEventStartDate())) {
                 event.updateEventStatus(EventStatus.MANUALLY_CLOSED);
-            }else{
+            } else {
                 Coupon coupon = event.getCoupon();
                 deleteCoupon(coupon, userId);
                 couponErrorProducer.sendEventClosed(eventMapper.toProduce(eventId, EventStatus.MANUALLY_CLOSED));
             }
 
-        }else{
+        } else {
             // 이름, description 수정
             event.modifyEvent(request.eventName(), request.eventDescription());
         }
     }
 
     // 쿠폰 삭제
-    private void deleteCoupon(Coupon coupon, String userId){
+    private void deleteCoupon(Coupon coupon, String userId) {
         coupon.deleteEntity(userId);
     }
 

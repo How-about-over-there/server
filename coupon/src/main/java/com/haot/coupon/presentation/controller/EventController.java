@@ -1,13 +1,13 @@
 package com.haot.coupon.presentation.controller;
 
 import com.haot.coupon.application.dto.request.events.EventSearchRequest;
+import com.haot.coupon.application.dto.response.PageResponse;
 import com.haot.coupon.application.dto.response.events.EventSearchResponse;
 import com.haot.coupon.application.service.EventService;
 import com.haot.coupon.common.response.ApiResponse;
 import com.haot.coupon.common.response.enums.SuccessCode;
 import com.haot.submodule.role.Role;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +29,9 @@ public class EventController implements com.haot.coupon.presentation.docs.EventC
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public ApiResponse<Page<EventSearchResponse>> searchEvent(@RequestHeader("X-User-Role") Role userRole,
-                                                              @ModelAttribute EventSearchRequest request,
-                                                              Pageable pageable) {
+    public ApiResponse<PageResponse<EventSearchResponse>> searchEvent(@RequestHeader("X-User-Role") Role userRole,
+                                                                      @ModelAttribute EventSearchRequest request,
+                                                                      Pageable pageable) {
         return ApiResponse.success(eventService.searchEvent(userRole, request, pageable));
     }
 

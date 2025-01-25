@@ -7,6 +7,7 @@ import com.haot.payment.application.dto.response.PageResponse;
 import com.haot.payment.application.dto.response.PaymentResponse;
 import com.haot.payment.application.service.PaymentService;
 import com.haot.payment.common.response.ApiResponse;
+import com.haot.payment.presentation.docs.PaymentControllerDocs;
 import com.haot.submodule.role.Role;
 import com.haot.submodule.role.RoleCheck;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,8 +27,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/payments")
 @RequiredArgsConstructor
-@Tag(name = "Payment Controller", description = "Payment API 설명")
-public class PaymentController {
+public class PaymentController implements PaymentControllerDocs {
 
     private final PaymentService paymentService;
 
@@ -35,7 +35,6 @@ public class PaymentController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @RoleCheck({Role.USER, Role.ADMIN})
-    @Operation(summary = "결제 생성 API")
     public ApiResponse<Map<String, Object>> createPayment(@Valid @RequestBody PaymentCreateRequest request,
                                                           @RequestHeader("X-User-Id") String userId,
                                                           @RequestHeader("X-User-Role") Role role,
@@ -63,7 +62,6 @@ public class PaymentController {
     @PostMapping("/{paymentId}/complete")
     @ResponseStatus(HttpStatus.OK)
     @RoleCheck({Role.USER, Role.ADMIN})
-    @Operation(summary = "결제 확인 API")
     public ApiResponse<PaymentResponse> completePayment(@PathVariable String paymentId,
                                                         @RequestHeader("X-User-Id") String userId,
                                                         @RequestHeader("X-User-Role") Role role) {
@@ -76,7 +74,6 @@ public class PaymentController {
     @GetMapping("/{paymentId}")
     @ResponseStatus(HttpStatus.OK)
     @RoleCheck({Role.USER, Role.ADMIN})
-    @Operation(summary = "본인 결제 단건 조회 API")
     public ApiResponse<PaymentResponse> getPaymentById(@PathVariable String paymentId,
                                                        @RequestHeader("X-User-Id") String userId,
                                                        @RequestHeader("X-User-Role") Role role)  {
@@ -87,10 +84,9 @@ public class PaymentController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @RoleCheck({Role.USER, Role.ADMIN})
-    @Operation(summary = "본인 결제 전체 조회 및 검색 API")
     public ApiResponse<PageResponse<PaymentResponse>> getPayments(
             @ModelAttribute PaymentSearchRequest request,
-            @PageableDefault(size = 10, direction = Sort.Direction.ASC, sort = "createdAt") Pageable pageable,
+            Pageable pageable,
             @RequestHeader("X-User-Id") String userId,
             @RequestHeader("X-User-Role") Role role
     ) {
@@ -101,7 +97,6 @@ public class PaymentController {
     @PostMapping("/{paymentId}/cancel")
     @ResponseStatus(HttpStatus.OK)
     @RoleCheck({Role.USER, Role.ADMIN})
-    @Operation(summary = "결제 취소 API")
     public ApiResponse<PaymentResponse> cancelPayment(@Valid @RequestBody PaymentCancelRequest request,
                                                       @PathVariable String paymentId,
                                                       @RequestHeader("X-User-Id") String userId,

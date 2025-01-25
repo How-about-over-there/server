@@ -17,6 +17,7 @@ import com.haot.lodge.application.response.LodgeCreateResponse;
 import com.haot.lodge.common.response.ApiResponse;
 import com.haot.lodge.presentation.controller.LodgeController;
 import com.haot.lodge.presentation.request.lodge.LodgeCreateRequest;
+import com.haot.lodge.util.TestDtoFixture;
 import com.haot.submodule.role.Role;
 import java.time.LocalDate;
 import java.util.List;
@@ -67,7 +68,7 @@ public class LodgeControllerCreatTest {
                 )
         );
 
-        LodgeDto lodgeDto = TestUtil.createMockLodgeDto();
+        LodgeDto lodgeDto = TestDtoFixture.createMockLodgeDto();
 
         ApiResponse<LodgeCreateResponse> expectedResponse = ApiResponse.success(new LodgeCreateResponse(lodgeDto));
 

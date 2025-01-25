@@ -3,8 +3,8 @@ package com.haot.reservation.infrastructure.repository;
 import static com.haot.reservation.domain.model.QReservation.reservation;
 import static com.haot.reservation.domain.utils.QuerydslSortUtils.getOrderSpecifiers;
 
-import com.haot.reservation.application.dtos.req.ReservationAdminSearchRequest;
-import com.haot.reservation.application.dtos.req.ReservationSearchRequest;
+import com.haot.reservation.application.dto.req.ReservationAdminSearchRequest;
+import com.haot.reservation.application.dto.req.ReservationSearchRequest;
 import com.haot.reservation.domain.model.Reservation;
 import com.haot.reservation.domain.model.ReservationStatus;
 import com.haot.submodule.role.Role;
