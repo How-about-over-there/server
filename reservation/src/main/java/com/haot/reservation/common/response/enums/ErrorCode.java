@@ -21,7 +21,7 @@ public enum ErrorCode implements ResCodeIfs {
 
   // 7200번 부터는 feignClient 에러입니다.
   FEIGN_CLIENT_ERROR(HttpStatus.BAD_REQUEST, "7200", "Feign 클라이언트 호출 오류 발생: "),
-  GATEWAY_ERROR(HttpStatus.BAD_GATEWAY, "7201","gateway 오류 발생: "),
+  GATEWAY_ERROR(HttpStatus.BAD_GATEWAY, "7201","Gateway 오류 발생: "),
   UNEXPECTED_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "7202", "예기치 못한 오류가 발생: ");
 
   private final HttpStatus httpStatus;
