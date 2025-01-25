@@ -78,7 +78,13 @@ jobs:
           sed -i "s@\${POINT_SERVICE_HOST}@${POINT_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s@\${RESERVATION_SERVICE_HOST}@${RESERVATION_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s@\${REVIEW_SERVICE_HOST}@${REVIEW_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|<url>http://.*</url>|<url>${LOKI_PUSH_URL}</url>|" ${{ matrix.service }}/src/main/resources/logback.xml
+          if [[ "${{ matrix.service }}" != "server" ]]; then
+            echo "Updating logback.xml for ${matrix.service} with Loki URL: ${LOKI_PUSH_URL}"
+            sed -i "s|<url>${LOKI_PUSH_URL}</url>|<url>${LOKI_PUSH_URL}</url>|" ${{ matrix.service }}/src/main/resources/logback.xml
+          else
+            echo "Skipping logback.xml update for 'server' service."
+          fi
+          
 
 
       # Gradle 빌드
