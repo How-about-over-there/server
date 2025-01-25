@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         service: [server, gateway, auth, coupon, lodge, payment, point, reservation, review, user]
-        non-server-service: [gateway, auth, coupon, lodge, payment, point, reservation, review, user]
+
     steps:
       # 코드 체크아웃
       - name: Check out the repository and update submodules
@@ -78,7 +78,7 @@ jobs:
           sed -i "s@\${POINT_SERVICE_HOST}@${POINT_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s@\${RESERVATION_SERVICE_HOST}@${RESERVATION_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s@\${REVIEW_SERVICE_HOST}@${REVIEW_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|<url>http://.*</url>|<url>${LOKI_PUSH_URL}</url>|" ${{ matrix.non-server-service }}/src/main/resources/logback.xml
+          sed -i "s|<url>http://.*</url>|<url>${LOKI_PUSH_URL}</url>|" ${{ matrix.service }}/src/main/resources/logback.xml
 
 
       # Gradle 빌드
