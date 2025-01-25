@@ -1,9 +1,10 @@
-package com.haot.point.application.service;
+package com.haot.point.application.service.impl;
 
 import com.haot.point.application.dto.request.PointTransactionRequest;
 import com.haot.point.application.dto.request.point.PointCreateRequest;
 import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointResponse;
+import com.haot.point.application.service.PointService;
 import com.haot.point.common.exception.CustomPointException;
 import com.haot.point.common.exception.enums.ErrorCode;
 import com.haot.point.domain.enums.PointStatus;
@@ -29,7 +30,7 @@ import java.util.List;
 @Slf4j(topic = "PointServiceImpl")
 @Service
 @RequiredArgsConstructor
-public class PointServiceImpl implements PointService{
+public class PointServiceImpl implements PointService {
 
     private final PointRepository pointRepository;
     private final PointHistoryRepository pointHistoryRepository;
