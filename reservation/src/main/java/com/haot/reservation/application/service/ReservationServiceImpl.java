@@ -288,7 +288,6 @@ public class ReservationServiceImpl implements ReservationService {
       }
     } catch (Exception e) {
       handleReservationCreationFailure(userId, role, reservationData, e);
-      throw new ReservationException(ErrorCode.GENERAL_ERROR);
     }
     return reservationData;
   }
