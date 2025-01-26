@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter implements WebFilter {
       return chain.filter(exchange);
     }
 
-    if (exactPaths.stream().anyMatch(path::contains)) {
+    if (containsPaths.stream().anyMatch(path::contains)) {
       log.info("Bypassing authentication for containsPaths path: {}", path);
       return chain.filter(exchange);
     }
