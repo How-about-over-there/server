@@ -35,3 +35,6 @@ management:
       enabled: true
     health:
       show-details: never
+
+gateway:
+  url: http://${GATEWAY_SERVICE_HOST}:19091

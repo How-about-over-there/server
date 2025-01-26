@@ -26,3 +26,6 @@ eureka:
 portone:
   api:
     secret: ${PORT_ONE}
+
+gateway:
+  url: http://${GATEWAY_SERVICE_HOST}:19091
