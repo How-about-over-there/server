@@ -1,7 +1,6 @@
 package com.haot.point.presentation.controller;
 
 import com.haot.point.application.dto.request.history.PointHistorySearchRequest;
-import com.haot.point.application.dto.request.history.UserPointHistorySearchRequest;
 import com.haot.point.application.dto.request.point.PointStatusRequest;
 import com.haot.point.application.dto.response.PageResponse;
 import com.haot.point.application.dto.response.PointAllResponse;
@@ -24,33 +23,20 @@ public class PointHistoryController implements PointHistoryControllerDocs {
 
     private final PointHistoryService pointHistoryService;
 
-    // 본인 포인트 내역 조회
     @GetMapping("/{historyId}")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck({Role.USER, Role.ADMIN})
     public ApiResponse<PointHistoryResponse> getPointHistoryById(@PathVariable String historyId,
                                                                  @RequestHeader("X-User-Id") String userId,
                                                                  @RequestHeader("X-User-Role") Role role) {
         return ApiResponse.success(pointHistoryService.getPointHistoryById(historyId, userId, role));
     }
 
-    // 본인 포인트 내역 전체 조회 및 검색
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<PageResponse<PointHistoryResponse>> getPointHistories(
-            @ModelAttribute PointHistorySearchRequest request,
-            Pageable pageable,
-            @RequestHeader("X-User-Id") String userId,
-            @RequestHeader("X-User-Role") Role role
-    ) {
-
-        return ApiResponse.success(pointHistoryService.getPointHistories(request, pageable, userId, role));
-    }
-
-    // 본인 포인트 내역 전체 조회 및 검색 - 사용/적립/만료 내역만
-    @GetMapping("/my")
-    @ResponseStatus(HttpStatus.OK)
+    @RoleCheck({Role.USER, Role.ADMIN})
     public ApiResponse<PageResponse<PointHistoryResponse>> getUserPointHistories(
-            @ModelAttribute UserPointHistorySearchRequest request,
+            @ModelAttribute PointHistorySearchRequest request,
             Pageable pageable,
             @RequestHeader("X-User-Id") String userId,
             @RequestHeader("X-User-Role") Role role
@@ -59,7 +45,6 @@ public class PointHistoryController implements PointHistoryControllerDocs {
         return ApiResponse.success(pointHistoryService.getUserPointHistories(request, pageable, userId));
     }
 
-    // 포인트 상태 변경
     @PostMapping("/{historyId}/status")
     @ResponseStatus(HttpStatus.OK)
     @RoleCheck({Role.ADMIN, Role.USER})
