@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_lodge_rule")
+@Table(name = "p_lodge_rule", schema = "lodge")
 public class LodgeRule extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
