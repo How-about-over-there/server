@@ -3,6 +3,8 @@
 ![Modern App Portfolio Mockup Presentation (3) (1)](https://github.com/user-attachments/assets/61b3d03e-f550-451f-9dab-c6416631ee1c)
 
 
+[📃 최종발표자료](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-%EC%B5%9C%EC%A2%85-%EB%B0%9C%ED%91%9C-%EC%9E%90%EB%A3%8C)
+
 ## 👋 서비스/프로젝트 소개
 
 <aside>
