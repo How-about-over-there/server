@@ -16,6 +16,8 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int redisPort;
 
+    @Value("${spring.data.redis.password}")
+    private String redisPassword;
     /**
      * RedissonClient Bean 등록
      */
@@ -24,6 +26,7 @@ public class RedisConfig {
         Config config = new Config();
         config.useSingleServer()
                 .setAddress("redis://" + redisHost + ":" + redisPort)
+                .setPassword(redisPassword)
                 .setConnectionMinimumIdleSize(10)
                 .setConnectionPoolSize(50);
 

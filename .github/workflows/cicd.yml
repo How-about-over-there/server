@@ -36,6 +36,7 @@ jobs:
       # Application 의 Data source 설정
       - name: Set environment variables for all services
         env:
+          KAFKA_SERVER_URL: ${{ secrets.KAFKA_SERVER_URL }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}

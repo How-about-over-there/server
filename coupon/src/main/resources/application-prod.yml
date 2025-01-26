@@ -21,7 +21,7 @@ spring:
           batch_size: 1000
     #show-sql: true
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_SERVER_URL}
 
   data:
     redis:
