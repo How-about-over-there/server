@@ -6,11 +6,11 @@
     </appender>
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
         <http>
-            <url>http://haot-loki:3100/loki/api/v1/push</url>
+            <url>${LOKI_PUSH_URL}</url>
         </http>
         <format>
             <label>
-                <pattern>service=coupon-service,level=%level</pattern>
+                <pattern>service=point-service,level=%level</pattern>
             </label>
             <message class="com.github.loki4j.logback.JsonLayout" />
         </format>

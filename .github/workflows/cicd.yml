@@ -2,7 +2,7 @@ name: HAOT CI/CD Pipeline
 
 on:
   push:
-    branches: [ "deploy" ]  # deploy 브랜치에 push 시 트리거
+    branches: [ "main" ]  # deploy 브랜치에 push 시 트리거
 
 jobs:
   build-and-deploy:
@@ -36,6 +36,11 @@ jobs:
       # Application 의 Data source 설정
       - name: Set environment variables for all services
         env:
+          KAFKA_SERVER_URL: ${{ secrets.KAFKA_SERVER_URL }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           DATABASE_URL: ${{ secrets.DB_URL}}
           DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
           DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -43,35 +48,65 @@ jobs:
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
           SERVER_DNS: ${{ secrets.SERVER_DNS }}
           USER_SERVICE_DNS: ${{ secrets.USER_SERVICE_DNS }}
-          SERVER_HOST: ${{ secrets.SERVICE_HOST }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
           USER_SERVICE_HOST: ${{ secrets.USER_SERVICE_HOST }}
           AUTH_SERVICE_HOST: ${{ secrets.AUTH_SERVICE_HOST }}
           GATEWAY_SERVICE_HOST: ${{ secrets.GATEWAY_SERVICE_HOST }}
+          COUPON_SERVICE_HOST: ${{ secrets.COUPON_SERVICE_HOST }}
+          LODGE_SERVICE_HOST: ${{ secrets.LODGE_SERVICE_HOST }}
+          PAYMENT_SERVICE_HOST: ${{ secrets.PAYMENT_SERVICE_HOST }}
+          POINT_SERVICE_HOST: ${{ secrets.POINT_SERVICE_HOST }}
+          RESERVATION_SERVICE_HOST: ${{ secrets.RESERVATION_SERVICE_HOST }}
+          REVIEW_SERVICE_HOST: ${{ secrets.REVIEW_SERVICE_HOST }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           PORT_ONE: ${{ secrets.PORT_ONE }}
+          LOKI_PUSH_URL: ${{ secrets.LOKI_PUSH_URL }}
 
         run: |
           # Update application.yml for each service
-          sed -i "s|\${DATABASE_URL}|${DATABASE_URL}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${DATABASE_USERNAME}|${DATABASE_USERNAME}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${REDIS_URL}|${REDIS_URL}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${REDIS_PASSWORD}|${REDIS_PASSWORD}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${SERVER_DNS}|${SERVER_DNS}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${USER_SERVICE_DNS}|${USER_SERVICE_DNS}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${SERVER_HOST}|${SERVER_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${USER_SERVICE_HOST}|${USER_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${AUTH_SERVICE_HOST}|${AUTH_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${GATEWAY_SERVICE_HOST}|${GATEWAY_SERVICE_HOST}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${JWT_SECRET}|${JWT_SECRET}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
-          sed -i "s|\${PORT_ONE}|${PORT_ONE}|g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          
+          sed -i "s#\${KAFKA_SERVER_URL}#${KAFKA_SERVER_URL}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+
+          sed -i "s#\${AWS_ACCESS_KEY}#${AWS_ACCESS_KEY}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${AWS_SECRET_KEY}#${AWS_SECRET_KEY}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${AWS_REGION}#${AWS_REGION}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${AWS_S3_BUCKET}#${AWS_S3_BUCKET}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+
+          sed -i "s#\${DATABASE_URL}#${DATABASE_URL}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${DATABASE_USERNAME}#${DATABASE_USERNAME}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${DATABASE_PASSWORD}#${DATABASE_PASSWORD}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${REDIS_URL}#${REDIS_URL}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${REDIS_PASSWORD}#${REDIS_PASSWORD}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${SERVER_DNS}#${SERVER_DNS}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${USER_SERVICE_DNS}#${USER_SERVICE_DNS}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${SERVER_HOST}#${SERVER_HOST}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${USER_SERVICE_HOST}#${USER_SERVICE_HOST}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${AUTH_SERVICE_HOST}#${AUTH_SERVICE_HOST}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${GATEWAY_SERVICE_HOST}#${GATEWAY_SERVICE_HOST}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s#\${JWT_SECRET}#${JWT_SECRET}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${PORT_ONE}@${PORT_ONE}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${COUPON_SERVICE_HOST}@${COUPON_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${LODGE_SERVICE_HOST}@${LODGE_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${PAYMENT_SERVICE_HOST}@${PAYMENT_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${POINT_SERVICE_HOST}@${POINT_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${RESERVATION_SERVICE_HOST}@${RESERVATION_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          sed -i "s@\${REVIEW_SERVICE_HOST}@${REVIEW_SERVICE_HOST}@g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+          if [[ "${{ matrix.service }}" != "server" ]]; then
+            echo "Updating logback.xml for ${{ matrix.service }} with Loki URL: ${LOKI_PUSH_URL}"
+            sed -i "s@\${LOKI_PUSH_URL}@${LOKI_PUSH_URL}@g" ${{ matrix.service }}/src/main/resources/logback.xml
+          else
+            echo "Skipping logback.xml update for 'server' service."
+          fi
+          
+
 
       # Gradle 빌드
       - name: Build with Gradle for ${{ matrix.service }}
         run: |
           cd ./${{ matrix.service }}
           chmod +x ./gradlew
-          ./gradlew bootJar -Dspring.profiles.active=prod
+          ./gradlew clean
+          ./gradlew bootJar -Pprofile=prod
 
       # Docker 이미지 빌드
       - name: Build Docker images for ${{ matrix.service }}

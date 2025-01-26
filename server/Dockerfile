@@ -15,5 +15,7 @@ COPY ${JAR_FILE} app.jar
 # 4. 컨테이너 포트 정의(옵션)
 EXPOSE 19090
 
+ENV SPRING_PROFILES_ACTIVE=prod
+
 # 5. 컨테이너 시작 시 실행할 명령어
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-jar", "/app.jar"]

@@ -1,8 +1,7 @@
 server:
   port: 19098
+
 spring:
-  profiles:
-    include: s3
   application:
     name: lodge-service
   datasource:
@@ -32,6 +31,18 @@ eureka:
     service-url:
       defaultZone: http://${SERVER_DNS}/eureka/
 
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION}
+    stack:
+      auto: false
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+
 management:
   endpoints:
     web:
@@ -42,3 +53,6 @@ management:
       enabled: true
     health:
       show-details: never
+
+gateway:
+  url: http://${GATEWAY_SERVICE_HOST}:19091

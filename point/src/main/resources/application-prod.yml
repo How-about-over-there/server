@@ -28,3 +28,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://${SERVER_DNS}/eureka/
+
+gateway:
+  url: http://${GATEWAY_SERVICE_HOST}:19091

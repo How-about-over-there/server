@@ -21,7 +21,7 @@ spring:
           batch_size: 1000
     #show-sql: true
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_SERVER_URL}
 
   data:
     redis:
@@ -46,3 +46,6 @@ management:
       enabled: true
     health:
       show-details: never
+
+gateway:
+  url: http://${GATEWAY_SERVICE_HOST}:19091
