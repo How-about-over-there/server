@@ -64,6 +64,12 @@
     <image src="https://github.com/user-attachments/assets/540b4e69-ff5a-4cf1-917a-96d365c9983e" width="900"></image>
 </details>
 
+## 🖼 ERD
+<details>
+<summary>ERD</summary>
+    <image src="https://github.com/user-attachments/assets/9d3f9f53-3881-4c07-bf40-6b2d1f0cb220" width="900"></image>
+</details>
+
 ## 📄 주요 기능
 
 ### 예약-결제 Flow
