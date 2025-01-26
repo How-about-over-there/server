@@ -10,7 +10,7 @@
         </http>
         <format>
             <label>
-                <pattern>service=coupon-service,level=%level</pattern>
+                <pattern>service=lodge-service,level=%level</pattern>
             </label>
             <message class="com.github.loki4j.logback.JsonLayout" />
         </format>
