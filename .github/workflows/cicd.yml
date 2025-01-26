@@ -2,7 +2,7 @@ name: HAOT CI/CD Pipeline
 
 on:
   push:
-    branches: [ "deploy" ]  # deploy 브랜치에 push 시 트리거
+    branches: [ "main" ]  # deploy 브랜치에 push 시 트리거
 
 jobs:
   build-and-deploy:
