@@ -50,13 +50,13 @@
 
 ### **🧑‍💻 CONTRIBUTORS**
 
-| 이름      | 포지션   | 담당(개인별 기여점)                                                                                                            | Github 링크                  |
+| 이름      | 포지션   | 담당                                                                                                      | Github 링크                  |
 |-----------|----------|-----------------------------------------------------------------------------------------------------------------------------|------------------------------|
-| 김성훈     | 리더     |▶ Coupon 도메인 서비스 개발 <br>▶Gateway 통합 swagger 설정 완료<br>▶모니터링(Promethues, Grafana, Loki)설정, Kafka, Redis<br>▶Docker-compose 파일 설정| [(https://github.com/kimsung3113)] |
-| 조우석 | 부리더   | ▶ 예약 관련 서비스 개발<br>▶ 리뷰 관련 서비스 개발<br>▶S3 이미지 업로드 구현                          | [https://github.com/wooseok50]    |
-| 강찬욱 | 팀원     | ▶ Auth/User 서비스 개발<br>▶ Gateway 개발<br>▶ 깃 서브모듈 구현<br>▶ 인프라 및 CI/CD 구축<br>                                               | [https://github.com/chanwookK]     |
-| 김지수 | 팀원     | ▶ Payment 서비스 개발<br>▶ 포트원 API 연동을 통해 실제 결제 환경 제공<br>▶ Point 서비스 개발<br>| [https://github.com/jelliclesu]    |
-| 문시원 | 팀원     | ▶ 숙소 도메인 서비스 개발<br>▶S3 이미지 업로드 구현<br>▶ 협업을 위한 깃허브 설정<br>| [https://github.com/muncool39]    |
+| 김성훈     | 리더     |▶ Coupon 도메인 서비스 개발 <br>▶ Gateway 통합 swagger 설정 완료<br>▶ 모니터링(Promethues, Grafana, Loki)설정, Kafka, Redis<br>▶Docker-compose 파일 설정| https://github.com/kimsung3113 |
+| 조우석 | 부리더   | ▶ 예약 관련 서비스 개발<br>▶ 리뷰 관련 서비스 개발<br>▶ S3 이미지 업로드 구현                          | https://github.com/wooseok50    |
+| 강찬욱 | 팀원     | ▶ Auth/User 서비스 개발<br>▶ Gateway 개발<br>▶ 깃 서브모듈 구현<br>▶ 인프라 및 CI/CD 구축<br>                                               | https://github.com/chanwookK     |
+| 김지수 | 팀원     | ▶ Payment 서비스 개발<br>▶ 포트원 API 연동을 통해 실제 결제 환경 제공<br>▶ Point 서비스 개발<br>| https://github.com/jelliclesu    |
+| 문시원 | 팀원     | ▶ 숙소 도메인 서비스 개발<br>▶ S3 이미지 업로드 구현<br>▶ 협업을 위한 컨벤션 설정<br>| https://github.com/muncool39    |
 
 ## 🖌 인프라 설계도
 <details>
