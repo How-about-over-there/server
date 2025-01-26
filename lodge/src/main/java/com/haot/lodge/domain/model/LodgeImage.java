@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_lodge_image")
+@Table(name = "p_lodge_image", schema = "lodge")
 public class LodgeImage extends BaseEntity {
 
     @Id
