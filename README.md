@@ -70,6 +70,9 @@
     <image src="https://github.com/user-attachments/assets/9d3f9f53-3881-4c07-bf40-6b2d1f0cb220" width="900"></image>
 </details>
 
+## 🌟상태코드
+[상태코드 명세서](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-Error-%EC%83%81%ED%83%9C-%EC%BD%94%EB%93%9C%ED%91%9C)
+
 ## 📄 주요 기능
 
 ### 예약-결제 Flow
