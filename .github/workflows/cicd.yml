@@ -64,6 +64,9 @@ jobs:
 
         run: |
           # Update application.yml for each service
+          
+          sed -i "s#\${KAFKA_SERVER_URL}#${KAFKA_SERVER_URL}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
+
           sed -i "s#\${AWS_ACCESS_KEY}#${AWS_ACCESS_KEY}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s#\${AWS_SECRET_KEY}#${AWS_SECRET_KEY}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
           sed -i "s#\${AWS_REGION}#${AWS_REGION}#g" ${{ matrix.service }}/src/main/resources/application-prod.yml
