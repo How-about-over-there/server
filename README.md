@@ -2,9 +2,6 @@
 
 ![Modern App Portfolio Mockup Presentation (3) (1)](https://github.com/user-attachments/assets/61b3d03e-f550-451f-9dab-c6416631ee1c)
 
-
-[📃 최종발표자료](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-%EC%B5%9C%EC%A2%85-%EB%B0%9C%ED%91%9C-%EC%9E%90%EB%A3%8C)
-
 ## 👋 서비스/프로젝트 소개
 
 <aside>
@@ -72,9 +69,6 @@
     <image src="https://github.com/user-attachments/assets/9d3f9f53-3881-4c07-bf40-6b2d1f0cb220" width="900"></image>
 </details>
 
-## 🌟상태코드
-[상태코드 명세서](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-Error-%EC%83%81%ED%83%9C-%EC%BD%94%EB%93%9C%ED%91%9C)
-
 ## 📄 주요 기능
 
 ### 예약-결제 Flow
@@ -95,7 +89,7 @@
 
 <aside>  
     
-🏠**숙소 예약 서비스**:
+🏠 **숙소 예약 서비스**:
 
 - 숙소 정보 검색 및 숙박 날짜 예약
 - 예약 시 쿠폰 및 포인트 적용
@@ -103,7 +97,7 @@
 
 <aside>
 
-💰**결제 서비스**:
+💰 **결제 서비스**:
 
 - [📖 결제 요청/취소 과정](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-%EA%B2%B0%EC%A0%9C-%EC%9A%94%EC%B2%AD-&-%EA%B2%B0%EC%A0%9C-%EC%B7%A8%EC%86%8C-%EA%B3%BC%EC%A0%95)
 
@@ -113,7 +107,7 @@
 
 <aside>
 
-💵**포인트 서비스**:
+💵 **포인트 서비스**:
 
 - [📖 포인트 적립/사용 과정](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EC%A0%81%EB%A6%BD-&-%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EC%82%AC%EC%9A%A9-%EA%B3%BC%EC%A0%95)
 
@@ -123,12 +117,121 @@
 
 <aside>
 
-🎫**쿠폰 서비스**: **Redis 및 Kafka를 통한 비동기 쿠폰 발급, 동시성 처리**
+🎫 **쿠폰 서비스**: **Redis 및 Kafka를 통한 비동기 쿠폰 발급, 동시성 처리**
 
-- 대용량 트래픽을 수용하기 위한 비동기 쿠폰 발급
-- Redis의 Lua Script로 동시성 제어 및 쿠폰 발급 상태 관리
-- Kafka 를 활용한 실시간 이벤트 & 병렬 처리 (시간 및 수량 제한)
-</aside>
+## 🚀 기술 스택
+
+<details>
+<summary>🖥️ <strong>언어 및 프레임워크</strong></summary>
+
+- **Java 17**: 최신 기능과 안정성을 제공하는 언어.
+- **Spring Boot 3.3.7**: 빠르고 유연한 애플리케이션 개발.
+- **Spring Cloud Gateway**: API 게이트웨이 및 로드 밸런싱.
+- **Spring Cloud Netflix Eureka**: 서비스 디스커버리 및 로드 밸런싱.
+- **Spring Cloud OpenFeign**: 마이크로서비스 간 통신을 위한 HTTP 클라이언트.
+- **JPQL & QueryDSL**: 복잡한 데이터 조회와 효율적인 SQL 작성.
+- **Mapstruct**: DTO 변환 자동화.
+
+</details>
+
+<details>
+<summary>📩 <strong>메시징</strong></summary>
+
+- **Apache Kafka**: 고성능, 실시간 스트리밍 데이터 플랫폼.
+
+</details>
+
+<details>
+<summary>🛠 <strong>툴 및 소스 관리</strong></summary>
+
+- **Git & Github**: 소스 버전 관리.
+- **Postman**: API 테스트 및 디버깅.
+- **IntelliJ IDEA**: 강력한 개발 환경.
+- **Slack**: 팀 협업 및 커뮤니케이션.
+- **Gradle**: 프로젝트 빌드 및 의존성 관리.
+
+</details>
+
+<details>
+<summary>📊 <strong>로그 관리 및 모니터링</strong></summary>
+
+- **Prometheus**: 모니터링 및 경보 시스템.
+- **Grafana**: 데이터 시각화 및 대시보드.
+- **Zipkin**: 분산 트레이싱.
+- **Loki**: 로그 관리.
+- **Actuator**: 애플리케이션 상태 모니터링.
+
+</details>
+
+<details>
+<summary>🔐 <strong>인증 및 보안</strong></summary>
+
+- **JWT**: 안전하고 가벼운 인증 토큰.
+- **Argon2**: 강력한 비밀번호 해시 알고리즘.
+
+</details>
+
+<details>
+<summary>🌍 <strong>외부 API</strong></summary>
+
+- **PortOne API**: 결제 처리 및 통합.
+
+</details>
+
+<details>
+<summary>🗄 <strong>ORM</strong></summary>
+
+- **Spring Data JPA**: 객체-관계 매핑 및 데이터 액세스.
+
+</details>
+
+<details>
+<summary>💾 <strong>데이터베이스</strong></summary>
+
+- **PostgreSQL**: 고성능 오픈소스 RDBMS.
+
+</details>
+
+<details>
+<summary>⚡ <strong>성능 최적화 및 캐싱</strong></summary>
+
+- **Redis & Redisson**: 고속 데이터 캐싱 및 분산 잠금.
+- **LuaScript**: Redis 스크립팅 확장.
+
+</details>
+
+<details>
+<summary>☁️ <strong>인프라 및 배포</strong></summary>
+
+- **AWS EC2, RDS, S3, ECS, ECR, Elastic Cache**: 클라우드 인프라 및 관리.
+- **Docker & Docker Compose**: 컨테이너 관리 및 오케스트레이션.
+- **Github Actions (CI/CD)**: 지속적 통합 및 배포.
+
+</details>
+
+<details>
+<summary>✅ <strong>테스트</strong></summary>
+
+- **Jacoco**: 코드 커버리지 분석.
+- **SonarQube**: 코드 품질 관리.
+- **JUnit5 & Mockito**: 단위 테스트 및 목(Mock) 테스트.
+
+</details>
+
+<details>
+<summary>📈 <strong>성능 테스트</strong></summary>
+
+- **Apache JMeter**: 부하 및 성능 테스트.
+
+</details>
+
+<details>
+<summary>📚 <strong>문서화</strong></summary>
+
+- **Notion**: 프로젝트 관리 및 문서화.
+- **Swagger**: API 문서화 및 테스트.
+
+</details>
 
 <aside>
 
@@ -172,3 +275,8 @@
 [🎀 Feign Client 통신 문제](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-Feign-Client-%ED%86%B5%EC%8B%A0-%EB%AC%B8%EC%A0%9C)
 
 [🐸 Feign Client 예외 처리 문제](https://github.com/How-about-over-there/server/wiki/%5BTrouble-Shooting%5D-Feign-Client-%EC%98%88%EC%99%B8-%EC%B2%98%EB%A6%AC-%EB%AC%B8%EC%A0%9C)
+
+## 🌟 문서 및 발표 자료
+[💬 상태코드 명세서](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-Error-%EC%83%81%ED%83%9C-%EC%BD%94%EB%93%9C%ED%91%9C)
+
+[📃 최종발표자료](https://github.com/How-about-over-there/server/wiki/%5BDocs%5D-%EC%B5%9C%EC%A2%85-%EB%B0%9C%ED%91%9C-%EC%9E%90%EB%A3%8C)
