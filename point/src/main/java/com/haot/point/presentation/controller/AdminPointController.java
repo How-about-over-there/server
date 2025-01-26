@@ -4,6 +4,8 @@ import com.haot.point.application.dto.request.point.PointUpdateRequest;
 import com.haot.point.application.dto.response.PointResponse;
 import com.haot.point.common.response.ApiResponse;
 import com.haot.point.presentation.docs.AdminPointControllerDocs;
+import com.haot.submodule.role.Role;
+import com.haot.submodule.role.RoleCheck;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,24 +19,24 @@ import java.util.List;
 @RequestMapping("/admin/v1/points")
 public class AdminPointController implements AdminPointControllerDocs {
 
-    // 포인트 수정
     @PutMapping("/{pointId}")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck(Role.ADMIN)
     public ApiResponse<Void> updatePoint(@Valid @RequestBody PointUpdateRequest request,
                                          @PathVariable String pointId) {
         return ApiResponse.success();
     }
 
-    // 포인트 삭제
     @DeleteMapping("/{pointId}")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck(Role.ADMIN)
     public ApiResponse<Void> deletePoint(@PathVariable String pointId) {
         return ApiResponse.success();
     }
 
-    // 포인트 단건 조회
     @GetMapping("/{pointId}")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck(Role.ADMIN)
     public ApiResponse<PointResponse> getPointById(@PathVariable String pointId) {
         return ApiResponse.success(
                 new PointResponse(
@@ -45,9 +47,9 @@ public class AdminPointController implements AdminPointControllerDocs {
         );
     }
 
-    // 포인트 전체 조회 및 검색
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck(Role.ADMIN)
     public ApiResponse<Page<PointResponse>> getPoints(Pageable pageable) {
 
         List<PointResponse> list = List.of(

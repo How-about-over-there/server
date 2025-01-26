@@ -1,11 +1,11 @@
-package com.haot.point.application.service;
+package com.haot.point.application.service.impl;
 
 import com.haot.point.application.dto.request.history.PointHistorySearchRequest;
-import com.haot.point.application.dto.request.history.UserPointHistorySearchRequest;
 import com.haot.point.application.dto.request.point.PointStatusRequest;
 import com.haot.point.application.dto.response.PageResponse;
 import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointHistoryResponse;
+import com.haot.point.application.service.PointHistoryService;
 import com.haot.point.common.exception.CustomPointException;
 import com.haot.point.common.exception.enums.ErrorCode;
 import com.haot.point.domain.enums.PointStatus;
@@ -81,24 +81,12 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<PointHistoryResponse> getPointHistories(
-            PointHistorySearchRequest request, Pageable pageable, String userId, Role role) {
-        if (role == Role.USER) {
-            request.setUserId(userId);
-            request.setIsUser(true);
-        }
-        Page<PointHistoryResponse> pointHistories = pointHistoryRepository.searchPointHistories(request, pageable);
-        return PageResponse.of(pointHistories);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     @Cacheable(
             cacheNames = "userPointHistories",
             key = "T(String).format('%s:%s:%s:%s:%s:%s', #userId, #pageable.pageNumber, #pageable.pageSize, #request.isEarned, #request.isUsed, #request.isExpired)"
     )
     public PageResponse<PointHistoryResponse> getUserPointHistories(
-            UserPointHistorySearchRequest request, Pageable pageable, String userId) {
+            PointHistorySearchRequest request, Pageable pageable, String userId) {
 
         String fullListCacheKey = String.format("%s:%d:%d:false:false:false", userId, pageable.getPageNumber(), pageable.getPageSize());
 
@@ -139,7 +127,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 
     /* 조건에 따라 데이터를 필터링하고 페이징 처리 */
     private Page<PointHistoryResponse> filterAndPaginate(PageResponse<PointHistoryResponse> cachedData,
-                                                         UserPointHistorySearchRequest request,
+                                                         PointHistorySearchRequest request,
                                                          Pageable pageable) {
         Stream<PointHistoryResponse> filteredData = cachedData.content().stream();
 
@@ -160,7 +148,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
         return new PageImpl<>(filteredList.subList(start, end), pageable, filteredList.size());
     }
 
-    // 타입에 따른 롤백 처리 로직
+    /* 타입에 따른 롤백 처리 로직 */
     private void handleRollback(PointHistory pointHistory) {
         Point point = pointHistory.getPoint();
         switch (pointHistory.getType()) {
@@ -172,7 +160,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
         }
     }
 
-    // 취소 데이터 생성 및 캐시 삭제
+    /* 취소 데이터 생성 및 캐시 삭제 */
     private PointAllResponse createCancelData(PointHistory pointHistory, PointType pointType, String contextId) {
         Point point = pointHistory.getPoint();
         pointHistory.updateStatus(null, PointStatus.CANCELLED);

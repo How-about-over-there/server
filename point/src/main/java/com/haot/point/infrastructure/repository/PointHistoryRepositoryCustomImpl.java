@@ -1,6 +1,6 @@
 package com.haot.point.infrastructure.repository;
 
-import com.haot.point.application.dto.request.history.PointHistorySearchRequest;
+import com.haot.point.application.dto.request.history.AdminHistorySearchRequest;
 import com.haot.point.application.dto.response.PointHistoryResponse;
 import com.haot.point.domain.enums.PointStatus;
 import com.haot.point.domain.enums.PointType;
@@ -35,7 +35,7 @@ public class PointHistoryRepositoryCustomImpl implements PointHistoryRepositoryC
     );
 
     @Override
-    public Page<PointHistoryResponse> searchPointHistories(PointHistorySearchRequest request, Pageable pageable) {
+    public Page<PointHistoryResponse> searchPointHistories(AdminHistorySearchRequest request, Pageable pageable) {
 
         // 조건 추가
         JPAQuery<PointHistory> query = queryFactory.selectFrom(pointHistory)
@@ -52,7 +52,7 @@ public class PointHistoryRepositoryCustomImpl implements PointHistoryRepositoryC
         return new PageImpl<>(results, pageable, total);
     }
 
-    private BooleanBuilder booleanBuilder(PointHistorySearchRequest request) {
+    private BooleanBuilder booleanBuilder(AdminHistorySearchRequest request) {
 
         return new BooleanBuilder()
                 .and(isDeletedFalse())

@@ -1,9 +1,7 @@
 package com.haot.point.presentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haot.point.application.dto.request.history.PointHistorySearchRequest;
 import com.haot.point.application.dto.request.point.PointStatusRequest;
-import com.haot.point.application.dto.response.PageResponse;
 import com.haot.point.application.dto.response.PointAllResponse;
 import com.haot.point.application.dto.response.PointHistoryResponse;
 import com.haot.point.application.service.PointHistoryService;
@@ -13,17 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
@@ -64,47 +57,6 @@ class PointHistoryControllerTest {
                 .andExpect(jsonPath("$.statusCode").value("9000"))
                 .andExpect(jsonPath("$.status").value("SUCCESS"))
                 .andExpect(jsonPath("$.data.historyId").value(historyId))
-                .andReturn(); // 호출 결과를 MvcResult 로 반환
-
-        // Then: 요청 결과 확인
-        String responseBody = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
-        // JSON 포맷팅
-        String formattedJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(
-                objectMapper.readTree(responseBody) // JSON 트리로 파싱
-        );
-        // 응답 Body 출력
-        System.out.println("응답 데이터: " + formattedJson);
-    }
-
-    @Test
-    @DisplayName("포인트 내역 전체 조회 및 검색 테스트")
-    void getPointHistories() throws Exception {
-        // Given: 테스트 데이터
-        PointHistorySearchRequest request = new PointHistorySearchRequest();
-        PageResponse<PointHistoryResponse> response = PageResponse.of(
-                new PageImpl<>(List.of(
-                        new PointHistoryResponse("HISTORY-UUID-1", "POINT-UUID", "USER-UUID",
-                                1000.0, "EARN", "포인트 적립", LocalDateTime.now(), "PROCESSED"),
-                        new PointHistoryResponse("HISTORY-UUID-2", "POINT-UUID", "USER-UUID",
-                                1000.0, "EARN", "포인트 적립", LocalDateTime.now(), "PROCESSED")
-                ))
-        );
-        Pageable pageable = PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "createdAt"));
-
-        // Mocking: PointService 동작 설정
-        when(pointHistoryService.getPointHistories(request, pageable, "USER-UUID", Role.USER)).thenReturn(response);
-
-        // When: API 호출 및 결과 받기
-        MvcResult result = mockMvc.perform(get("/api/v1/points/histories")
-                        .header("X-User-Id", "USER-UUID")
-                        .header("X-User-Role", "USER")
-                        .param("page", "0") // 페이지 번호
-                        .param("size", "2") // 페이지 크기
-                        .param("sort", "createdAt,asc") // 정렬 기준
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusCode").value("9000"))
-                .andExpect(jsonPath("$.status").value("SUCCESS"))
                 .andReturn(); // 호출 결과를 MvcResult 로 반환
 
         // Then: 요청 결과 확인

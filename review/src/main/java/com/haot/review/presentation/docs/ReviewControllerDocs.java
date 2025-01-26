@@ -1,4 +1,4 @@
-package com.haot.review.presentation.controller;
+package com.haot.review.presentation.docs;
 
 import com.haot.review.application.dtos.req.ReviewCreateRequest;
 import com.haot.review.application.dtos.req.ReviewSearchRequest;
